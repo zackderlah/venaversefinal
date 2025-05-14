@@ -11,8 +11,12 @@ const notoSansJP = Noto_Sans_JP({
 })
 
 export const metadata: Metadata = {
-  title: 'Media Reviews',
+  title: 'venaverse',
   description: 'Personal reviews of films, albums, anime, and manga',
+  icons: {
+    icon: '/girl.png',
+    apple: '/girl.png',
+  },
 }
 
 export default function RootLayout({
