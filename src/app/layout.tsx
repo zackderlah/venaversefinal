@@ -14,8 +14,8 @@ export const metadata: Metadata = {
   title: 'venaverse',
   description: 'Personal reviews of films, albums, anime, and manga',
   icons: {
-    icon: '/girl.png',
-    apple: '/girl.png',
+    icon: '/style.png',
+    apple: '/style.png',
   },
 }
 
