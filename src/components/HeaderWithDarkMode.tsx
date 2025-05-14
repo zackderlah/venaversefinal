@@ -43,18 +43,20 @@ export default function HeaderWithDarkMode() {
 
   return (
     <header className="mb-6">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-4xl font-black tracking-tight lowercase">vena/verse</h1>
-        <div className="flex items-center gap-4">
-          <Clock />
+      <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center mb-4">
+        <div className="flex flex-row justify-between items-center w-full sm:w-auto">
+          <h1 className="text-4xl font-black tracking-tight lowercase">vena/verse</h1>
           <button
             onClick={toggleDark}
-            className="px-3 py-1 border border-black bg-gray-100 dark:bg-gray-800 dark:text-yellow-300 dark:border-gray-400 transition-colors duration-150 hover:bg-gray-200 hover:dark:bg-gray-700"
+            className="px-3 py-1 border border-black bg-gray-100 dark:bg-gray-800 dark:text-yellow-300 dark:border-gray-400 transition-colors duration-150 hover:bg-gray-200 hover:dark:bg-gray-700 ml-2 sm:ml-0"
             aria-label="toggle dark mode"
             type="button"
           >
             {isDark ? '🌙' : '☀️'}
           </button>
+        </div>
+        <div className="flex flex-col sm:flex-row sm:items-center w-full sm:w-auto">
+          <Clock />
         </div>
       </div>
       
