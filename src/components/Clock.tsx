@@ -18,7 +18,7 @@ export default function Clock() {
       <div className="text-xs text-gray-500 dark:text-gray-400">
         {time.toLocaleTimeString()}
       </div>
-      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+      <div className="text-xs text-gray-500 dark:text-gray-400 mt-2 sm:mt-1">
         "<span className="rating text-xs font-bold">H</span>" toggle background view
       </div>
     </div>
