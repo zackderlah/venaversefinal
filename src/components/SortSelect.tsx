@@ -7,7 +7,7 @@ interface SortSelectProps {
 
 export default function SortSelect({ value, onChange }: SortSelectProps) {
   return (
-    <div className="flex gap-4 items-center text-sm">
+    <div className="flex flex-col xs:flex-row flex-wrap gap-2 xs:gap-4 items-stretch xs:items-center text-sm w-full">
       <button
         onClick={() => onChange('date-desc')}
         className={`px-3 py-1 border-2 transition-colors ${
