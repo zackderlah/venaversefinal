@@ -11,11 +11,29 @@ const notoSansJP = Noto_Sans_JP({
 })
 
 export const metadata: Metadata = {
-  title: 'venaverse',
+  title: 'vena/verse',
   description: 'Personal reviews of films, albums, anime, and manga',
   icons: {
     icon: '/girl2.png',
     apple: '/girl2.png',
+  },
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f9fafb' },
+    { media: '(prefers-color-scheme: dark)', color: '#0A0A0A' }
+  ],
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'vena/verse',
+  },
+  formatDetection: {
+    telephone: false,
   },
 }
 
