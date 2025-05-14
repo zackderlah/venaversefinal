@@ -43,23 +43,36 @@ export default function HeaderWithDarkMode() {
 
   return (
     <header className="mb-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center mb-4">
-        <div className="flex flex-row justify-between items-center w-full sm:w-auto">
+      <div className="mb-4">
+        <div className="flex flex-row justify-between items-center w-full sm:hidden">
           <h1 className="text-4xl font-black tracking-tight lowercase">vena/verse</h1>
           <button
             onClick={toggleDark}
-            className="px-3 py-1 border border-black bg-gray-100 dark:bg-gray-800 dark:text-yellow-300 dark:border-gray-400 transition-colors duration-150 hover:bg-gray-200 hover:dark:bg-gray-700 ml-2 sm:ml-0"
+            className="px-3 py-1 border border-black bg-gray-100 dark:bg-gray-800 dark:text-yellow-300 dark:border-gray-400 transition-colors duration-150 hover:bg-gray-200 hover:dark:bg-gray-700 ml-2"
             aria-label="toggle dark mode"
             type="button"
           >
             {isDark ? '🌙' : '☀️'}
           </button>
         </div>
-        <div className="flex flex-col sm:flex-row sm:items-center w-full sm:w-auto">
+        <div className="sm:flex justify-between items-center hidden">
+          <h1 className="text-4xl font-black tracking-tight lowercase">vena/verse</h1>
+          <div className="flex items-center gap-4">
+            <Clock />
+            <button
+              onClick={toggleDark}
+              className="px-3 py-1 border border-black bg-gray-100 dark:bg-gray-800 dark:text-yellow-300 dark:border-gray-400 transition-colors duration-150 hover:bg-gray-200 hover:dark:bg-gray-700"
+              aria-label="toggle dark mode"
+              type="button"
+            >
+              {isDark ? '🌙' : '☀️'}
+            </button>
+          </div>
+        </div>
+        <div className="sm:hidden mt-2">
           <Clock />
         </div>
       </div>
-      
       {/* Mobile Menu Button */}
       <button
         onClick={toggleMenu}
@@ -71,7 +84,6 @@ export default function HeaderWithDarkMode() {
           <span className={`block absolute w-full h-0.5 bg-current transition-all duration-300 ${isMenuOpen ? '-rotate-45 top-0' : 'translate-y-1.5'}`}></span>
         </span>
       </button>
-
       {/* Navigation Links */}
       <nav className={`${isMenuOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row gap-6 text-sm items-start md:items-center lowercase`}>
         <Link href="/" className="nav-link text-gray-900 w-full md:w-auto">home</Link>
