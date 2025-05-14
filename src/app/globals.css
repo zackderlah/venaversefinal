@@ -1,0 +1,212 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Neue Montreal';
+  src: url('/NeueMontreal-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  body {
+    @apply antialiased bg-gray-50 text-gray-900;
+    font-family: 'Neue Montreal', sans-serif;
+    background-image: url('/bg2.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+  }
+  
+  .dark body {
+    @apply bg-black text-gray-50;
+    background-image: url('/bg2.jpg');
+  }
+
+  h1, h2, h3 {
+    @apply font-black tracking-tight;
+    font-family: 'Neue Montreal', sans-serif;
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@keyframes rating-gradient-move {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes nav-gradient-move {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@layer components {
+  .review-card {
+    @apply border-2 border-black p-6 mb-6 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all;
+    position: relative;
+  }
+
+  .review-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.02),
+      rgba(0, 0, 0, 0.02) 2px,
+      transparent 2px,
+      transparent 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .dark .review-card {
+    @apply border-gray-100 bg-[#0A0A0A];
+    box-shadow: 4px 4px 0px 0px rgba(255,255,255,0.8);
+  }
+
+  .dark .review-card::before {
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.02),
+      rgba(255, 255, 255, 0.02) 2px,
+      transparent 2px,
+      transparent 4px
+    );
+  }
+
+  .dark .review-card:hover {
+    box-shadow: 6px 6px 0px 0px rgba(255,255,255,0.8);
+  }
+
+  .review-card p {
+    @apply text-gray-600;
+    position: relative;
+    z-index: 2;
+  }
+
+  .dark .review-card p {
+    @apply text-gray-300;
+  }
+
+  .rating {
+    @apply text-2xl font-black;
+    background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6, #34d399, #fbbf24, #60a5fa);
+    background-size: 200% 200%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: rating-gradient-move 3s linear infinite alternate;
+    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 2;
+  }
+
+  .review-date {
+    @apply text-sm font-medium text-gray-600;
+    position: relative;
+    z-index: 2;
+  }
+
+  .dark .review-date {
+    @apply text-gray-400;
+  }
+
+  .nav-link {
+    @apply relative px-4 py-2 font-bold transition-colors;
+  }
+
+  .nav-link.text-blue-600 {
+    background: linear-gradient(90deg, #2563eb, #60a5fa, #2563eb);
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: nav-gradient-move 3s ease infinite;
+  }
+
+  .nav-link.text-purple-600 {
+    background: linear-gradient(90deg, #7c3aed, #a78bfa, #7c3aed);
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: nav-gradient-move 3s ease infinite;
+  }
+
+  .nav-link.text-red-600 {
+    background: linear-gradient(90deg, #dc2626, #f87171, #dc2626);
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: nav-gradient-move 3s ease infinite;
+  }
+
+  .nav-link.text-green-600 {
+    background: linear-gradient(90deg, #059669, #34d399, #059669);
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: nav-gradient-move 3s ease infinite;
+  }
+
+  .nav-link.text-gray-900 {
+    @apply dark:text-white;
+  }
+
+  .nav-link.text-gray-900:hover {
+    @apply text-black dark:text-white;
+  }
+
+  .nav-link::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-full h-1 bg-black transform scale-x-0 transition-transform origin-left;
+  }
+
+  .dark .nav-link::after {
+    @apply bg-white;
+  }
+
+  .nav-link:hover::after {
+    @apply scale-x-100;
+  }
+
+  .category-button {
+    @apply p-4 border-2 border-black text-center font-bold bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all;
+  }
+
+  .dark .category-button {
+    @apply border-white bg-[#0A0A0A] text-white;
+    box-shadow: 2px 2px 0px 0px rgba(255,255,255,0.8);
+  }
+
+  .dark .category-button:hover {
+    box-shadow: 4px 4px 0px 0px rgba(255,255,255,0.8);
+  }
+} 
