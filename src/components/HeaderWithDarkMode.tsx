@@ -88,7 +88,7 @@ export default function HeaderWithDarkMode() {
       <nav className={`${isMenuOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row gap-6 text-sm items-start md:items-center lowercase`}>
         <Link href="/" className="nav-link text-gray-900 w-full md:w-auto">home</Link>
         <Link href="/films" className="nav-link text-blue-600 w-full md:w-auto">films</Link>
-        <Link href="/albums" className="nav-link text-purple-600 w-full md:w-auto">albums</Link>
+        <Link href="/music" className="nav-link text-purple-600 w-full md:w-auto">music</Link>
         <Link href="/anime" className="nav-link text-red-600 w-full md:w-auto">anime</Link>
         <Link href="/manga" className="nav-link text-green-600 w-full md:w-auto">manga</Link>
       </nav>

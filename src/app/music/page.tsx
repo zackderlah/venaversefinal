@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import SearchBar from '@/components/SearchBar'
 import SortSelect from '@/components/SortSelect'
 
-export default function AlbumsPage() {
+export default function MusicPage() {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('date-desc');
   
@@ -43,10 +43,10 @@ export default function AlbumsPage() {
       <section>
         <h2 className="text-3xl font-black mb-4 lowercase">album reviews</h2>
         <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg lowercase">
-          a collection of my thoughts and ratings for albums i've listened to.
+          a collection of my thoughts and ratings for music i've listened to.
         </p>
         <div className="space-y-8">
-          <SearchBar value={search} onChange={setSearch} placeholder="search albums by title..." />
+          <SearchBar value={search} onChange={setSearch} placeholder="search music by title..." />
           <div className="border-t-2 border-b-2 border-black dark:border-white py-4">
             <SortSelect value={sortBy} onChange={setSortBy} />
           </div>
