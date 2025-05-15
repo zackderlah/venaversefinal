@@ -7,21 +7,15 @@ interface ReviewCardProps {
   review: Review;
 }
 
-interface AuthenticatedUser {
-  id: number;
-  username: string;
-  // other fields if returned by /api/auth/me
-}
-
 export default function ReviewCard({ review }: ReviewCardProps) {
-  const { user: currentAuthenticatedUser } = useAuth();
+  const { user: currentAuthenticatedUser, loading: authLoading } = useAuth();
 
   // categoryPath is not used in this version of the card, but kept for potential future use or consistency
   // const categoryPath = review.category === 'film' ? 'films' :
   //                     review.category === 'music' ? 'music' :
   //                     review.category === 'anime' ? 'anime' : 'books';
 
-  const canEdit = currentAuthenticatedUser && review.userId === currentAuthenticatedUser.id;
+  const canEdit = !authLoading && currentAuthenticatedUser && review.userId === currentAuthenticatedUser.id;
 
   const handleDelete = async () => {
     if (window.confirm('are you sure you want to delete this review? this action cannot be undone.')) {
