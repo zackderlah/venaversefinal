@@ -3,20 +3,20 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Clock from './Clock';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 export default function HeaderWithDarkMode() {
   const [isDark, setIsDark] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const [user, setUser] = useState<{ username: string } | null>(null);
 
   useEffect(() => {
     // Check localStorage first
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
-    // If theme is saved in localStorage, use that
-    // Otherwise, check system preference
     if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
       document.documentElement.classList.add('dark');
       setIsDark(true);
@@ -24,7 +24,16 @@ export default function HeaderWithDarkMode() {
       document.documentElement.classList.remove('dark');
       setIsDark(false);
     }
-  }, []);
+
+    // Check login status on route change or initial load
+    fetch('/api/auth/me').then(async (res) => {
+      if (res.ok) {
+        setUser(await res.json());
+      } else {
+        setUser(null);
+      }
+    });
+  }, [pathname]);
 
   const toggleDark = () => {
     const newIsDark = !isDark;
@@ -41,6 +50,12 @@ export default function HeaderWithDarkMode() {
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    setUser(null);
+    router.push('/login');
   };
 
   return (
@@ -88,11 +103,25 @@ export default function HeaderWithDarkMode() {
       </button>
       {/* Navigation Links */}
       <nav className={`${isMenuOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row gap-6 text-sm items-start md:items-center lowercase`}>
-        <Link href="/" className={`nav-link text-gray-900 w-full md:w-auto${pathname === '/' ? ' active' : ''}`}>home</Link>
-        <Link href="/films" className={`nav-link text-blue-600 w-full md:w-auto${pathname.startsWith('/films') ? ' active' : ''}`}>films</Link>
-        <Link href="/music" className={`nav-link text-purple-600 w-full md:w-auto${pathname.startsWith('/music') ? ' active' : ''}`}>music</Link>
-        <Link href="/anime" className={`nav-link text-red-600 w-full md:w-auto${pathname.startsWith('/anime') ? ' active' : ''}`}>anime</Link>
-        <Link href="/books" className={`nav-link text-green-600 w-full md:w-auto${pathname.startsWith('/books') ? ' active' : ''}`}>books</Link>
+        <div className="flex flex-col md:flex-row md:items-center w-full">
+          <Link href="/" className={`nav-link text-gray-900 w-full md:w-auto${pathname === '/' ? ' active' : ''}`}>home</Link>
+          <Link href="/films" className={`nav-link text-blue-600 w-full md:w-auto${pathname.startsWith('/films') ? ' active' : ''}`}>films</Link>
+          <Link href="/music" className={`nav-link text-purple-600 w-full md:w-auto${pathname.startsWith('/music') ? ' active' : ''}`}>music</Link>
+          <Link href="/anime" className={`nav-link text-red-600 w-full md:w-auto${pathname.startsWith('/anime') ? ' active' : ''}`}>anime</Link>
+          <Link href="/books" className={`nav-link text-green-600 w-full md:w-auto${pathname.startsWith('/books') ? ' active' : ''}`}>books</Link>
+          <Link href="/other" className={`nav-link text-yellow-600 w-full md:w-auto${pathname.startsWith('/other') ? ' active' : ''}`}>other</Link>
+          <div className="flex gap-2 mt-4 md:mt-0 ml-auto">
+            {user ? (
+              <>
+                <Link href="/create-post" className="border-2 border-black dark:border-white px-3 py-1 font-bold bg-white dark:bg-[#0A0A0A] text-black dark:text-white hover:bg-gray-100 hover:dark:bg-gray-900 transition-colors text-xs lowercase">create post</Link>
+                <Link href="/profile" className="border-2 border-black dark:border-white px-3 py-1 font-bold bg-white dark:bg-[#0A0A0A] text-black dark:text-white hover:bg-gray-100 hover:dark:bg-gray-900 transition-colors text-xs lowercase">profile</Link>
+                <button onClick={handleLogout} className="border-2 border-black dark:border-white px-3 py-1 font-bold bg-black dark:bg-white text-white dark:text-black hover:bg-gray-900 hover:dark:bg-gray-200 transition-colors text-xs lowercase">logout</button>
+              </>
+            ) : (
+              <Link href="/login" className="border-2 border-black dark:border-white px-3 py-1 font-bold bg-black dark:bg-white text-white dark:text-black hover:bg-gray-900 hover:dark:bg-gray-200 transition-colors text-xs lowercase">login</Link>
+            )}
+          </div>
+        </div>
       </nav>
     </header>
   );

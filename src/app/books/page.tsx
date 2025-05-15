@@ -1,18 +1,45 @@
 'use client';
 
 import { useState, useEffect } from 'react'
-import { reviews } from '@/data/reviews'
 import ReviewCard from '@/components/ReviewCard'
 import SearchBar from '@/components/SearchBar'
 import SortSelect from '@/components/SortSelect'
+import { Review } from '@/types/review'
+
+interface AuthenticatedUser {
+  id: number;
+  username: string;
+}
 
 export default function BooksPage() {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('date-desc');
+  const [allBookReviews, setAllBookReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<AuthenticatedUser | null>(null);
+  const [viewMode, setViewMode] = useState<'all' | 'my'>('all');
   
-  const bookReviews = reviews.filter(review => review.category === 'books');
-  
-  const sortedAndFilteredReviews = bookReviews
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then(res => {
+        if (res.ok) return res.json();
+        return null;
+      })
+      .then(data => setCurrentUser(data));
+
+    fetch('/api/reviews/books')
+      .then(res => res.json())
+      .then((data: Review[]) => {
+        setAllBookReviews(data);
+        setLoading(false);
+      });
+  }, []);
+
+  const filteredByViewMode = viewMode === 'my' && currentUser
+    ? allBookReviews.filter(review => review.userId === currentUser.id)
+    : allBookReviews;
+
+  const sortedAndFilteredReviews = filteredByViewMode
     .filter(r => r.title.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => {
       switch (sortBy) {
@@ -36,15 +63,32 @@ export default function BooksPage() {
         element.scrollIntoView({ behavior: 'smooth' });
       }
     }
-  }, []);
+  }, [sortedAndFilteredReviews]);
 
   return (
     <div className="space-y-12">
       <section>
-        <h2 className="text-3xl font-black mb-4 lowercase">book reviews</h2>
+        <div className="flex space-x-6 border-b-2 border-black dark:border-white pb-3 mb-6">
+          <h2 
+            className={`text-3xl font-black lowercase cursor-pointer ${viewMode === 'my' ? 'opacity-100' : 'opacity-50 hover:opacity-75'}`}
+            onClick={() => currentUser && setViewMode('my')}
+          >
+            my book reviews
+          </h2>
+          <h2 
+            className={`text-3xl font-black lowercase cursor-pointer ${viewMode === 'all' ? 'opacity-100' : 'opacity-50 hover:opacity-75'}`}
+            onClick={() => setViewMode('all')}
+          >
+            all book reviews
+          </h2>
+        </div>
+        
         <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg lowercase">
-          a collection of my thoughts and ratings for books i've read.
+          {viewMode === 'my' 
+            ? (currentUser ? `a collection of book reviews written by you.` : `please log in to see your book reviews.`)
+            : `a collection of thoughts and ratings for books i've read.`}
         </p>
+
         <div className="space-y-8">
           <SearchBar value={search} onChange={setSearch} placeholder="search books by title..." />
           <div className="border-t-2 border-b-2 border-black dark:border-white py-4">
@@ -54,11 +98,23 @@ export default function BooksPage() {
       </section>
 
       <section>
-        <div className="space-y-6">
-          {sortedAndFilteredReviews.map((review) => (
-            <ReviewCard key={review.id} review={review} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="text-center text-gray-500 lowercase">loading...</div>
+        ) : (
+          <div className="space-y-4">
+            {sortedAndFilteredReviews.length > 0 ? (
+              sortedAndFilteredReviews.map((review) => (
+                <ReviewCard key={review.id} review={review} />
+              ))
+            ) : (
+              <p className="text-center text-gray-500 lowercase">
+                {viewMode === 'my' && !currentUser 
+                  ? 'please log in to see your reviews.'
+                  : (viewMode === 'my' ? 'you haven\'t written any book reviews yet.' : 'no book reviews found.')}
+              </p>
+            )}
+          </div>
+        )}
       </section>
     </div>
   );

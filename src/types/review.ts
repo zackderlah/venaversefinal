@@ -1,7 +1,7 @@
-export type ReviewCategory = 'film' | 'album' | 'anime' | 'books';
+export type ReviewCategory = 'film' | 'music' | 'anime' | 'books' | 'other';
 
 export interface Review {
-  id: string;
+  id: number;
   title: string;
   category: ReviewCategory;
   creator: string;
@@ -10,4 +10,9 @@ export interface Review {
   review: string;
   date: string;
   imageUrl?: string;
+  user?: { 
+    username: string;
+    id: number;
+  };
+  userId: number;
 } 
