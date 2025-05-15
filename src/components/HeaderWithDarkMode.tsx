@@ -4,13 +4,14 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Clock from './Clock';
 import { usePathname, useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 export default function HeaderWithDarkMode() {
   const [isDark, setIsDark] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const [user, setUser] = useState<{ username: string } | null>(null);
+  const { user, refreshUser } = useAuth();
 
   useEffect(() => {
     // Check localStorage first
@@ -24,16 +25,7 @@ export default function HeaderWithDarkMode() {
       document.documentElement.classList.remove('dark');
       setIsDark(false);
     }
-
-    // Check login status on route change or initial load
-    fetch('/api/auth/me').then(async (res) => {
-      if (res.ok) {
-        setUser(await res.json());
-      } else {
-        setUser(null);
-      }
-    });
-  }, [pathname]);
+  }, []);
 
   const toggleDark = () => {
     const newIsDark = !isDark;
@@ -54,7 +46,7 @@ export default function HeaderWithDarkMode() {
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
-    setUser(null);
+    await refreshUser();
     router.push('/login');
   };
 
