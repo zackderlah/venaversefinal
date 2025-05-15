@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { useLoadingBar } from '@/context/LoadingBarContext';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -10,15 +11,18 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const router = useRouter();
   const { refreshUser } = useAuth();
+  const { start, done } = useLoadingBar();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
+    start();
     const res = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
     });
+    done();
     if (res.ok) {
       await refreshUser();
       router.push('/');
