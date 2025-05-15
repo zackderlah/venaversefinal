@@ -1,37 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/context/AuthContext';
 import ReviewCard from '@/components/ReviewCard'
 import SearchBar from '@/components/SearchBar'
 import SortSelect from '@/components/SortSelect'
 import { Review } from '@/types/review'
 
-interface AuthenticatedUser {
-  id: number;
-  username: string;
-}
-
 export default function MusicPage() {
+  const { user: currentUser, loading: authLoading } = useAuth();
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('date-desc');
   const [allMusicReviews, setAllMusicReviews] = useState<Review[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState<AuthenticatedUser | null>(null);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'all' | 'my'>('all');
   
   useEffect(() => {
-    fetch('/api/auth/me')
-      .then(res => {
-        if (res.ok) return res.json();
-        return null;
-      })
-      .then(data => setCurrentUser(data));
-
     fetch('/api/reviews/music')
       .then(res => res.json())
       .then((data: Review[]) => {
         setAllMusicReviews(data);
-        setLoading(false);
+        setReviewsLoading(false);
       });
   }, []);
 
@@ -71,7 +60,7 @@ export default function MusicPage() {
         <div className="flex space-x-6 border-b-2 border-black dark:border-white pb-3 mb-6">
           <h2 
             className={`text-3xl font-black lowercase cursor-pointer ${viewMode === 'my' ? 'opacity-100' : 'opacity-50 hover:opacity-75'}`}
-            onClick={() => currentUser && setViewMode('my')}
+            onClick={() => setViewMode('my')}
           >
             my music reviews
           </h2>
@@ -98,7 +87,7 @@ export default function MusicPage() {
       </section>
 
       <section>
-        {loading ? (
+        {authLoading || reviewsLoading ? (
           <div className="text-center text-gray-500 lowercase">loading...</div>
         ) : (
           <div className="space-y-4">
@@ -110,7 +99,7 @@ export default function MusicPage() {
               <p className="text-center text-gray-500 lowercase">
                 {viewMode === 'my' && !currentUser 
                   ? 'please log in to see your reviews.'
-                  : (viewMode === 'my' ? 'you haven\'t written any music reviews yet.' : 'no music reviews found.')}
+                  : (viewMode === 'my' && currentUser ? 'you haven\'t written any music reviews yet.' : 'no music reviews found.')}
               </p>
             )}
           </div>

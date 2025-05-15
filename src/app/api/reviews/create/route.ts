@@ -12,6 +12,8 @@ interface UserPayload {
   // add other user properties if needed
 }
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   try {
     const token = cookies().get('session_token')?.value;

@@ -3,6 +3,8 @@ import { PrismaClient } from '@/generated/prisma/client';
 
 const prisma = new PrismaClient();
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   const reviews = await prisma.review.findMany({
     where: { category: 'books' }, // Changed category to 'books'

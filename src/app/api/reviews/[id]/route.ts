@@ -11,6 +11,8 @@ interface UserPayload {
   username: string;
 }
 
+export const dynamic = 'force-dynamic';
+
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const token = cookies().get('session_token')?.value;

@@ -87,6 +87,9 @@ Prisma.NullTypes = {
  * Enums
  */
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
+  ReadUncommitted: 'ReadUncommitted',
+  ReadCommitted: 'ReadCommitted',
+  RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
 });
 
@@ -116,6 +119,11 @@ exports.Prisma.ReviewScalarFieldEnum = {
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
 };
 
 exports.Prisma.NullsOrder = {
@@ -166,7 +174,7 @@ const config = {
   "datasourceNames": [
     "db"
   ],
-  "activeProvider": "sqlite",
+  "activeProvider": "postgresql",
   "postinstall": false,
   "inlineDatasources": {
     "db": {
@@ -176,8 +184,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"sqlite\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id         Int      @id @default(autoincrement())\n  username   String   @unique\n  password   String\n  profilePic String? // URL or file path\n  background String? // URL or file path\n  isAdmin    Boolean  @default(false)\n  createdAt  DateTime @default(now())\n  reviews    Review[]\n}\n\nmodel Review {\n  id       Int      @id @default(autoincrement())\n  title    String\n  category String\n  creator  String\n  year     Int\n  rating   Int\n  review   String\n  date     DateTime\n  imageUrl String?\n  user     User     @relation(fields: [userId], references: [id])\n  userId   Int\n}\n",
-  "inlineSchemaHash": "28666caec58d0bf6bb1ddf1035b92d3f6d1f1534efbe963aac373314e87e21cb",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id         Int      @id @default(autoincrement())\n  username   String   @unique\n  password   String\n  profilePic String? // URL or file path\n  background String? // URL or file path\n  isAdmin    Boolean  @default(false)\n  createdAt  DateTime @default(now())\n  reviews    Review[]\n}\n\nmodel Review {\n  id       Int      @id @default(autoincrement())\n  title    String\n  category String\n  creator  String\n  year     Int\n  rating   Int\n  review   String\n  date     DateTime\n  imageUrl String?\n  user     User     @relation(fields: [userId], references: [id])\n  userId   Int\n}\n",
+  "inlineSchemaHash": "919f79f913d6a18089cd7e6f03233bd6aeb7cb23972f9f6898a6d8869355f5ca",
   "copyEngine": true
 }
 
