@@ -197,6 +197,10 @@
     @apply scale-x-100;
   }
 
+  .nav-link.active::after {
+    @apply scale-x-100;
+  }
+
   @media (max-width: 768px) {
     .nav-link {
       @apply py-4 border-b border-gray-200 dark:border-gray-800 last:border-b-0;

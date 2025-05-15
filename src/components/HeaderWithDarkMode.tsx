@@ -3,10 +3,12 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Clock from './Clock';
+import { usePathname } from 'next/navigation';
 
 export default function HeaderWithDarkMode() {
   const [isDark, setIsDark] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     // Check localStorage first
@@ -86,11 +88,11 @@ export default function HeaderWithDarkMode() {
       </button>
       {/* Navigation Links */}
       <nav className={`${isMenuOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row gap-6 text-sm items-start md:items-center lowercase`}>
-        <Link href="/" className="nav-link text-gray-900 w-full md:w-auto">home</Link>
-        <Link href="/films" className="nav-link text-blue-600 w-full md:w-auto">films</Link>
-        <Link href="/music" className="nav-link text-purple-600 w-full md:w-auto">music</Link>
-        <Link href="/anime" className="nav-link text-red-600 w-full md:w-auto">anime</Link>
-        <Link href="/books" className="nav-link text-green-600 w-full md:w-auto">books</Link>
+        <Link href="/" className={`nav-link text-gray-900 w-full md:w-auto${pathname === '/' ? ' active' : ''}`}>home</Link>
+        <Link href="/films" className={`nav-link text-blue-600 w-full md:w-auto${pathname.startsWith('/films') ? ' active' : ''}`}>films</Link>
+        <Link href="/music" className={`nav-link text-purple-600 w-full md:w-auto${pathname.startsWith('/music') ? ' active' : ''}`}>music</Link>
+        <Link href="/anime" className={`nav-link text-red-600 w-full md:w-auto${pathname.startsWith('/anime') ? ' active' : ''}`}>anime</Link>
+        <Link href="/books" className={`nav-link text-green-600 w-full md:w-auto${pathname.startsWith('/books') ? ' active' : ''}`}>books</Link>
       </nav>
     </header>
   );
