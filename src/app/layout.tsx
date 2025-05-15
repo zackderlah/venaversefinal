@@ -12,7 +12,7 @@ const notoSansJP = Noto_Sans_JP({
 
 export const metadata: Metadata = {
   title: 'vena/verse',
-  description: 'Personal reviews of films, music, anime, and manga',
+  description: 'Personal reviews of films, music, anime, and books',
   icons: {
     icon: '/girl2.png',
     apple: '/girl2.png',

@@ -12,7 +12,7 @@ interface ReviewLinkProps {
 export default function ReviewLink({ review, children }: ReviewLinkProps) {
   const categoryPath = review.category === 'film' ? 'films' : 
                       review.category === 'album' ? 'music' :
-                      review.category === 'anime' ? 'anime' : 'manga';
+                      review.category === 'anime' ? 'anime' : 'books';
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();

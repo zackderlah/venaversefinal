@@ -90,7 +90,7 @@ export default function HeaderWithDarkMode() {
         <Link href="/films" className="nav-link text-blue-600 w-full md:w-auto">films</Link>
         <Link href="/music" className="nav-link text-purple-600 w-full md:w-auto">music</Link>
         <Link href="/anime" className="nav-link text-red-600 w-full md:w-auto">anime</Link>
-        <Link href="/manga" className="nav-link text-green-600 w-full md:w-auto">manga</Link>
+        <Link href="/books" className="nav-link text-green-600 w-full md:w-auto">books</Link>
       </nav>
     </header>
   );

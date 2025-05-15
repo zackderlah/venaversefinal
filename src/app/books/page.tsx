@@ -6,13 +6,13 @@ import ReviewCard from '@/components/ReviewCard'
 import SearchBar from '@/components/SearchBar'
 import SortSelect from '@/components/SortSelect'
 
-export default function MangaPage() {
+export default function BooksPage() {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('date-desc');
   
-  const mangaReviews = reviews.filter(review => review.category === 'manga');
+  const bookReviews = reviews.filter(review => review.category === 'books');
   
-  const sortedAndFilteredReviews = mangaReviews
+  const sortedAndFilteredReviews = bookReviews
     .filter(r => r.title.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => {
       switch (sortBy) {
@@ -41,12 +41,12 @@ export default function MangaPage() {
   return (
     <div className="space-y-12">
       <section>
-        <h2 className="text-3xl font-black mb-4 lowercase">manga reviews</h2>
+        <h2 className="text-3xl font-black mb-4 lowercase">book reviews</h2>
         <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg lowercase">
-          a collection of my thoughts and ratings for manga series i've read.
+          a collection of my thoughts and ratings for books i've read.
         </p>
         <div className="space-y-8">
-          <SearchBar value={search} onChange={setSearch} placeholder="search manga by title..." />
+          <SearchBar value={search} onChange={setSearch} placeholder="search books by title..." />
           <div className="border-t-2 border-b-2 border-black dark:border-white py-4">
             <SortSelect value={sortBy} onChange={setSortBy} />
           </div>

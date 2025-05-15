@@ -41,7 +41,7 @@ export default function MusicPage() {
   return (
     <div className="space-y-12">
       <section>
-        <h2 className="text-3xl font-black mb-4 lowercase">album reviews</h2>
+        <h2 className="text-3xl font-black mb-4 lowercase">music reviews</h2>
         <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg lowercase">
           a collection of my thoughts and ratings for music i've listened to.
         </p>

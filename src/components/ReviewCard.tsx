@@ -8,7 +8,7 @@ interface ReviewCardProps {
 export default function ReviewCard({ review }: ReviewCardProps) {
   const categoryPath = review.category === 'film' ? 'films' : 
                       review.category === 'album' ? 'music' :
-                      review.category === 'anime' ? 'anime' : 'manga';
+                      review.category === 'anime' ? 'anime' : 'books';
 
   return (
     <div id={`review-${review.id}`} className="review-card">

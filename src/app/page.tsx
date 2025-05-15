@@ -14,7 +14,7 @@ export default function Home() {
       <section className="border-b-2 border-black dark:border-gray-100 pb-8">
         <h2 className="text-4xl font-black mb-4 tracking-tight lowercase">note</h2>
         <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg leading-relaxed lowercase">
-          this website is merely a personal collection of reviews for films, music, anime, and manga that i've experienced.
+          this website is merely a personal collection of reviews for films, music, anime, and books that i've experienced.
           each review includes my thoughts, ratings, and analysis of the work. i am not a good writer.
         </p>
       </section>

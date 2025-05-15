@@ -15,8 +15,8 @@ export default function MediaTag({ category }: MediaTagProps) {
         return 'Album';
       case 'anime':
         return 'Anime';
-      case 'manga':
-        return 'Manga';
+      case 'books':
+        return 'Books';
     }
   };
 
@@ -28,7 +28,7 @@ export default function MediaTag({ category }: MediaTagProps) {
         return 'bg-purple-100 text-purple-800';
       case 'anime':
         return 'bg-pink-100 text-pink-800';
-      case 'manga':
+      case 'books':
         return 'bg-green-100 text-green-800';
     }
   };
