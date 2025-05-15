@@ -1,7 +1,7 @@
 import { Review } from '@/types/review';
 import MediaTag from './MediaTag';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 interface ReviewCardProps {
   review: Review;
@@ -14,26 +14,7 @@ interface AuthenticatedUser {
 }
 
 export default function ReviewCard({ review }: ReviewCardProps) {
-  const [currentAuthenticatedUser, setCurrentAuthenticatedUser] = useState<AuthenticatedUser | null>(null);
-
-  useEffect(() => {
-    fetch('/api/auth/me')
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        }
-        return null;
-      })
-      .then(data => {
-        if (data) {
-          setCurrentAuthenticatedUser(data);
-        }
-      })
-      .catch(() => {
-        // Silently fail or log, user is simply not authenticated for edit purposes
-        setCurrentAuthenticatedUser(null);
-      });
-  }, []);
+  const { user: currentAuthenticatedUser } = useAuth();
 
   // categoryPath is not used in this version of the card, but kept for potential future use or consistency
   // const categoryPath = review.category === 'film' ? 'films' :
