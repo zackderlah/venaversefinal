@@ -78,11 +78,17 @@ const staticReviews = [
 
 async function main() {
   // Ensure user 'johnny' exists
-  const password = await bcrypt.hash('password123', 10);
+  const password = await bcrypt.hash('God23dude', 10);
   let johnny = await prisma.user.findUnique({ where: { username: 'johnny' } });
   if (!johnny) {
     johnny = await prisma.user.create({
       data: { username: 'johnny', password },
+    });
+  } else {
+    // Update password if user already exists
+    await prisma.user.update({
+      where: { username: 'johnny' },
+      data: { password },
     });
   }
 
