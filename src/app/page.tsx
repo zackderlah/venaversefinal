@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { reviews } from '@/data/reviews'
 import ReviewCard from '@/components/ReviewCard'
 import ReviewLink from '@/components/ReviewLink'
+import Masonry from 'react-masonry-css';
 
 export default function Home() {
   const [recentReviews, setRecentReviews] = useState<any[]>([]);
@@ -36,17 +37,25 @@ export default function Home() {
         {loading ? (
           <div className="text-center text-gray-500 lowercase">loading...</div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <Masonry
+            breakpointCols={{ default: 2, 700: 1 }}
+            className="masonry-grid"
+            columnClassName="masonry-grid_column"
+          >
             {recentReviews.map((review) => (
-              <div key={review.id} className="flex flex-col h-full">
+              <div key={review.id} className="flex flex-col h-full mb-8">
                 <ReviewLink review={review}>
                   <ReviewCard review={review} />
                 </ReviewLink>
               </div>
             ))}
-          </div>
+          </Masonry>
         )}
       </section>
     </div>
   )
-} 
+}
+
+// Masonry CSS (add to globals.css or as inline style)
+// .masonry-grid { display: flex; margin-left: -16px; }
+// .masonry-grid_column { padding-left: 16px; background-clip: padding-box; } 

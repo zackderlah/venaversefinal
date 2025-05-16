@@ -234,4 +234,7 @@
 }
 #nprogress .peg {
   box-shadow: 0 0 10px #e11d48, 0 0 5px #e11d48 !important;
-} 
+}
+
+.masonry-grid { display: flex; margin-left: -16px; }
+.masonry-grid_column { padding-left: 16px; background-clip: padding-box; } 
