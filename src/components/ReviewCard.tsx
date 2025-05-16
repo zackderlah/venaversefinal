@@ -7,6 +7,11 @@ function capitalizeTitle(title: string) {
   return title.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
 }
 
+function truncateReview(review: string, maxLength: number = 500) {
+  if (review.length <= maxLength) return review;
+  return review.slice(0, maxLength) + '...';
+}
+
 interface ReviewCardProps {
   review: Review;
 }
@@ -65,7 +70,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
         <span className="rating shrink-0 ml-2">{review.rating}/10</span>
       </div>
       <p className="text-gray-600 mb-4">
-        {review.review}
+        {truncateReview(review.review)}
       </p>
       <div className="review-date">
         Reviewed on {new Date(review.date).toLocaleDateString('en-US', {
