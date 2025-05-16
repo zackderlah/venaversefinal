@@ -122,15 +122,4 @@ export default function CommentSection({ reviewId }: { reviewId: number }) {
       ) : null}
     </div>
   );
-}
-
-<style jsx global>{`
-  .pixel-bar {
-    image-rendering: pixelated;
-  }
-  .dark .pixel-bar {
-    background: #fff;
-    color: #0A0A0A;
-    border-color: #e11d48;
-  }
-`}</style> 
+} 

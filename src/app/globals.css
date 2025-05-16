@@ -241,4 +241,13 @@
 }
 
 .masonry-grid { display: flex; margin-left: -16px; }
-.masonry-grid_column { padding-left: 16px; background-clip: padding-box; } 
+.masonry-grid_column { padding-left: 16px; background-clip: padding-box; }
+
+.pixel-bar {
+  image-rendering: pixelated;
+}
+.dark .pixel-bar {
+  background: #fff !important;
+  color: #0A0A0A !important;
+  border-color: #e11d48 !important;
+} 
