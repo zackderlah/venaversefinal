@@ -2,7 +2,6 @@
 
 import { Review } from '@/types/review';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 interface ReviewLinkProps {
   review: Review;
@@ -10,21 +9,9 @@ interface ReviewLinkProps {
 }
 
 export default function ReviewLink({ review, children }: ReviewLinkProps) {
-  const categoryPath = review.category === 'film' ? 'films' : review.category;
-
-  const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const url = `/${categoryPath}#review-${review.id}`;
-    window.location.href = url;
-  };
-
   return (
-    <a 
-      href={`/${categoryPath}#review-${review.id}`}
-      onClick={handleClick}
-      className="block"
-    >
+    <Link href={`/reviews/${review.id}`} className="block">
       {children}
-    </a>
+    </Link>
   );
 } 
