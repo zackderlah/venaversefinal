@@ -5,9 +5,9 @@ import ClientLayout from '../components/ClientLayout'
 import { AuthProvider } from '../context/AuthContext'
 import { LoadingBarProvider } from '../context/LoadingBarContext'
 import GlobalLoadingBar from '../components/GlobalLoadingBar'
-import { SessionProvider } from "next-auth/react"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
+import SessionClientProvider from '../components/SessionClientProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 const notoSansJP = Noto_Sans_JP({ 
@@ -71,11 +71,11 @@ export default async function RootLayout({
       <body className={`${inter.className} ${notoSansJP.variable} bg-gray-50 text-gray-900 min-h-screen`}>
         <GlobalLoadingBar />
         <LoadingBarProvider>
-          <SessionProvider session={session}>
+          <SessionClientProvider session={session}>
             <AuthProvider>
               <ClientLayout>{children}</ClientLayout>
             </AuthProvider>
-          </SessionProvider>
+          </SessionClientProvider>
         </LoadingBarProvider>
       </body>
     </html>
