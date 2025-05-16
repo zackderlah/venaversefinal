@@ -64,7 +64,7 @@ export default function ReviewPage() {
         {review.creator}, {review.year}
         {review.user?.username && (
           <span className="ml-2 text-xs text-black dark:text-white font-bold lowercase">
-            by @{review.user.username}
+            by @<Link href={`/profile/${review.user.username}`} className="underline hover:text-blue-600">{review.user.username}</Link>
           </span>
         )}
       </div>
