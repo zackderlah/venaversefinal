@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { PrismaClient } from '@/generated/prisma/client';
+import CommentSection from '@/components/CommentSection';
 
 function capitalizeTitle(title: string) {
   return title.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
@@ -98,6 +99,7 @@ export default function ReviewPage() {
             </button>
           </div>
         )}
+        <CommentSection reviewId={review.id} />
       </div>
     </div>
   );
