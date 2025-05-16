@@ -5,8 +5,9 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  provider      = "prisma-client-js"
+  output        = "../src/generated/prisma"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
@@ -15,18 +16,19 @@ datasource db {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
-  username   String   @unique
+  id         Int       @id @default(autoincrement())
+  username   String    @unique
   password   String
   profilePic String? // URL or file path
   background String? // URL or file path
-  isAdmin    Boolean  @default(false)
-  createdAt  DateTime @default(now())
+  isAdmin    Boolean   @default(false)
+  createdAt  DateTime  @default(now())
   reviews    Review[]
+  comments   Comment[]
 }
 
 model Review {
-  id       Int      @id @default(autoincrement())
+  id       Int       @id @default(autoincrement())
   title    String
   category String
   creator  String
@@ -35,6 +37,17 @@ model Review {
   review   String
   date     DateTime
   imageUrl String?
-  user     User     @relation(fields: [userId], references: [id])
+  user     User      @relation(fields: [userId], references: [id])
   userId   Int
+  comments Comment[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  text      String
+  createdAt DateTime @default(now())
+  review    Review   @relation(fields: [reviewId], references: [id])
+  reviewId  Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
 }

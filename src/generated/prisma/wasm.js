@@ -143,6 +143,14 @@ exports.Prisma.ReviewScalarFieldEnum = {
   userId: 'userId'
 };
 
+exports.Prisma.CommentScalarFieldEnum = {
+  id: 'id',
+  text: 'text',
+  createdAt: 'createdAt',
+  reviewId: 'reviewId',
+  userId: 'userId'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -161,7 +169,8 @@ exports.Prisma.NullsOrder = {
 
 exports.Prisma.ModelName = {
   User: 'User',
-  Review: 'Review'
+  Review: 'Review',
+  Comment: 'Comment'
 };
 
 /**

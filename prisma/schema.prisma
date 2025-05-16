@@ -7,6 +7,7 @@
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
@@ -23,6 +24,7 @@ model User {
   isAdmin     Boolean @default(false)
   createdAt   DateTime @default(now())
   reviews     Review[]
+  comments    Comment[]
 }
 
 model Review {
@@ -35,6 +37,17 @@ model Review {
   review    String
   date      DateTime
   imageUrl  String?
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  comments  Comment[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  text      String
+  createdAt DateTime @default(now())
+  review    Review   @relation(fields: [reviewId], references: [id])
+  reviewId  Int
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
 }
