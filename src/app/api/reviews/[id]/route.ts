@@ -93,31 +93,13 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    // Optional: Add authentication check if you want to restrict who can even see the review data before editing
-    // For now, we assume public readability or that the edit page itself handles auth before loading data.
-    const token = cookies().get('session_token')?.value;
-    if (!token) {
-      return NextResponse.json({ message: 'authentication required to view review details for editing' }, { status: 401 });
-    }
-
-    let userPayload: UserPayload;
-    try {
-      userPayload = jwt.verify(token, JWT_SECRET) as UserPayload;
-    } catch (error) {
-      return NextResponse.json({ message: 'invalid token' }, { status: 403 });
-    }
-
     const reviewId = parseInt(params.id);
     if (isNaN(reviewId)) {
       return NextResponse.json({ message: 'invalid review id' }, { status: 400 });
     }
 
     const review = await prisma.review.findUnique({
-      where: { 
-        id: reviewId,
-        // Optionally, ensure the user fetching is the owner, though PUT will enforce this.
-        // userId: userPayload.id 
-      },
+      where: { id: reviewId },
       include: {
         user: { select: { username: true } }
       }
@@ -127,13 +109,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       return NextResponse.json({ message: 'review not found' }, { status: 404 });
     }
 
-    // Crucially, ensure the user trying to get this review for editing is the owner
-    if (review.userId !== userPayload.id) {
-        return NextResponse.json({ message: 'you are not authorized to view this review for editing' }, { status: 403 });
-    }
-
     return NextResponse.json(review);
-
   } catch (error) {
     console.error('Error fetching review:', error);
     return NextResponse.json({ message: 'error fetching review' }, { status: 500 });
