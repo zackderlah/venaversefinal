@@ -16,15 +16,16 @@ datasource db {
 }
 
 model User {
-  id         Int       @id @default(autoincrement())
-  username   String    @unique
-  password   String
-  profilePic String? // URL or file path
-  background String? // URL or file path
-  isAdmin    Boolean   @default(false)
-  createdAt  DateTime  @default(now())
-  reviews    Review[]
-  comments   Comment[]
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  username     String    @unique
+  password     String
+  profileImage String? // URL to the profile image
+  isAdmin      Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  reviews      Review[]
+  comments     Comment[]
 }
 
 model Review {
