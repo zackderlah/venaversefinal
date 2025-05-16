@@ -34,8 +34,7 @@ export async function GET(req: NextRequest) {
       select: { // Select only the necessary fields to send to the client
         id: true,
         username: true,
-        profilePic: true,
-        background: true,
+        profileImage: true,
         createdAt: true,
         isAdmin: true,
       }
