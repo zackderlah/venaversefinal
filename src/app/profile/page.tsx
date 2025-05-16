@@ -59,7 +59,7 @@ export default async function ProfilePage() {
       <div className="review-card">
         <h2 className="text-2xl font-black tracking-tight lowercase mb-2">favorite review</h2>
         {favoriteReview ? (
-          <ReviewCardDisplay review={favoriteReview} />
+          <ReviewCardDisplay review={{ ...favoriteReview, category: favoriteReview.category as import("@/types/review").ReviewCategory }} />
         ) : (
           <p className="text-gray-400 lowercase">no favorite review selected yet</p>
         )}
@@ -71,7 +71,7 @@ export default async function ProfilePage() {
         <div className="grid gap-6">
           {user?.reviews.length ? (
             user.reviews.map((review: any) => (
-              <ReviewCardDisplay key={review.id} review={review} />
+              <ReviewCardDisplay key={review.id} review={{ ...review, category: review.category as import("@/types/review").ReviewCategory }} />
             ))
           ) : (
             <p className="text-gray-400 lowercase">no recent reviews</p>
