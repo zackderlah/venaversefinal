@@ -10,8 +10,7 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
     select: {
       id: true,
       username: true,
-      profilePic: true,
-      background: true,
+      profileImage: true,
       createdAt: true,
     },
   });
