@@ -110,8 +110,9 @@ export default function CommentSection({ reviewId }: { reviewId: number }) {
           {error && <div className="text-red-600 text-xs">{error}</div>}
           <button
             type="submit"
-            className="self-end px-4 py-1 bg-pink-600 text-white rounded text-xs font-bold hover:bg-pink-700 transition"
+            className="self-end px-6 py-2 border-2 border-pink-500 bg-black text-white rounded-md text-xs font-bold shadow-[2px_2px_0px_0px_rgba(225,29,72,1)] hover:bg-pink-600 hover:text-black hover:border-black transition-all pixel-bar"
             disabled={posting || !newComment.trim()}
+            style={{ fontFamily: 'monospace', letterSpacing: '1px', imageRendering: 'pixelated' }}
           >
             {posting ? "Posting..." : "Post Comment"}
           </button>
@@ -121,4 +122,15 @@ export default function CommentSection({ reviewId }: { reviewId: number }) {
       ) : null}
     </div>
   );
-} 
+}
+
+<style jsx global>{`
+  .pixel-bar {
+    image-rendering: pixelated;
+  }
+  .dark .pixel-bar {
+    background: #fff;
+    color: #0A0A0A;
+    border-color: #e11d48;
+  }
+`}</style> 
