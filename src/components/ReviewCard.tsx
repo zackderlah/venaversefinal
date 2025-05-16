@@ -3,6 +3,10 @@ import MediaTag from './MediaTag';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 
+function capitalizeTitle(title: string) {
+  return title.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+}
+
 interface ReviewCardProps {
   review: Review;
 }
@@ -41,7 +45,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
     <div id={`review-${review.id}`} className="review-card">
       <div className="flex justify-between items-start gap-4 mb-4">
         <div className="min-w-0 flex-1">
-          <h3 className="text-xl font-black mb-1 truncate">{review.title}</h3>
+          <h3 className="text-xl font-black mb-1 truncate">{capitalizeTitle(review.title)}</h3>
           <div className="flex items-center gap-2 flex-wrap">
             <p className="text-sm text-gray-500">
               {review.creator}, {review.year}
