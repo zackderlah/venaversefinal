@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
+import { useAuth } from '@/context/AuthContext';
 
 export default function LoginPage() {
   const [identifier, setIdentifier] = useState('');
@@ -10,6 +11,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { refreshUser } = useAuth();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -24,6 +26,7 @@ export default function LoginPage() {
       if (result?.error) {
         setError('invalid credentials');
       } else {
+        await refreshUser();
         router.push('/');
         router.refresh();
       }
@@ -70,6 +73,9 @@ export default function LoginPage() {
             {loading ? 'signing in...' : 'sign in'}
           </button>
         </form>
+        <div className="mt-6 text-center">
+          <a href="/signup" className="inline-block text-xs font-mono lowercase text-black dark:text-white border-b-2 border-black dark:border-white hover:text-pink-600 dark:hover:text-pink-400 transition-colors">don't have an account? sign up</a>
+        </div>
       </div>
     </div>
   );
