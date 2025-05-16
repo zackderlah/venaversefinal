@@ -1,11 +1,10 @@
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import { cookies } from 'next/headers'; // Import cookies
 import jwt from 'jsonwebtoken'; // Import jsonwebtoken
+import { prisma } from '@/lib/prisma';
 
-const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'your-fallback-secret'; // Use the same secret
 
 interface UserPayload {
