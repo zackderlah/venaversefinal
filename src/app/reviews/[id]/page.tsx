@@ -59,7 +59,7 @@ export default function ReviewPage() {
 
   return (
     <div className="flex min-h-screen w-full p-0 m-0 justify-center">
-      <div className="w-full max-w-4xl h-full min-h-[80vh] border-2 border-black dark:border-white p-8 bg-white dark:bg-[#0A0A0A] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col">
+      <div className="w-full max-w-4xl border-2 border-black dark:border-white p-8 bg-white dark:bg-[#0A0A0A] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col">
         <h1 className="text-3xl font-black mb-2">{capitalizeTitle(review.title)}</h1>
         <div className="mb-4 text-gray-500 text-sm">
           {review.creator}, {review.year}
