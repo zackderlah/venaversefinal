@@ -6,6 +6,7 @@ import ReviewCard from '@/components/ReviewCard'
 import SearchBar from '@/components/SearchBar'
 import SortSelect from '@/components/SortSelect'
 import { Review } from '@/types/review'
+import ReviewLink from '@/components/ReviewLink'
 
 export default function FilmsPage() {
   const { user: currentUser, loading: authLoading } = useAuth();
@@ -93,7 +94,9 @@ export default function FilmsPage() {
           <div className="space-y-4">
             {sortedAndFilteredReviews.length > 0 ? (
               sortedAndFilteredReviews.map((review) => (
-                <ReviewCard key={review.id} review={review} />
+                <ReviewLink key={review.id} review={review}>
+                  <ReviewCard review={review} />
+                </ReviewLink>
               ))
             ) : (
               <p className="text-center text-gray-500 lowercase">
