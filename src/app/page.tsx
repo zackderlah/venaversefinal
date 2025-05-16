@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { reviews } from '@/data/reviews'
 import ReviewCard from '@/components/ReviewCard'
 import ReviewLink from '@/components/ReviewLink'
-import Masonry from 'react-masonry-css';
+import { Masonry } from 'masonic';
 
 export default function Home() {
   const [recentReviews, setRecentReviews] = useState<any[]>([]);
@@ -19,6 +19,13 @@ export default function Home() {
         setLoading(false);
       });
   }, []);
+
+  // Render function for each review
+  const renderReview = ({ data }: { data: any }) => (
+    <ReviewLink review={data}>
+      <ReviewCard review={data} />
+    </ReviewLink>
+  );
 
   return (
     <div className="space-y-16 px-4 py-8 max-w-[1000px] mx-auto border-x-2 border-black dark:border-gray-100 min-h-screen">
@@ -38,18 +45,12 @@ export default function Home() {
           <div className="text-center text-gray-500 lowercase">loading...</div>
         ) : (
           <Masonry
-            breakpointCols={{ default: 2, 700: 1 }}
-            className="masonry-grid"
-            columnClassName="masonry-grid_column"
-          >
-            {recentReviews.map((review) => (
-              <div key={review.id} className="flex flex-col h-full">
-                <ReviewLink review={review}>
-                  <ReviewCard review={review} />
-                </ReviewLink>
-              </div>
-            ))}
-          </Masonry>
+            items={recentReviews}
+            columnGutter={24}
+            columnWidth={350}
+            overscanBy={2}
+            render={renderReview}
+          />
         )}
       </section>
     </div>
