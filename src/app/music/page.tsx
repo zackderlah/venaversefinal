@@ -1,21 +1,23 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
-import ReviewCard from '@/components/ReviewCard'
-import SearchBar from '@/components/SearchBar'
-import SortSelect from '@/components/SortSelect'
-import { Review } from '@/types/review'
-import ReviewLink from '@/components/ReviewLink'
+import { useSession } from 'next-auth/react';
+import ReviewCard from '@/components/ReviewCard';
+import SearchBar from '@/components/SearchBar';
+import SortSelect from '@/components/SortSelect';
+import { Review } from '@/types/review';
+import ReviewLink from '@/components/ReviewLink';
 
 export default function MusicPage() {
-  const { user: currentUser, loading: authLoading } = useAuth();
+  const { data: session, status } = useSession();
+  const currentUser = session?.user;
+  const authLoading = status === 'loading';
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('date-desc');
   const [allMusicReviews, setAllMusicReviews] = useState<Review[]>([]);
   const [reviewsLoading, setReviewsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'all' | 'my'>('all');
-  
+
   useEffect(() => {
     fetch('/api/reviews/music')
       .then(res => res.json())
@@ -26,7 +28,7 @@ export default function MusicPage() {
   }, []);
 
   const filteredByViewMode = viewMode === 'my' && currentUser
-    ? allMusicReviews.filter(review => review.userId === currentUser.id)
+    ? allMusicReviews.filter(review => review.userId === Number(currentUser.id))
     : allMusicReviews;
 
   const sortedAndFilteredReviews = filteredByViewMode
@@ -59,26 +61,24 @@ export default function MusicPage() {
     <div className="space-y-12">
       <section>
         <div className="flex space-x-6 border-b-2 border-black dark:border-white pb-3 mb-6">
-          <h2 
+          <h2
             className={`text-3xl font-black lowercase cursor-pointer ${viewMode === 'my' ? 'opacity-100' : 'opacity-50 hover:opacity-75'}`}
             onClick={() => setViewMode('my')}
           >
             my music reviews
           </h2>
-          <h2 
+          <h2
             className={`text-3xl font-black lowercase cursor-pointer ${viewMode === 'all' ? 'opacity-100' : 'opacity-50 hover:opacity-75'}`}
             onClick={() => setViewMode('all')}
           >
             all music reviews
           </h2>
         </div>
-        
         <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg lowercase">
-          {viewMode === 'my' 
+          {viewMode === 'my'
             ? (currentUser ? `a collection of music reviews written by you.` : `please log in to see your music reviews.`)
             : `a collection of thoughts and ratings for music i've listened to.`}
         </p>
-
         <div className="space-y-8">
           <SearchBar value={search} onChange={setSearch} placeholder="search music by title..." />
           <div className="border-t-2 border-b-2 border-black dark:border-white py-4">
@@ -86,7 +86,6 @@ export default function MusicPage() {
           </div>
         </div>
       </section>
-
       <section>
         {authLoading || reviewsLoading ? (
           <div className="text-center text-gray-500 lowercase">loading...</div>
@@ -100,7 +99,7 @@ export default function MusicPage() {
               ))
             ) : (
               <p className="text-center text-gray-500 lowercase">
-                {viewMode === 'my' && !currentUser 
+                {viewMode === 'my' && !currentUser
                   ? 'please log in to see your reviews.'
                   : (viewMode === 'my' && currentUser ? 'you haven\'t written any music reviews yet.' : 'no music reviews found.')}
               </p>

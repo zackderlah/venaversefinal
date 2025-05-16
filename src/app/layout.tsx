@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { Inter, Noto_Sans_JP } from 'next/font/google'
 import './globals.css'
 import ClientLayout from '../components/ClientLayout'
-import { AuthProvider } from '../context/AuthContext'
 import { LoadingBarProvider } from '../context/LoadingBarContext'
 import GlobalLoadingBar from '../components/GlobalLoadingBar'
 import { getServerSession } from "next-auth"
@@ -72,9 +71,7 @@ export default async function RootLayout({
         <GlobalLoadingBar />
         <LoadingBarProvider>
           <SessionClientProvider session={session}>
-            <AuthProvider>
-              <ClientLayout>{children}</ClientLayout>
-            </AuthProvider>
+            <ClientLayout>{children}</ClientLayout>
           </SessionClientProvider>
         </LoadingBarProvider>
       </body>

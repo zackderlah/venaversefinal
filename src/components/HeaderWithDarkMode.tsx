@@ -4,14 +4,15 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Clock from './Clock';
 import { usePathname, useRouter } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
+import { useSession, signOut } from 'next-auth/react';
 
 export default function HeaderWithDarkMode() {
   const [isDark, setIsDark] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const { user, refreshUser } = useAuth();
+  const { data: session, status } = useSession();
+  const user = session?.user;
 
   useEffect(() => {
     // Check localStorage first
@@ -46,7 +47,7 @@ export default function HeaderWithDarkMode() {
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
-    await refreshUser();
+    await signOut();
     router.push('/login');
   };
 

@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useAuth } from "@/context/AuthContext";
+import { useSession } from 'next-auth/react';
 import { CldUploadWidget } from "next-cloudinary";
 
 export default function ProfileImageUpload() {
-  const { user, refreshUser } = useAuth();
+  const { data: session } = useSession();
+  const user = session?.user;
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
 
@@ -23,9 +24,7 @@ export default function ProfileImageUpload() {
       if (!response.ok) {
         throw new Error("Failed to update profile image");
       }
-
-      const data = await response.json();
-      await refreshUser();
+      window.location.reload();
     } catch (err) {
       setError("Failed to update profile image");
       console.error(err);
@@ -37,9 +36,9 @@ export default function ProfileImageUpload() {
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-black dark:border-white">
-        {user?.profileImage ? (
+        {user?.image ? (
           <img
-            src={user.profileImage}
+            src={user.image}
             alt="Profile"
             className="w-full h-full object-cover"
           />

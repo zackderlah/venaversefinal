@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
-import { useAuth } from '@/context/AuthContext';
 
 export default function LoginPage() {
   const [identifier, setIdentifier] = useState('');
@@ -11,7 +10,6 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { refreshUser } = useAuth();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -26,7 +24,6 @@ export default function LoginPage() {
       if (result?.error) {
         setError('invalid credentials');
       } else {
-        await refreshUser();
         router.push('/');
         router.refresh();
       }

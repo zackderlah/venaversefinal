@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useSession } from 'next-auth/react';
 import ReviewCard from '@/components/ReviewCard'
 import SearchBar from '@/components/SearchBar'
 import SortSelect from '@/components/SortSelect'
@@ -9,7 +9,9 @@ import { Review } from '@/types/review'
 import ReviewLink from '@/components/ReviewLink'
 
 export default function OtherPage() {
-  const { user: currentUser, loading: authLoading } = useAuth();
+  const { data: session, status } = useSession();
+  const currentUser = session?.user;
+  const authLoading = status === 'loading';
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('date-desc');
   const [allOtherReviews, setAllOtherReviews] = useState<Review[]>([]);
@@ -26,7 +28,7 @@ export default function OtherPage() {
   }, []);
 
   const filteredByViewMode = viewMode === 'my' && currentUser
-    ? allOtherReviews.filter(review => review.userId === currentUser.id)
+    ? allOtherReviews.filter(review => review.userId === Number(currentUser.id))
     : allOtherReviews;
 
   const sortedAndFilteredReviews = filteredByViewMode

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth } from "@/context/AuthContext";
+import { useSession } from 'next-auth/react';
 
 interface Comment {
   id: number;
@@ -11,7 +11,9 @@ interface Comment {
 }
 
 export default function CommentSection({ reviewId }: { reviewId: number }) {
-  const { user, loading: authLoading } = useAuth();
+  const { data: session, status } = useSession();
+  const user = session?.user;
+  const authLoading = status === 'loading';
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true);
@@ -83,7 +85,7 @@ export default function CommentSection({ reviewId }: { reviewId: number }) {
                   <span className="text-xs text-gray-500">{new Date(comment.createdAt).toLocaleString()}</span>
                   <div className="text-gray-700 dark:text-gray-200 mt-1 text-sm">{comment.text}</div>
                 </div>
-                {user && comment.user.id === user.id && (
+                {user && comment.user.id === Number(user.id) && (
                   <button
                     onClick={() => handleDelete(comment.id)}
                     className="ml-4 text-xs text-red-600 hover:underline"

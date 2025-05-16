@@ -1,7 +1,7 @@
 import { Review } from '@/types/review';
 import MediaTag from './MediaTag';
 import Link from 'next/link';
-import { useAuth } from '../context/AuthContext';
+import { useSession } from 'next-auth/react';
 
 function capitalizeTitle(title: string) {
   return title.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
@@ -17,14 +17,16 @@ interface ReviewCardProps {
 }
 
 export default function ReviewCard({ review }: ReviewCardProps) {
-  const { user: currentAuthenticatedUser, loading: authLoading } = useAuth();
+  const { data: session, status } = useSession();
+  const currentAuthenticatedUser = session?.user;
+  const authLoading = status === 'loading';
 
   // categoryPath is not used in this version of the card, but kept for potential future use or consistency
   // const categoryPath = review.category === 'film' ? 'films' :
   //                     review.category === 'music' ? 'music' :
   //                     review.category === 'anime' ? 'anime' : 'books';
 
-  const canEdit = !authLoading && currentAuthenticatedUser && review.userId === currentAuthenticatedUser.id;
+  const canEdit = !authLoading && currentAuthenticatedUser && review.userId === Number(currentAuthenticatedUser.id);
 
   const handleDelete = async () => {
     if (window.confirm('are you sure you want to delete this review? this action cannot be undone.')) {
