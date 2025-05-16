@@ -10,7 +10,11 @@ async function main() {
   let johnny = await prisma.user.findUnique({ where: { username: 'johnny' } });
   if (!johnny) {
     johnny = await prisma.user.create({
-      data: { username: 'johnny', password },
+      data: { 
+        username: 'johnny', 
+        password,
+        email: 'johnny@example.com'
+      },
     });
   }
 
