@@ -7,17 +7,39 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
-  const { username, password } = await req.json();
-  if (!username || !password || password.length < 6) {
+  const { email, username, password } = await req.json();
+  
+  if (!email || !username || !password || password.length < 6) {
     return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
   }
-  const existing = await prisma.user.findUnique({ where: { username } });
-  if (existing) {
-    return NextResponse.json({ error: 'Username already taken' }, { status: 409 });
+
+  // Check if email or username is already taken
+  const existingUser = await prisma.user.findFirst({
+    where: {
+      OR: [
+        { email },
+        { username }
+      ]
+    }
+  });
+
+  if (existingUser) {
+    if (existingUser.email === email) {
+      return NextResponse.json({ error: 'Email already taken' }, { status: 409 });
+    }
+    if (existingUser.username === username) {
+      return NextResponse.json({ error: 'Username already taken' }, { status: 409 });
+    }
   }
+
   const hashed = await bcrypt.hash(password, 10);
   const user = await prisma.user.create({
-    data: { username, password: hashed },
+    data: { 
+      email,
+      username, 
+      password: hashed 
+    },
   });
+
   return NextResponse.json({ id: user.id, username: user.username });
 } 

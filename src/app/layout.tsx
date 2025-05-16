@@ -5,6 +5,9 @@ import ClientLayout from '../components/ClientLayout'
 import { AuthProvider } from '../context/AuthContext'
 import { LoadingBarProvider } from '../context/LoadingBarContext'
 import GlobalLoadingBar from '../components/GlobalLoadingBar'
+import { SessionProvider } from "next-auth/react"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 
 const inter = Inter({ subsets: ['latin'] })
 const notoSansJP = Noto_Sans_JP({ 
@@ -40,11 +43,13 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const session = await getServerSession(authOptions)
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -66,9 +71,11 @@ export default function RootLayout({
       <body className={`${inter.className} ${notoSansJP.variable} bg-gray-50 text-gray-900 min-h-screen`}>
         <GlobalLoadingBar />
         <LoadingBarProvider>
-          <AuthProvider>
-            <ClientLayout>{children}</ClientLayout>
-          </AuthProvider>
+          <SessionProvider session={session}>
+            <AuthProvider>
+              <ClientLayout>{children}</ClientLayout>
+            </AuthProvider>
+          </SessionProvider>
         </LoadingBarProvider>
       </body>
     </html>

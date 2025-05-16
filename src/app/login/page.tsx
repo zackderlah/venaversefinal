@@ -2,72 +2,97 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
+import { signIn } from 'next-auth/react';
 import FormLoadingBar from '@/components/FormLoadingBar';
 
 export default function LoginPage() {
-  const [username, setUsername] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { refreshUser } = useAuth();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
     setLoading(true);
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    });
-    setLoading(false);
-    if (res.ok) {
-      await refreshUser();
-      router.push('/');
-    } else {
-      const data = await res.json();
-      setError(data.error || 'Login failed');
+
+    try {
+      const result = await signIn('credentials', {
+        identifier,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError('Invalid credentials');
+      } else {
+        router.push('/');
+        router.refresh();
+      }
+    } catch (err) {
+      setError('An error occurred during login');
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
-    <div className="max-w-sm mx-auto mt-20 border-2 border-black dark:border-white p-8 bg-white dark:bg-[#0A0A0A] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-      <h2 className="text-2xl font-black mb-6 lowercase">log in</h2>
-      <FormLoadingBar loading={loading} />
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#18181b] py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
         <div>
-          <label className="block mb-2 text-sm font-bold lowercase">username</label>
-          <input
-            type="text"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-            className="w-full border-2 border-black dark:border-white bg-transparent px-3 py-2 text-sm lowercase focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-900 transition"
-            required
-          />
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+            Sign in to your account
+          </h2>
         </div>
-        <div>
-          <label className="block mb-2 text-sm font-bold lowercase">password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            className="w-full border-2 border-black dark:border-white bg-transparent px-3 py-2 text-sm lowercase focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-900 transition"
-            required
-          />
-        </div>
-        {error && <div className="text-red-600 text-xs lowercase">{error}</div>}
-        <button
-          type="submit"
-          className="w-full border-2 border-black dark:border-white bg-black dark:bg-white text-white dark:text-black font-bold py-2 text-sm lowercase transition-colors hover:bg-gray-900 hover:dark:bg-gray-200"
-          disabled={loading}
-        >
-          log in
-        </button>
-      </form>
-      <div className="mt-4 text-xs text-gray-500 lowercase">
-        don&apos;t have an account? <a href="/signup" className="underline">sign up</a>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="identifier" className="sr-only">
+                Email or Username
+              </label>
+              <input
+                id="identifier"
+                name="identifier"
+                type="text"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-t-md focus:outline-none focus:ring-pink-500 focus:border-pink-500 focus:z-10 sm:text-sm bg-white dark:bg-[#18181b]"
+                placeholder="Email or Username"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="sr-only">
+                Password
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-b-md focus:outline-none focus:ring-pink-500 focus:border-pink-500 focus:z-10 sm:text-sm bg-white dark:bg-[#18181b]"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {error && (
+            <div className="text-red-500 text-sm text-center">{error}</div>
+          )}
+
+          <div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black dark:bg-white dark:text-black hover:bg-gray-900 dark:hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+            >
+              {loading ? "Signing in..." : "Sign in"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

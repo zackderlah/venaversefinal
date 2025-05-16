@@ -1143,32 +1143,35 @@ export namespace Prisma {
 
   export type UserMinAggregateOutputType = {
     id: number | null
+    email: string | null
     username: string | null
     password: string | null
-    profilePic: string | null
-    background: string | null
+    profileImage: string | null
     isAdmin: boolean | null
     createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type UserMaxAggregateOutputType = {
     id: number | null
+    email: string | null
     username: string | null
     password: string | null
-    profilePic: string | null
-    background: string | null
+    profileImage: string | null
     isAdmin: boolean | null
     createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type UserCountAggregateOutputType = {
     id: number
+    email: number
     username: number
     password: number
-    profilePic: number
-    background: number
+    profileImage: number
     isAdmin: number
     createdAt: number
+    updatedAt: number
     _all: number
   }
 
@@ -1183,32 +1186,35 @@ export namespace Prisma {
 
   export type UserMinAggregateInputType = {
     id?: true
+    email?: true
     username?: true
     password?: true
-    profilePic?: true
-    background?: true
+    profileImage?: true
     isAdmin?: true
     createdAt?: true
+    updatedAt?: true
   }
 
   export type UserMaxAggregateInputType = {
     id?: true
+    email?: true
     username?: true
     password?: true
-    profilePic?: true
-    background?: true
+    profileImage?: true
     isAdmin?: true
     createdAt?: true
+    updatedAt?: true
   }
 
   export type UserCountAggregateInputType = {
     id?: true
+    email?: true
     username?: true
     password?: true
-    profilePic?: true
-    background?: true
+    profileImage?: true
     isAdmin?: true
     createdAt?: true
+    updatedAt?: true
     _all?: true
   }
 
@@ -1300,12 +1306,13 @@ export namespace Prisma {
 
   export type UserGroupByOutputType = {
     id: number
+    email: string
     username: string
     password: string
-    profilePic: string | null
-    background: string | null
+    profileImage: string | null
     isAdmin: boolean
     createdAt: Date
+    updatedAt: Date
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
     _sum: UserSumAggregateOutputType | null
@@ -1329,12 +1336,13 @@ export namespace Prisma {
 
   export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    email?: boolean
     username?: boolean
     password?: boolean
-    profilePic?: boolean
-    background?: boolean
+    profileImage?: boolean
     isAdmin?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     reviews?: boolean | User$reviewsArgs<ExtArgs>
     comments?: boolean | User$commentsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1342,35 +1350,38 @@ export namespace Prisma {
 
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    email?: boolean
     username?: boolean
     password?: boolean
-    profilePic?: boolean
-    background?: boolean
+    profileImage?: boolean
     isAdmin?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    email?: boolean
     username?: boolean
     password?: boolean
-    profilePic?: boolean
-    background?: boolean
+    profileImage?: boolean
     isAdmin?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
     id?: boolean
+    email?: boolean
     username?: boolean
     password?: boolean
-    profilePic?: boolean
-    background?: boolean
+    profileImage?: boolean
     isAdmin?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "password" | "profilePic" | "background" | "isAdmin" | "createdAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "username" | "password" | "profileImage" | "isAdmin" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     reviews?: boolean | User$reviewsArgs<ExtArgs>
     comments?: boolean | User$commentsArgs<ExtArgs>
@@ -1387,12 +1398,13 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
+      email: string
       username: string
       password: string
-      profilePic: string | null
-      background: string | null
+      profileImage: string | null
       isAdmin: boolean
       createdAt: Date
+      updatedAt: Date
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -1819,12 +1831,13 @@ export namespace Prisma {
    */
   interface UserFieldRefs {
     readonly id: FieldRef<"User", 'Int'>
+    readonly email: FieldRef<"User", 'String'>
     readonly username: FieldRef<"User", 'String'>
     readonly password: FieldRef<"User", 'String'>
-    readonly profilePic: FieldRef<"User", 'String'>
-    readonly background: FieldRef<"User", 'String'>
+    readonly profileImage: FieldRef<"User", 'String'>
     readonly isAdmin: FieldRef<"User", 'Boolean'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
+    readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
     
 
@@ -4602,12 +4615,13 @@ export namespace Prisma {
 
   export const UserScalarFieldEnum: {
     id: 'id',
+    email: 'email',
     username: 'username',
     password: 'password',
-    profilePic: 'profilePic',
-    background: 'background',
+    profileImage: 'profileImage',
     isAdmin: 'isAdmin',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -4740,51 +4754,55 @@ export namespace Prisma {
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     id?: IntFilter<"User"> | number
+    email?: StringFilter<"User"> | string
     username?: StringFilter<"User"> | string
     password?: StringFilter<"User"> | string
-    profilePic?: StringNullableFilter<"User"> | string | null
-    background?: StringNullableFilter<"User"> | string | null
+    profileImage?: StringNullableFilter<"User"> | string | null
     isAdmin?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
+    updatedAt?: DateTimeFilter<"User"> | Date | string
     reviews?: ReviewListRelationFilter
     comments?: CommentListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
+    email?: SortOrder
     username?: SortOrder
     password?: SortOrder
-    profilePic?: SortOrderInput | SortOrder
-    background?: SortOrderInput | SortOrder
+    profileImage?: SortOrderInput | SortOrder
     isAdmin?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     reviews?: ReviewOrderByRelationAggregateInput
     comments?: CommentOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+    email?: string
     username?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     password?: StringFilter<"User"> | string
-    profilePic?: StringNullableFilter<"User"> | string | null
-    background?: StringNullableFilter<"User"> | string | null
+    profileImage?: StringNullableFilter<"User"> | string | null
     isAdmin?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
+    updatedAt?: DateTimeFilter<"User"> | Date | string
     reviews?: ReviewListRelationFilter
     comments?: CommentListRelationFilter
-  }, "id" | "username">
+  }, "id" | "email" | "username">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
+    email?: SortOrder
     username?: SortOrder
     password?: SortOrder
-    profilePic?: SortOrderInput | SortOrder
-    background?: SortOrderInput | SortOrder
+    profileImage?: SortOrderInput | SortOrder
     isAdmin?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -4797,12 +4815,13 @@ export namespace Prisma {
     OR?: UserScalarWhereWithAggregatesInput[]
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"User"> | number
+    email?: StringWithAggregatesFilter<"User"> | string
     username?: StringWithAggregatesFilter<"User"> | string
     password?: StringWithAggregatesFilter<"User"> | string
-    profilePic?: StringNullableWithAggregatesFilter<"User"> | string | null
-    background?: StringNullableWithAggregatesFilter<"User"> | string | null
+    profileImage?: StringNullableWithAggregatesFilter<"User"> | string | null
     isAdmin?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
 
   export type ReviewWhereInput = {
@@ -4951,78 +4970,85 @@ export namespace Prisma {
   }
 
   export type UserCreateInput = {
+    email: string
     username: string
     password: string
-    profilePic?: string | null
-    background?: string | null
+    profileImage?: string | null
     isAdmin?: boolean
     createdAt?: Date | string
+    updatedAt?: Date | string
     reviews?: ReviewCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
     id?: number
+    email: string
     username: string
     password: string
-    profilePic?: string | null
-    background?: string | null
+    profileImage?: string | null
     isAdmin?: boolean
     createdAt?: Date | string
+    updatedAt?: Date | string
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
+    email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    profilePic?: NullableStringFieldUpdateOperationsInput | string | null
-    background?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     isAdmin?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reviews?: ReviewUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
+    email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    profilePic?: NullableStringFieldUpdateOperationsInput | string | null
-    background?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     isAdmin?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
     id?: number
+    email: string
     username: string
     password: string
-    profilePic?: string | null
-    background?: string | null
+    profileImage?: string | null
     isAdmin?: boolean
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type UserUpdateManyMutationInput = {
+    email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    profilePic?: NullableStringFieldUpdateOperationsInput | string | null
-    background?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     isAdmin?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
+    email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    profilePic?: NullableStringFieldUpdateOperationsInput | string | null
-    background?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     isAdmin?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ReviewCreateInput = {
@@ -5251,12 +5277,13 @@ export namespace Prisma {
 
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
+    email?: SortOrder
     username?: SortOrder
     password?: SortOrder
-    profilePic?: SortOrder
-    background?: SortOrder
+    profileImage?: SortOrder
     isAdmin?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type UserAvgOrderByAggregateInput = {
@@ -5265,22 +5292,24 @@ export namespace Prisma {
 
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
+    email?: SortOrder
     username?: SortOrder
     password?: SortOrder
-    profilePic?: SortOrder
-    background?: SortOrder
+    profileImage?: SortOrder
     isAdmin?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
+    email?: SortOrder
     username?: SortOrder
     password?: SortOrder
-    profilePic?: SortOrder
-    background?: SortOrder
+    profileImage?: SortOrder
     isAdmin?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
@@ -5919,23 +5948,25 @@ export namespace Prisma {
   }
 
   export type UserCreateWithoutReviewsInput = {
+    email: string
     username: string
     password: string
-    profilePic?: string | null
-    background?: string | null
+    profileImage?: string | null
     isAdmin?: boolean
     createdAt?: Date | string
+    updatedAt?: Date | string
     comments?: CommentCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutReviewsInput = {
     id?: number
+    email: string
     username: string
     password: string
-    profilePic?: string | null
-    background?: string | null
+    profileImage?: string | null
     isAdmin?: boolean
     createdAt?: Date | string
+    updatedAt?: Date | string
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -5979,23 +6010,25 @@ export namespace Prisma {
   }
 
   export type UserUpdateWithoutReviewsInput = {
+    email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    profilePic?: NullableStringFieldUpdateOperationsInput | string | null
-    background?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     isAdmin?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: CommentUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReviewsInput = {
     id?: IntFieldUpdateOperationsInput | number
+    email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    profilePic?: NullableStringFieldUpdateOperationsInput | string | null
-    background?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     isAdmin?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -6046,23 +6079,25 @@ export namespace Prisma {
   }
 
   export type UserCreateWithoutCommentsInput = {
+    email: string
     username: string
     password: string
-    profilePic?: string | null
-    background?: string | null
+    profileImage?: string | null
     isAdmin?: boolean
     createdAt?: Date | string
+    updatedAt?: Date | string
     reviews?: ReviewCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCommentsInput = {
     id?: number
+    email: string
     username: string
     password: string
-    profilePic?: string | null
-    background?: string | null
+    profileImage?: string | null
     isAdmin?: boolean
     createdAt?: Date | string
+    updatedAt?: Date | string
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -6119,23 +6154,25 @@ export namespace Prisma {
   }
 
   export type UserUpdateWithoutCommentsInput = {
+    email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    profilePic?: NullableStringFieldUpdateOperationsInput | string | null
-    background?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     isAdmin?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reviews?: ReviewUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentsInput = {
     id?: IntFieldUpdateOperationsInput | number
+    email?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    profilePic?: NullableStringFieldUpdateOperationsInput | string | null
-    background?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     isAdmin?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
   }
 
