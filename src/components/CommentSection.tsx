@@ -101,7 +101,7 @@ export default function CommentSection({ reviewId }: { reviewId: number }) {
           <textarea
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
-            className="border rounded p-2 text-sm resize-none"
+            className="border rounded p-2 text-sm resize-none bg-white dark:bg-[#18181b] text-black dark:text-white border-gray-300 dark:border-gray-700 focus:border-pink-500 focus:ring-pink-500 outline-none transition-colors"
             rows={3}
             maxLength={1000}
             placeholder="Add a comment..."
