@@ -1,30 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import jwt from 'jsonwebtoken';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-fallback-secret'; // Use an environment variable
-
-interface UserPayload {
-  id: number;
-  username: string;
-  // add other user properties if needed
-}
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {
-    const token = cookies().get('session_token')?.value;
-    if (!token) {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
       return NextResponse.json({ message: 'authentication required' }, { status: 401 });
-    }
-
-    let userPayload: UserPayload;
-    try {
-      userPayload = jwt.verify(token, JWT_SECRET) as UserPayload;
-    } catch (error) {
-      return NextResponse.json({ message: 'invalid token' }, { status: 403 });
     }
 
     const { title, category, creator, year: yearStr, rating: ratingStr, review } = await req.json();
@@ -57,9 +42,9 @@ export async function POST(req: NextRequest) {
         rating,
         review,
         date: new Date(),
-        userId: userPayload.id,
+        userId: Number(session.user.id),
       },
-      include: { // Optionally include user data if needed for response, though not strictly necessary here
+      include: {
         user: {
           select: { username: true }
         }

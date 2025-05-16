@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import jwt from 'jsonwebtoken';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-fallback-secret';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,15 +19,9 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
 // POST: Add a comment (must be logged in)
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
-  const token = cookies().get('session_token')?.value;
-  if (!token) {
+  const session = await getServerSession(authOptions);
+  if (!session || !session.user) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-  }
-  let userPayload: any;
-  try {
-    userPayload = jwt.verify(token, JWT_SECRET);
-  } catch (error) {
-    return NextResponse.json({ error: 'Invalid token' }, { status: 403 });
   }
   const reviewId = parseInt(params.id);
   if (isNaN(reviewId)) return NextResponse.json({ error: 'Invalid review id' }, { status: 400 });
@@ -41,7 +33,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     data: {
       text,
       reviewId,
-      userId: userPayload.id,
+      userId: Number(session.user.id),
     },
     include: { user: { select: { username: true, id: true } } },
   });
@@ -50,21 +42,15 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
 // DELETE: Remove a comment (must be owner)
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-  const token = cookies().get('session_token')?.value;
-  if (!token) {
+  const session = await getServerSession(authOptions);
+  if (!session || !session.user) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-  }
-  let userPayload: any;
-  try {
-    userPayload = jwt.verify(token, JWT_SECRET);
-  } catch (error) {
-    return NextResponse.json({ error: 'Invalid token' }, { status: 403 });
   }
   const { commentId } = await req.json();
   if (!commentId) return NextResponse.json({ error: 'Missing commentId' }, { status: 400 });
   // Only allow deleting own comment
   const comment = await prisma.comment.findUnique({ where: { id: commentId } });
-  if (!comment || comment.userId !== userPayload.id) {
+  if (!comment || comment.userId !== Number(session.user.id)) {
     return NextResponse.json({ error: 'Not allowed' }, { status: 403 });
   }
   await prisma.comment.delete({ where: { id: commentId } });

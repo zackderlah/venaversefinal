@@ -1,29 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import jwt from 'jsonwebtoken';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-fallback-secret';
-
-interface UserPayload {
-  id: number;
-  username: string;
-}
 
 export const dynamic = 'force-dynamic';
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const token = cookies().get('session_token')?.value;
-    if (!token) {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
       return NextResponse.json({ message: 'authentication required' }, { status: 401 });
-    }
-
-    let userPayload: UserPayload;
-    try {
-      userPayload = jwt.verify(token, JWT_SECRET) as UserPayload;
-    } catch (error) {
-      return NextResponse.json({ message: 'invalid token' }, { status: 403 });
     }
 
     const reviewId = parseInt(params.id);
@@ -39,7 +25,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       return NextResponse.json({ message: 'review not found' }, { status: 404 });
     }
 
-    if (existingReview.userId !== userPayload.id) {
+    if (existingReview.userId !== Number(session.user.id)) {
       return NextResponse.json({ message: 'you are not authorized to edit this review' }, { status: 403 });
     }
 
@@ -73,7 +59,6 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         year,
         rating,
         review,
-        // date will remain the original creation date, not updated.
       },
       include: {
         user: {
@@ -117,16 +102,9 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const token = cookies().get('session_token')?.value;
-    if (!token) {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
       return NextResponse.json({ message: 'authentication required' }, { status: 401 });
-    }
-
-    let userPayload: UserPayload;
-    try {
-      userPayload = jwt.verify(token, JWT_SECRET) as UserPayload;
-    } catch (error) {
-      return NextResponse.json({ message: 'invalid token' }, { status: 403 });
     }
 
     const reviewId = parseInt(params.id);
@@ -142,8 +120,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       return NextResponse.json({ message: 'review not found' }, { status: 404 });
     }
 
-    if (existingReview.userId !== userPayload.id) {
-      // Even if an admin system is added later, for now, only authors can delete their own reviews.
+    if (existingReview.userId !== Number(session.user.id)) {
       return NextResponse.json({ message: 'you are not authorized to delete this review' }, { status: 403 });
     }
 
