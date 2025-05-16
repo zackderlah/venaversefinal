@@ -58,45 +58,47 @@ export default function ReviewPage() {
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-16 border-2 border-black dark:border-white p-8 bg-white dark:bg-[#0A0A0A] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-      <h1 className="text-3xl font-black mb-2">{capitalizeTitle(review.title)}</h1>
-      <div className="mb-4 text-gray-500 text-sm">
-        {review.creator}, {review.year}
-        {review.user?.username && (
-          <span className="ml-2 text-xs text-black dark:text-white font-bold lowercase">
-            by @<Link href={`/profile/${review.user.username}`} className="underline hover:text-blue-600">{review.user.username}</Link>
-          </span>
+    <div className="flex items-center justify-center min-h-screen w-full p-0 m-0">
+      <div className="w-full max-w-4xl h-full min-h-[80vh] border-2 border-black dark:border-white p-8 bg-white dark:bg-[#0A0A0A] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col justify-center">
+        <h1 className="text-3xl font-black mb-2">{capitalizeTitle(review.title)}</h1>
+        <div className="mb-4 text-gray-500 text-sm">
+          {review.creator}, {review.year}
+          {review.user?.username && (
+            <span className="ml-2 text-xs text-black dark:text-white font-bold lowercase">
+              by @<Link href={`/profile/${review.user.username}`} className="underline hover:text-blue-600">{review.user.username}</Link>
+            </span>
+          )}
+        </div>
+        <div className="mb-4">
+          <span className="rating text-2xl font-black">{review.rating}/10</span>
+        </div>
+        <div className="mb-6 text-gray-600 dark:text-gray-300">
+          {review.review}
+        </div>
+        <div className="review-date text-sm text-gray-500 dark:text-gray-400 mb-4">
+          Reviewed on {new Date(review.date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })}
+        </div>
+        {canEdit && (
+          <div className="mt-2 flex space-x-3">
+            <Link 
+              href={`/reviews/${review.id}/edit`}
+              className="text-xs lowercase font-semibold text-blue-600 hover:underline"
+            >
+              edit review
+            </Link>
+            <button 
+              onClick={handleDelete}
+              className="text-xs lowercase font-semibold text-red-600 hover:underline"
+            >
+              delete
+            </button>
+          </div>
         )}
       </div>
-      <div className="mb-4">
-        <span className="rating text-2xl font-black">{review.rating}/10</span>
-      </div>
-      <div className="mb-6 text-gray-600 dark:text-gray-300">
-        {review.review}
-      </div>
-      <div className="review-date text-sm text-gray-500 dark:text-gray-400 mb-4">
-        Reviewed on {new Date(review.date).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        })}
-      </div>
-      {canEdit && (
-        <div className="mt-2 flex space-x-3">
-          <Link 
-            href={`/reviews/${review.id}/edit`}
-            className="text-xs lowercase font-semibold text-blue-600 hover:underline"
-          >
-            edit review
-          </Link>
-          <button 
-            onClick={handleDelete}
-            className="text-xs lowercase font-semibold text-red-600 hover:underline"
-          >
-            delete
-          </button>
-        </div>
-      )}
     </div>
   );
 } 
