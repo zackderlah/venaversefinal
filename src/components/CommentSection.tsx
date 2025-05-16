@@ -110,11 +110,11 @@ export default function CommentSection({ reviewId }: { reviewId: number }) {
           {error && <div className="text-red-600 text-xs">{error}</div>}
           <button
             type="submit"
-            className="self-end px-6 py-2 border-2 border-pink-500 bg-black text-white rounded-md text-xs font-bold shadow-[2px_2px_0px_0px_rgba(225,29,72,1)] hover:bg-pink-600 hover:text-black hover:border-black transition-all pixel-bar"
+            className="self-end px-6 py-2 border-2 border-black dark:border-white bg-black text-white dark:bg-white dark:text-black rounded-md text-xs font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:bg-gray-900 hover:dark:bg-gray-100 transition-all pixel-bar"
             disabled={posting || !newComment.trim()}
-            style={{ fontFamily: 'monospace', letterSpacing: '1px', imageRendering: 'pixelated' }}
+            style={{ fontFamily: 'monospace', letterSpacing: '1px', imageRendering: 'pixelated', textTransform: 'lowercase' }}
           >
-            {posting ? "Posting..." : "Post Comment"}
+            {posting ? "posting..." : "post comment"}
           </button>
         </form>
       ) : !authLoading ? (
