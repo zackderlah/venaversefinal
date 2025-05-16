@@ -43,7 +43,7 @@ export default function Home() {
             columnClassName="masonry-grid_column"
           >
             {recentReviews.map((review) => (
-              <div key={review.id} className="flex flex-col h-full mb-8">
+              <div key={review.id} className="flex flex-col h-full">
                 <ReviewLink review={review}>
                   <ReviewCard review={review} />
                 </ReviewLink>
