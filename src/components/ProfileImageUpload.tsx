@@ -1,29 +1,39 @@
 "use client";
 
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
 import { useSession } from 'next-auth/react';
-import { CldUploadWidget } from "next-cloudinary";
 
-export default function ProfileImageUpload() {
+export default function ProfileImageUpload({ profileImage }: { profileImage?: string }) {
+  console.log('ProfileImageUpload received profileImage:', profileImage);
   const { data: session } = useSession();
   const user = session?.user;
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleUpload = async (result: any) => {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError("");
     try {
-      setUploading(true);
-      setError("");
-      
+      // Upload to Cloudinary
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'venaverse');
+      const cloudName = 'dgpkcrmkf'; // TODO: Replace with your actual cloud name
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      if (!data.secure_url) throw new Error('Cloudinary upload failed');
+      // Update profile image in DB
       const response = await fetch("/api/users/profile-image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageUrl: result.info.secure_url }),
+        body: JSON.stringify({ imageUrl: data.secure_url }),
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to update profile image");
-      }
+      if (!response.ok) throw new Error('Failed to update profile image in DB');
       window.location.reload();
     } catch (err) {
       setError("Failed to update profile image");
@@ -35,8 +45,14 @@ export default function ProfileImageUpload() {
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-black dark:border-white">
-        {user?.image ? (
+      <div className="relative w-32 h-32 rounded-full overflow-hidden border border-black dark:border-white bg-gray-100 dark:bg-gray-800">
+        {profileImage ? (
+          <img
+            src={profileImage}
+            alt="Profile"
+            className="w-full h-full object-cover"
+          />
+        ) : user?.image ? (
           <img
             src={user.image}
             alt="Profile"
@@ -47,25 +63,20 @@ export default function ProfileImageUpload() {
             <span className="text-4xl text-gray-400">👤</span>
           </div>
         )}
+        <div className="absolute inset-0 pointer-events-none rounded-full border border-black dark:border-white" style={{boxShadow: '0 2px 8px rgba(0,0,0,0.08)'}} />
       </div>
-
-      <CldUploadWidget
-        uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_PRESET}
-        onUpload={handleUpload}
-      >
-        {({ open }) => (
-          <button
-            onClick={() => open()}
-            disabled={uploading}
-            className="px-4 py-2 text-sm border-2 border-black dark:border-white bg-black text-white dark:bg-white dark:text-black rounded-md font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:bg-gray-900 hover:dark:bg-gray-100 transition-all pixel-bar"
-            style={{ fontFamily: 'monospace', letterSpacing: '1px', imageRendering: 'pixelated', textTransform: 'lowercase' }}
-          >
-            {uploading ? "uploading..." : "change picture"}
-          </button>
-        )}
-      </CldUploadWidget>
-
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+      <label htmlFor="profile-upload" className="mt-2 px-4 py-2 bg-white dark:bg-[#0A0A0A] border-2 border-black dark:border-white rounded-lg font-black text-xs lowercase cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 hover:dark:bg-gray-900 transition-all">
+        {uploading ? 'uploading...' : 'change profile photo'}
+        <input
+          id="profile-upload"
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          disabled={uploading}
+          className="hidden"
+        />
+      </label>
+      {error && <p className="text-red-500 text-xs font-bold lowercase mt-1">{error}</p>}
     </div>
   );
 } 

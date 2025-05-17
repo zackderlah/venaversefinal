@@ -1,10 +1,10 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import ProfileImageUpload from "@/components/ProfileImageUpload";
 import { prisma } from "@/lib/prisma";
 import ReviewCardDisplay from "@/components/ReviewCardDisplay";
 import Link from "next/link";
+import ProfileHeaderClient from "@/components/ProfileHeaderClient";
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
@@ -23,6 +23,9 @@ export default async function ProfilePage() {
     },
   });
 
+  console.log('ProfilePage user:', user);
+  console.log('ProfilePage session:', session);
+
   let favoriteReview = null;
   if (user?.favoriteReviewId) {
     favoriteReview = await prisma.review.findUnique({
@@ -34,26 +37,7 @@ export default async function ProfilePage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
       {/* Profile Header */}
-      <div className="review-card flex flex-col md:flex-row items-center gap-8 mb-4">
-        <ProfileImageUpload />
-        <div className="flex-1 w-full">
-          <h1 className="text-4xl font-black tracking-tight lowercase mb-2">{session.user?.name}</h1>
-          <div className="flex flex-wrap items-center gap-4 text-gray-500 dark:text-gray-300 text-sm mb-2 lowercase">
-            <span>member since {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : "-"}</span>
-            <span>•</span>
-            <span>{user?.reviews.length || 0} reviews</span>
-          </div>
-          <div className="text-gray-600 dark:text-gray-300 text-base lowercase">{session.user?.email}</div>
-        </div>
-      </div>
-
-      {/* Bio Section */}
-      <div className="review-card">
-        <h2 className="text-2xl font-black tracking-tight lowercase mb-2">about</h2>
-        <p className="text-gray-600 dark:text-gray-300 text-base lowercase">
-          {user?.bio || "no bio yet. click edit to add one!"}
-        </p>
-      </div>
+      <ProfileHeaderClient user={user} session={session} />
 
       {/* Favorite Review */}
       <div className="review-card">
@@ -61,7 +45,7 @@ export default async function ProfilePage() {
         {favoriteReview ? (
           <ReviewCardDisplay review={{
             ...favoriteReview,
-            category: favoriteReview.category as import("@/types/review").ReviewCategory,
+            category: favoriteReview.category,
             date: favoriteReview.date.toISOString(),
             imageUrl: favoriteReview.imageUrl ?? undefined,
           }} />
@@ -80,7 +64,7 @@ export default async function ProfilePage() {
                 key={review.id}
                 review={{
                   ...review,
-                  category: review.category as import("@/types/review").ReviewCategory,
+                  category: review.category,
                   date: review.date.toISOString(),
                   imageUrl: review.imageUrl ?? undefined,
                 }}

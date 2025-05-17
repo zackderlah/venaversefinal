@@ -65,11 +65,18 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async jwt({ token, user }) {
+      // If user is present (on login), set token fields
       if (user) {
         token.id = user.id;
         token.name = user.name;
         token.email = user.email;
         token.picture = user.image;
+      } else if (token.email) {
+        // On subsequent requests, fetch the latest profileImage from the DB
+        const dbUser = await prisma.user.findUnique({ where: { email: token.email as string } });
+        if (dbUser) {
+          token.picture = dbUser.profileImage;
+        }
       }
       return token;
     }
