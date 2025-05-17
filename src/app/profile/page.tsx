@@ -45,7 +45,7 @@ export default async function ProfilePage() {
         {favoriteReview ? (
           <ReviewCardDisplay review={{
             ...favoriteReview,
-            category: favoriteReview.category,
+            category: favoriteReview.category as import("@/types/review").ReviewCategory,
             date: favoriteReview.date.toISOString(),
             imageUrl: favoriteReview.imageUrl ?? undefined,
           }} />
@@ -64,7 +64,7 @@ export default async function ProfilePage() {
                 key={review.id}
                 review={{
                   ...review,
-                  category: review.category,
+                  category: review.category as import("@/types/review").ReviewCategory,
                   date: review.date.toISOString(),
                   imageUrl: review.imageUrl ?? undefined,
                 }}
