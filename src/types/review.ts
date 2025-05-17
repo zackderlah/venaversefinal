@@ -13,6 +13,7 @@ export interface Review {
   user?: { 
     username: string;
     id: number;
+    profileImage?: string | null;
   };
   userId: number;
 } 
