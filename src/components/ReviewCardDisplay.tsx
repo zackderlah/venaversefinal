@@ -23,12 +23,27 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
             <p className="text-sm text-gray-500">
               {review.creator}, {review.year}
               {review.user?.username && (
-                <span className="ml-2 text-xs text-black dark:text-white font-bold lowercase">by @<Link 
-                  href={`/profile/${review.user.username}`} 
-                  className="underline hover:text-blue-600"
+                <span className="ml-2 text-xs text-black dark:text-white font-bold lowercase flex items-center gap-1">
+                  <Link href={`/profile/${review.user.username}`} className="inline-block align-middle" style={{ lineHeight: 0 }}>
+                    {review.user.profileImage ? (
+                      <img
+                        src={review.user.profileImage}
+                        alt={review.user.username}
+                        className="w-6 h-6 rounded-full object-cover border border-black dark:border-white"
+                      />
+                    ) : (
+                      <span className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-xs text-gray-500 font-bold">
+                        {review.user.username[0].toUpperCase()}
+                      </span>
+                    )}
+                  </Link>
+                  by @<Link 
+                    href={`/profile/${review.user.username}`} 
+                    className="underline hover:text-blue-600"
                   >
-                  {review.user.username}
-                </Link></span>
+                    {review.user.username}
+                  </Link>
+                </span>
               )}
             </p>
             <MediaTag category={review.category} />

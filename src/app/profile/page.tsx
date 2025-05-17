@@ -18,7 +18,7 @@ export default async function ProfilePage() {
       reviews: {
         take: 5,
         orderBy: { date: 'desc' },
-        include: { user: true },
+        include: { user: { select: { id: true, username: true, profileImage: true } } },
       },
     },
   });
@@ -30,7 +30,7 @@ export default async function ProfilePage() {
   if (user?.favoriteReviewId) {
     favoriteReview = await prisma.review.findUnique({
       where: { id: user.favoriteReviewId },
-      include: { user: true },
+      include: { user: { select: { id: true, username: true, profileImage: true } } },
     });
   }
 
