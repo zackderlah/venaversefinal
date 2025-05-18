@@ -13,7 +13,6 @@ export default async function UserProfilePage({ params }: { params: { username: 
     where: { username },
     include: {
       reviews: {
-        take: 5,
         orderBy: { date: 'desc' },
         include: { user: { select: { id: true, username: true, profileImage: true } } },
       },

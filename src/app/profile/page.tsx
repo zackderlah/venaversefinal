@@ -16,7 +16,6 @@ export default async function ProfilePage() {
     where: { email: session.user?.email! },
     include: {
       reviews: {
-        take: 5,
         orderBy: { date: 'desc' },
         include: { user: { select: { id: true, username: true, profileImage: true } } },
       },

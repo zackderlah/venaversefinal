@@ -1,0 +1,40 @@
+.level-badge {
+  font-family: 'Inter', 'Arial', sans-serif;
+  font-weight: 700;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: 32px;
+  font-size: 1.1rem;
+  padding: 0.25em 1.1em;
+  color: #fff;
+  border: none;
+  box-shadow: none;
+  letter-spacing: 0.5px;
+  background-clip: padding-box;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.bg-gray-400 { background: #b0b0b0; color: #222; }
+.bg-blue-500 { background: #2563eb; }
+.bg-green-500 { background: #22c55e; }
+.bg-yellow-400 { background: #eab308; color: #222; }
+.bg-orange-500 { background: #f97316; }
+.bg-red-600 { background: #dc2626; }
+.bg-purple-600 { background: #7c3aed; }
+.bg-pink-500 { background: #ec4899; }
+.bg-gradient-to-r.from-yellow-300.to-yellow-500.shadow-gold { background: #facc15; }
+.bg-gradient-to-r.from-blue-200.to-blue-500.shadow-diamond { background: #38bdf8; }
+.rainbow-badge {
+  background: linear-gradient(270deg, #ff0000, #ff9900, #ffee00, #33ff00, #00ffee, #0066ff, #cc00ff, #ff0000);
+  background-size: 1600% 1600%;
+  color: #fff;
+  animation: rainbow 3s linear infinite;
+}
+@keyframes rainbow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+} 

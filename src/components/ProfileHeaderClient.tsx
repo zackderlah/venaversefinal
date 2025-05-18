@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import ProfileImageUpload from "./ProfileImageUpload";
+import LevelBadge from "./LevelBadge";
+import { calculateUserXPAndLevel } from "@/utils/level";
 
 export default function ProfileHeaderClient({ user, session, isOwner = false }: { user: any, session: any, isOwner?: boolean }) {
   const [editingBio, setEditingBio] = useState(false);
@@ -8,8 +10,15 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
   const [bioLoading, setBioLoading] = useState(false);
   const [bioError, setBioError] = useState("");
 
+  // Calculate level from reviews
+  const { level } = calculateUserXPAndLevel(user?.reviews || []);
+
   return (
-    <div className="review-card flex flex-col md:flex-row items-center md:items-start gap-8 mb-4 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white dark:bg-[#0A0A0A]">
+    <div className="review-card flex flex-col md:flex-row items-center md:items-start gap-8 mb-4 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white dark:bg-[#0A0A0A] relative">
+      {/* Level badge top right */}
+      <div className="absolute top-4 right-4 z-10">
+        <LevelBadge level={level} href={`/profile/${user.username}/level`} />
+      </div>
       <div className="flex flex-col items-center gap-2 mr-0 md:mr-8">
         <div className="relative w-32 h-32 rounded-full overflow-hidden border border-black dark:border-white bg-gray-100 dark:bg-gray-800">
           {user.profileImage ? (
