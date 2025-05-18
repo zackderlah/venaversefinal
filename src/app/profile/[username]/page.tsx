@@ -5,6 +5,7 @@ import ProfileHeaderClient from "@/components/ProfileHeaderClient";
 import ReviewCardDisplay from "@/components/ReviewCardDisplay";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import ProfileCommentSection from '@/components/ProfileCommentSection';
 
 export default async function UserProfilePage({ params }: { params: { username: string } }) {
   const session = await getServerSession(authOptions);
@@ -20,14 +21,6 @@ export default async function UserProfilePage({ params }: { params: { username: 
   });
   if (!user) return notFound();
 
-  let favoriteReview = null;
-  if (user.favoriteReviewId) {
-    favoriteReview = await prisma.review.findUnique({
-      where: { id: user.favoriteReviewId },
-      include: { user: { select: { id: true, username: true, profileImage: true } } },
-    });
-  }
-
   const isOwner = session?.user?.name === user.username;
 
   return (
@@ -35,19 +28,10 @@ export default async function UserProfilePage({ params }: { params: { username: 
       {/* Profile Header */}
       <ProfileHeaderClient user={user} session={session} isOwner={isOwner} />
 
-      {/* Favorite Review */}
+      {/* Profile Comments */}
       <div className="review-card">
-        <h2 className="text-2xl font-black tracking-tight lowercase mb-2">favorite review</h2>
-        {favoriteReview ? (
-          <ReviewCardDisplay review={{
-            ...favoriteReview,
-            category: favoriteReview.category as import("@/types/review").ReviewCategory,
-            date: favoriteReview.date.toISOString(),
-            imageUrl: favoriteReview.imageUrl ?? undefined,
-          }} />
-        ) : (
-          <p className="text-gray-400 lowercase">no favorite review selected yet</p>
-        )}
+        <h2 className="text-2xl font-black tracking-tight lowercase mb-2">profile comments</h2>
+        <ProfileCommentSection profileId={user.id} />
       </div>
 
       {/* Recent Activity */}
