@@ -34,7 +34,11 @@ export default async function ProfilePage() {
       {/* Profile Comments */}
       <div className="review-card">
         <h2 className="text-2xl font-black tracking-tight lowercase mb-2">profile comments</h2>
-        <ProfileCommentSection profileId={user.id} />
+        {user ? (
+          <ProfileCommentSection profileId={user.id} />
+        ) : (
+          <div className="text-gray-400 lowercase">user not found</div>
+        )}
       </div>
 
       {/* Recent Activity */}
