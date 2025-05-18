@@ -7,6 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 import { PrismaClient } from '@prisma/client';
 import CommentSection from '@/components/CommentSection';
 import Image from 'next/image';
+import MediaTag from '@/components/MediaTag';
 
 function capitalizeTitle(title: string) {
   return title.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
@@ -75,17 +76,39 @@ export default function ReviewPage() {
             </div>
           )}
           <div className="flex-1">
-            <h1 className="text-3xl font-black mb-2">{capitalizeTitle(review.title)}</h1>
-            <div className="mb-4 text-gray-500 text-sm">
+            <div className="flex items-start justify-between mb-2">
+              <h1 className="text-3xl font-black">{capitalizeTitle(review.title)}</h1>
+              <span className="rating text-4xl font-black ml-4">{review.rating}/10</span>
+            </div>
+            <div className="mb-2 text-gray-500 text-sm">
               {review.creator}, {review.year}
+            </div>
+            <div className="flex items-center gap-2 mb-4">
+              <MediaTag category={review.category} />
               {review.user?.username && (
-                <span className="ml-2 text-xs text-black dark:text-white font-bold lowercase">
-                  by @<Link href={`/profile/${review.user.username}`} className="underline hover:text-blue-600">{review.user.username}</Link>
+                <span className="text-xs text-black dark:text-white font-bold lowercase flex items-center gap-1">
+                  <span
+                    className="cursor-pointer flex items-center gap-1"
+                    onClick={e => {
+                      e.stopPropagation();
+                      router.push(`/profile/${review.user.username}`);
+                    }}
+                  >
+                    {review.user.profileImage ? (
+                      <img
+                        src={review.user.profileImage}
+                        alt={review.user.username}
+                        className="w-6 h-6 rounded-full object-cover border border-black dark:border-white"
+                      />
+                    ) : (
+                      <span className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-xs text-gray-500 font-bold">
+                        {review.user.username[0].toUpperCase()}
+                      </span>
+                    )}
+                    <span className="ml-1 underline hover:text-blue-600">{review.user.username}</span>
+                  </span>
                 </span>
               )}
-            </div>
-            <div className="mb-4">
-              <span className="rating text-2xl font-black">{review.rating}/10</span>
             </div>
             <div className="mb-6 text-gray-600 dark:text-gray-300">
               {review.review}

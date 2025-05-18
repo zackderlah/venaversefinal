@@ -62,7 +62,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       },
       include: {
         user: {
-          select: { username: true }
+          select: { username: true, profileImage: true }
         }
       }
     });
@@ -85,7 +85,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     const review = await prisma.review.findUnique({
       where: { id: reviewId },
       include: {
-        user: { select: { username: true } }
+        user: { select: { username: true, profileImage: true } }
       }
     });
 
