@@ -2,6 +2,8 @@ import { Review } from '@/types/review';
 import MediaTag from './MediaTag';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 function capitalizeTitle(title: string) {
   return title.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
@@ -20,6 +22,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
   const { data: session, status } = useSession();
   const currentAuthenticatedUser = session?.user;
   const authLoading = status === 'loading';
+  const router = useRouter();
 
   // categoryPath is not used in this version of the card, but kept for potential future use or consistency
   // const categoryPath = review.category === 'film' ? 'films' :
@@ -50,28 +53,62 @@ export default function ReviewCard({ review }: ReviewCardProps) {
 
   return (
     <div id={`review-${review.id}`} className="review-card">
-      <div className="flex justify-between items-start gap-4 mb-4">
-        <div className="min-w-0 flex-1">
-          <h3 className="text-xl font-black mb-1 truncate">{capitalizeTitle(review.title)}</h3>
-          <div className="flex items-center gap-2 flex-wrap">
-            <p className="text-sm text-gray-500">
-              {review.creator}, {review.year}
-              {review.user?.username && (
-                <span className="ml-2 text-xs text-black dark:text-white font-bold lowercase">by @<Link 
-                  href={`/profile/${review.user.username}`} 
-                  className="underline hover:text-blue-600"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {review.user.username}
-                </Link></span>
-              )}
-            </p>
-            <MediaTag category={review.category} />
+      <div className="flex flex-row gap-4 items-start">
+        {review.imageUrl && (
+          <div className="relative w-16 h-24 flex-shrink-0">
+            <Image
+              src={review.imageUrl}
+              alt={`Cover for ${review.title}`}
+              fill
+              className="object-cover rounded-lg"
+              sizes="64px"
+            />
+          </div>
+        )}
+        <div className="flex-1 min-w-0 flex flex-col justify-start">
+          <div className="flex justify-between items-start gap-4 mb-1">
+            <div className="min-w-0 flex-1">
+              <h3 className="text-xl font-black mb-1 truncate">{capitalizeTitle(review.title)}</h3>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-sm text-gray-500">
+                  {review.creator}, {review.year}
+                </span>
+                <MediaTag category={review.category} />
+                {review.user?.username ? (
+                  <span className="text-xs text-black dark:text-white font-bold lowercase flex items-center gap-1">
+                    <span
+                      className="cursor-pointer flex items-center gap-1"
+                      onClick={e => {
+                        e.stopPropagation();
+                        if (review.user && review.user.username) {
+                          router.push(`/profile/${review.user.username}`);
+                        }
+                      }}
+                    >
+                      {review.user.profileImage ? (
+                        <img
+                          src={review.user.profileImage}
+                          alt={review.user.username}
+                          className="w-6 h-6 rounded-full object-cover border border-black dark:border-white"
+                        />
+                      ) : (
+                        <span className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-xs text-gray-500 font-bold">
+                          {review.user.username[0].toUpperCase()}
+                        </span>
+                      )}
+                      <span className="ml-1 underline hover:text-blue-600">{review.user.username}</span>
+                    </span>
+                  </span>
+                ) : null}
+              </div>
+            </div>
+            <div className="flex flex-col items-end gap-2">
+              <span className="rating shrink-0 ml-2">{review.rating}/10</span>
+            </div>
           </div>
         </div>
-        <span className="rating shrink-0 ml-2">{review.rating}/10</span>
       </div>
-      <p className="text-gray-600 mb-4">
+      <p className="text-gray-600 mb-2 mt-2">
         {truncateReview(review.review)}
       </p>
       <div className="review-date">
