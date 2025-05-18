@@ -76,15 +76,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
                 <MediaTag category={review.category} />
                 {review.user?.username ? (
                   <span className="text-xs text-black dark:text-white font-bold lowercase flex items-center gap-1">
-                    <span
-                      className="cursor-pointer flex items-center gap-1"
-                      onClick={e => {
-                        e.stopPropagation();
-                        if (review.user && review.user.username) {
-                          router.push(`/profile/${review.user.username}`);
-                        }
-                      }}
-                    >
+                    <Link href={`/profile/${review.user.username}`} className="flex items-center gap-1">
                       {review.user.profileImage ? (
                         <img
                           src={review.user.profileImage}
@@ -97,7 +89,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
                         </span>
                       )}
                       <span className="ml-1 underline hover:text-blue-600">{review.user.username}</span>
-                    </span>
+                    </Link>
                   </span>
                 ) : null}
               </div>

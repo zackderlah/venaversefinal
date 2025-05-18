@@ -43,7 +43,6 @@ export default async function ProfileLevelPage({ params }: { params: { username:
         {BADGE_LEVELS.map(lvl => (
           <div key={lvl} className="flex flex-col items-center gap-1">
             <LevelBadge level={lvl} />
-            <span className="text-xs text-gray-700 dark:text-gray-300 font-bold">Lv. {lvl}</span>
           </div>
         ))}
       </div>

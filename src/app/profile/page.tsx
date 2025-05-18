@@ -59,15 +59,16 @@ export default async function ProfilePage() {
         <div className="grid gap-6">
           {user?.reviews.length ? (
             user.reviews.map((review: any) => (
-              <ReviewCardDisplay
-                key={review.id}
-                review={{
-                  ...review,
-                  category: review.category as import("@/types/review").ReviewCategory,
-                  date: review.date.toISOString(),
-                  imageUrl: review.imageUrl ?? undefined,
-                }}
-              />
+              <Link key={review.id} href={`/reviews/${review.id}`} className="block">
+                <ReviewCardDisplay
+                  review={{
+                    ...review,
+                    category: review.category as import("@/types/review").ReviewCategory,
+                    date: review.date.toISOString(),
+                    imageUrl: review.imageUrl ?? undefined,
+                  }}
+                />
+              </Link>
             ))
           ) : (
             <p className="text-gray-400 lowercase">no recent reviews</p>
