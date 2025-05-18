@@ -10,7 +10,22 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
 
   return (
     <div className="review-card flex flex-col md:flex-row items-center md:items-start gap-8 mb-4 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white dark:bg-[#0A0A0A]">
-      {isOwner && <ProfileImageUpload profileImage={user?.profileImage} />}
+      <div className="flex flex-col items-center gap-2 mr-0 md:mr-8">
+        <div className="relative w-32 h-32 rounded-full overflow-hidden border border-black dark:border-white bg-gray-100 dark:bg-gray-800">
+          {user.profileImage ? (
+            <img
+              src={user.profileImage}
+              alt={user.username}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+              <span className="text-6xl text-gray-400">👤</span>
+            </div>
+          )}
+        </div>
+        {isOwner && <ProfileImageUpload profileImage={user?.profileImage} />}
+      </div>
       <div className="flex-1 w-full flex flex-col justify-center md:justify-start items-center md:items-start">
         <h1 className="text-4xl font-black tracking-tight lowercase mb-2">{user.username}</h1>
         <div className="flex flex-wrap items-center gap-4 text-gray-500 dark:text-gray-300 text-sm mb-2 lowercase">
