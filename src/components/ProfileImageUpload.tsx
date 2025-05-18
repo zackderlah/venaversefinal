@@ -44,28 +44,8 @@ export default function ProfileImageUpload({ profileImage }: { profileImage?: st
   };
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div className="relative w-32 h-32 rounded-full overflow-hidden border border-black dark:border-white bg-gray-100 dark:bg-gray-800">
-        {profileImage ? (
-          <img
-            src={profileImage}
-            alt="Profile"
-            className="w-full h-full object-cover"
-          />
-        ) : user?.image ? (
-          <img
-            src={user.image}
-            alt="Profile"
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-            <span className="text-4xl text-gray-400">👤</span>
-          </div>
-        )}
-        <div className="absolute inset-0 pointer-events-none rounded-full border border-black dark:border-white" style={{boxShadow: '0 2px 8px rgba(0,0,0,0.08)'}} />
-      </div>
-      <label htmlFor="profile-upload" className="mt-2 px-4 py-2 bg-white dark:bg-[#0A0A0A] border-2 border-black dark:border-white rounded-lg font-black text-xs lowercase cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 hover:dark:bg-gray-900 transition-all">
+    <div className="flex flex-col items-center gap-2">
+      <label htmlFor="profile-upload" className="px-4 py-2 bg-white dark:bg-[#0A0A0A] border-2 border-black dark:border-white rounded-lg font-black text-xs lowercase cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 hover:dark:bg-gray-900 transition-all">
         {uploading ? 'uploading...' : 'change profile photo'}
         <input
           id="profile-upload"
