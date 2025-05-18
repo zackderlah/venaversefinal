@@ -37,7 +37,7 @@ export default async function ProfilePage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
       {/* Profile Header */}
-      <ProfileHeaderClient user={user} session={session} />
+      <ProfileHeaderClient user={user} session={session} isOwner={true} />
 
       {/* Favorite Review */}
       <div className="review-card">

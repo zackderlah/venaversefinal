@@ -24,7 +24,7 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
             </div>
           )}
         </div>
-        {isOwner && <ProfileImageUpload profileImage={user?.profileImage} />}
+        {isOwner && <div className="mt-2"><ProfileImageUpload profileImage={user?.profileImage} /></div>}
       </div>
       <div className="flex-1 w-full flex flex-col justify-center md:justify-start items-center md:items-start">
         <h1 className="text-4xl font-black tracking-tight lowercase mb-2">{user.username}</h1>
