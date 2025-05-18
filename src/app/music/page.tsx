@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import ReviewCard from '@/components/ReviewCard';
+import ReviewCardDisplay from '@/components/ReviewCardDisplay';
 import SearchBar from '@/components/SearchBar';
 import SortSelect from '@/components/SortSelect';
 import { Review } from '@/types/review';
@@ -94,7 +94,7 @@ export default function MusicPage() {
             {sortedAndFilteredReviews.length > 0 ? (
               sortedAndFilteredReviews.map((review) => (
                 <ReviewLink key={review.id} review={review}>
-                  <ReviewCard review={review} />
+                  <ReviewCardDisplay review={review} />
                 </ReviewLink>
               ))
             ) : (
