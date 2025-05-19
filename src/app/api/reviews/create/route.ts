@@ -9,10 +9,12 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
+      console.error('No session or user found');
       return NextResponse.json({ message: 'authentication required' }, { status: 401 });
     }
 
     const { title, category, creator, year: yearStr, rating: ratingStr, review } = await req.json();
+    console.log('Received review creation request:', { title, category, creator, yearStr, ratingStr, review });
 
     // Validate input
     if (!title || !category || !creator || !yearStr || !ratingStr || !review) {
@@ -122,6 +124,7 @@ export async function POST(req: NextRequest) {
         }
       }
     });
+    console.log('Review created in database:', newReview);
 
     return NextResponse.json(newReview, { status: 201 });
 
