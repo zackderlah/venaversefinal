@@ -1,12 +1,21 @@
+"use client";
+
 import { Review } from '@/types/review';
 import MediaTag from './MediaTag';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 interface ReviewCardDisplayProps {
   review: Review;
 }
 
 export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
+  const { data: session, status } = useSession();
+  const currentAuthenticatedUser = session?.user;
+  const authLoading = status === 'loading';
+  const router = useRouter();
+
   function capitalizeTitle(title: string) {
     return title.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
   }
@@ -14,6 +23,29 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
     if (review.length <= maxLength) return review;
     return review.slice(0, maxLength) + '...';
   }
+
+  const canEdit = !authLoading && currentAuthenticatedUser && review.userId === Number(currentAuthenticatedUser.id);
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (window.confirm('are you sure you want to delete this review? this action cannot be undone.')) {
+      try {
+        const res = await fetch(`/api/reviews/${review.id}`, {
+          method: 'DELETE',
+        });
+        if (res.ok) {
+          window.location.reload();
+        } else {
+          const errorData = await res.json();
+          alert(`Failed to delete review: ${errorData.message || 'Unknown error'}`);
+        }
+      } catch (error) {
+        console.error('Error deleting review:', error);
+        alert('An error occurred while deleting the review.');
+      }
+    }
+  };
+
   return (
     <div id={`review-${review.id}`} className="review-card">
       <div className="flex flex-row gap-4 items-start">
@@ -60,6 +92,23 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
               day: 'numeric'
             })}
           </div>
+          {canEdit && (
+            <div className="mt-2 flex space-x-3">
+              <Link 
+                href={`/reviews/${review.id}/edit`}
+                onClick={e => e.stopPropagation()}
+                className="text-xs lowercase font-semibold text-blue-600 hover:underline"
+              >
+                edit review
+              </Link>
+              <button 
+                onClick={handleDelete}
+                className="text-xs lowercase font-semibold text-red-600 hover:underline"
+              >
+                delete
+              </button>
+            </div>
+          )}
         </div>
         <span className="rating shrink-0 ml-2 text-3xl font-extrabold mt-1">{review.rating}/10</span>
       </div>
