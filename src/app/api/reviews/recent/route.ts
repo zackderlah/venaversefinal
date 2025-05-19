@@ -7,5 +7,9 @@ export async function GET(req: NextRequest) {
     take: 10,
     include: { user: { select: { username: true, id: true, profileImage: true } } },
   });
-  return NextResponse.json(reviews);
+  return NextResponse.json(reviews, {
+    headers: {
+      'Cache-Control': 'no-store, max-age=0',
+    },
+  });
 } 
