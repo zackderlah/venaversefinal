@@ -16,7 +16,7 @@ export default function BooksPage() {
   const [sortBy, setSortBy] = useState('date-desc');
   const [allBookReviews, setAllBookReviews] = useState<Review[]>([]);
   const [reviewsLoading, setReviewsLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<'all' | 'my'>('all');
+  const [viewMode, setViewMode] = useState<'all' | 'my'>('my');
   
   useEffect(() => {
     fetch('/api/reviews/books')

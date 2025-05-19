@@ -16,7 +16,7 @@ export default function FilmsPage() {
   const [sortBy, setSortBy] = useState('date-desc');
   const [allFilmReviews, setAllFilmReviews] = useState<Review[]>([]);
   const [reviewsLoading, setReviewsLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<'all' | 'my'>('all');
+  const [viewMode, setViewMode] = useState<'all' | 'my'>('my');
   
   useEffect(() => {
     fetch('/api/reviews/films')

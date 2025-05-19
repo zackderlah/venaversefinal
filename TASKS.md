@@ -15,6 +15,8 @@
 - [x] Display reviews on relevant pages
 - [x] Edit own reviews
 - [x] Delete own reviews
+- [ ] Make the review field optional when creating or editing a review
+- [ ] Show 'my [category] reviews' by default when navigating to a category page
 
 ## 4. Currently Experiencing Section
 - [x] Add "currently experiencing" form (type, title, creator, year, seasons, progress)

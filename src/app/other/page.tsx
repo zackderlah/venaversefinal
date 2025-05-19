@@ -16,7 +16,7 @@ export default function OtherPage() {
   const [sortBy, setSortBy] = useState('date-desc');
   const [allOtherReviews, setAllOtherReviews] = useState<Review[]>([]);
   const [reviewsLoading, setReviewsLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<'all' | 'my'>('all');
+  const [viewMode, setViewMode] = useState<'all' | 'my'>('my');
   
   useEffect(() => {
     fetch('/api/reviews/other')
