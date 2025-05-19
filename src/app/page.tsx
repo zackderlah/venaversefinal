@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link'
-import { reviews } from '@/data/reviews'
 import ReviewCard from '@/components/ReviewCard'
 import ReviewLink from '@/components/ReviewLink'
 import { Masonry } from 'masonic';
