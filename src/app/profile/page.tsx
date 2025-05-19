@@ -71,7 +71,7 @@ export default async function ProfilePage() {
           )}
         </div>
         <div className="mt-4 text-right">
-          <Link href="/reviews" className="text-xs font-bold underline text-blue-600 dark:text-blue-400 lowercase">view all reviews</Link>
+          {/* Removed 'view all reviews' link */}
         </div>
       </div>
     </div>

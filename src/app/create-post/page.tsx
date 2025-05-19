@@ -293,7 +293,7 @@ export default function CreatePostPage() {
 
     // Basic validation
     for (const key in formData) {
-      if (formData[key as keyof typeof formData].trim() === '') {
+      if (key !== 'review' && formData[key as keyof typeof formData].trim() === '') {
         setError(`please fill in the ${key} field.`);
         setIsSubmitting(false);
         return;
@@ -424,7 +424,7 @@ export default function CreatePostPage() {
 
         <div>
           <label htmlFor="review" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">review</label>
-          <textarea name="review" id="review" value={formData.review} onChange={handleChange} rows={6} required className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+          <textarea name="review" id="review" value={formData.review} onChange={handleChange} rows={6} className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
         </div>
 
         {error && <p className="text-red-500 text-sm lowercase">{error}</p>}

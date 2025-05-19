@@ -32,8 +32,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     const { title, category, creator, year: yearStr, rating: ratingStr, review } = await req.json();
 
     // Validate input
-    if (!title || !category || !creator || !yearStr || !ratingStr || !review) {
-      return NextResponse.json({ message: 'all fields are required' }, { status: 400 });
+    if (!title || !category || !creator || !yearStr || !ratingStr) {
+      return NextResponse.json({ message: 'all fields except review are required' }, { status: 400 });
     }
 
     const year = parseInt(yearStr as string);

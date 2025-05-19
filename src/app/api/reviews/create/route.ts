@@ -17,8 +17,8 @@ export async function POST(req: NextRequest) {
     console.log('Received review creation request:', { title, category, creator, yearStr, ratingStr, review });
 
     // Validate input
-    if (!title || !category || !creator || !yearStr || !ratingStr || !review) {
-      return NextResponse.json({ message: 'all fields are required' }, { status: 400 });
+    if (!title || !category || !creator || !yearStr || !ratingStr) {
+      return NextResponse.json({ message: 'all fields except review are required' }, { status: 400 });
     }
 
     const year = parseInt(yearStr as string);

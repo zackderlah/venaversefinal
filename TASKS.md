@@ -43,3 +43,6 @@
 - [x] Add validation for form fields (e.g., year, rating)
 - [x] Redirect after successful actions (e.g., after creating a review)
 - [x] Handle edge cases (e.g., no results, API errors)
+
+## 9. Background Cycling
+- [ ] Allow users to cycle through all wallpapers in the public folder starting with "bg" using left/right arrow keys, and persist the selected background across refreshes and navigation
