@@ -145,19 +145,19 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
             results = allResults.slice(0, 3);
           }
         } else if (form.type === 'music') {
-          let url = `https://itunes.apple.com/search?term=${encodeURIComponent(searchValue)}&entity=album&limit=10`;
+          let url = `https://itunes.apple.com/search?term=${encodeURIComponent(searchValue)}&entity=album,song&limit=10`;
           if (form.creator.trim().length > 0) {
-            url = `https://itunes.apple.com/search?term=${encodeURIComponent(form.creator + ' ' + searchValue)}&entity=album&limit=10`;
+            url = `https://itunes.apple.com/search?term=${encodeURIComponent(form.creator + ' ' + searchValue)}&entity=album,song&limit=10`;
           }
           const res = await fetch(url);
           const data = await res.json();
           let allResults = [];
           if (data.results) {
             allResults = data.results.map((m: any) => ({
-              title: m.collectionName,
+              title: m.trackName || m.collectionName,
               creator: m.artistName,
               poster: m.artworkUrl100,
-              year: m.releaseDate ? m.releaseDate.slice(0, 4) : '',
+              year: (m.releaseDate || m.collectionReleaseDate) ? (m.releaseDate || m.collectionReleaseDate).slice(0, 4) : '',
             }));
             if (form.creator.trim().length > 0) {
               const creatorLower = form.creator.trim().toLowerCase();

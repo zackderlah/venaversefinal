@@ -113,19 +113,19 @@ export default function CreatePostPage() {
           }
         } else if (formData.category === 'music') {
           // iTunes API: Use both artist and title if creator is filled
-          let url = `https://itunes.apple.com/search?term=${encodeURIComponent(searchValue)}&entity=album&limit=10`;
+          let url = `https://itunes.apple.com/search?term=${encodeURIComponent(searchValue)}&entity=album,song&limit=10`;
           if (formData.creator.trim().length > 0) {
-            url = `https://itunes.apple.com/search?term=${encodeURIComponent(formData.creator + ' ' + searchValue)}&entity=album&limit=10`;
+            url = `https://itunes.apple.com/search?term=${encodeURIComponent(formData.creator + ' ' + searchValue)}&entity=album,song&limit=10`;
           }
           const res = await fetch(url);
           const data = await res.json();
           let allResults = [];
           if (data.results) {
             allResults = data.results.map((m: any) => ({
-              title: m.collectionName,
+              title: m.trackName || m.collectionName,
               creator: m.artistName,
               poster: m.artworkUrl100,
-              year: m.releaseDate ? m.releaseDate.slice(0, 4) : '',
+              year: (m.releaseDate || m.collectionReleaseDate) ? (m.releaseDate || m.collectionReleaseDate).slice(0, 4) : '',
             }));
             // If creator is filled, filter by artist
             if (formData.creator.trim().length > 0) {
