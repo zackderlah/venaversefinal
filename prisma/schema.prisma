@@ -1,12 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
-  // output   = "../src/generated/prisma"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
@@ -16,56 +9,74 @@ datasource db {
 }
 
 model User {
-  id           Int       @id @default(autoincrement())
-  email        String    @unique
-  username     String    @unique
-  password     String
-  profileImage String?   // URL to the profile image
-  bio          String?   // User bio
-  favoriteReviewId Int?  @unique // ID of the favorite review
-  favoriteReview   Review? @relation("FavoriteReview", fields: [favoriteReviewId], references: [id])
-  recentActivity   Json?  // Array of recent activity objects
-  isAdmin      Boolean   @default(false)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  reviews      Review[]
-  comments     Comment[]
-  profileCommentsAuthored ProfileComment[] @relation("ProfileCommentAuthor")
-  profileCommentsReceived ProfileComment[] @relation("ProfileCommentTarget")
+  id                      Int                     @id @default(autoincrement())
+  username                String                  @unique
+  password                String
+  isAdmin                 Boolean                 @default(false)
+  createdAt               DateTime                @default(now())
+  email                   String                  @unique
+  updatedAt               DateTime                @updatedAt
+  profileImage            String?
+  bio                     String?
+  favoriteReviewId        Int?                    @unique
+  recentActivity          Json?
+  comments                Comment[]
+  currentlyExperiencing   CurrentlyExperiencing[]
+  profileCommentsReceived ProfileComment[]        @relation("ProfileCommentTarget")
+  profileCommentsAuthored ProfileComment[]        @relation("ProfileCommentAuthor")
+  reviews                 Review[]
+  favoriteReview          Review?                 @relation("FavoriteReview", fields: [favoriteReviewId], references: [id])
 }
 
 model Review {
-  id        Int      @id @default(autoincrement())
-  title     String
-  category  String
-  creator   String
-  year      Int
-  rating    Int
-  review    String
-  date      DateTime
-  imageUrl  String?
-  user      User     @relation(fields: [userId], references: [id])
-  userId    Int
-  comments  Comment[]
-  favoritedBy User? @relation("FavoriteReview")
+  id          Int       @id @default(autoincrement())
+  title       String
+  category    String
+  creator     String
+  year        Int
+  rating      Float
+  review      String
+  date        DateTime
+  imageUrl    String?
+  userId      Int
+  comments    Comment[]
+  user        User      @relation(fields: [userId], references: [id])
+  favoritedBy User?     @relation("FavoriteReview")
 }
 
 model Comment {
   id        Int      @id @default(autoincrement())
   text      String
   createdAt DateTime @default(now())
-  review    Review   @relation(fields: [reviewId], references: [id])
   reviewId  Int
-  user      User     @relation(fields: [userId], references: [id])
   userId    Int
+  review    Review   @relation(fields: [reviewId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model ProfileComment {
   id        Int      @id @default(autoincrement())
   text      String
   createdAt DateTime @default(now())
-  user      User     @relation("ProfileCommentAuthor", fields: [userId], references: [id])
   userId    Int
-  profile   User     @relation("ProfileCommentTarget", fields: [profileId], references: [id])
   profileId Int
+  profile   User     @relation("ProfileCommentTarget", fields: [profileId], references: [id])
+  user      User     @relation("ProfileCommentAuthor", fields: [userId], references: [id])
+}
+
+model CurrentlyExperiencing {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  title     String
+  type      String
+  progress  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  creator   String
+  imageUrl  String?
+  seasons   String?  @db.VarChar(191)
+  year      String?  @db.VarChar(191)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

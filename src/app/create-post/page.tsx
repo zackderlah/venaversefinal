@@ -113,7 +113,7 @@ export default function CreatePostPage() {
 
         <div>
           <label htmlFor="rating" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">rating (1-10)</label>
-          <input type="number" name="rating" id="rating" value={formData.rating} onChange={handleChange} required min="1" max="10" className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500" />
+          <input type="number" name="rating" id="rating" value={formData.rating} onChange={handleChange} required min="1" max="10" step="0.1" className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500" />
         </div>
 
         <div>

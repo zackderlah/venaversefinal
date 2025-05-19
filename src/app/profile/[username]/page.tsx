@@ -6,6 +6,7 @@ import ReviewCardDisplay from "@/components/ReviewCardDisplay";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ProfileCommentSection from '@/components/ProfileCommentSection';
+import CurrentlyExperiencingSection from '@/components/CurrentlyExperiencingSection';
 
 export default async function UserProfilePage({ params }: { params: { username: string } }) {
   const session = await getServerSession(authOptions);
@@ -17,16 +18,29 @@ export default async function UserProfilePage({ params }: { params: { username: 
         orderBy: { date: 'desc' },
         include: { user: { select: { id: true, username: true, profileImage: true } } },
       },
+      currentlyExperiencing: {
+        orderBy: { updatedAt: 'desc' },
+      },
     },
   });
   if (!user) return notFound();
 
-  const isOwner = session?.user?.name === user.username;
+  const isOwner = Number(session?.user?.id) === user.id;
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
       {/* Profile Header */}
       <ProfileHeaderClient user={user} session={session} isOwner={isOwner} />
+
+      {/* Currently Experiencing */}
+      <div className="review-card">
+        <h2 className="text-2xl font-black tracking-tight lowercase mb-2">currently experiencing</h2>
+        {user ? (
+          <CurrentlyExperiencingSection profileId={user.id} />
+        ) : (
+          <div className="text-gray-400 lowercase">user not found</div>
+        )}
+      </div>
 
       {/* Profile Comments */}
       <div className="review-card">

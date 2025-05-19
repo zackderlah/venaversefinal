@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 interface ProfileCommentSectionProps {
   profileId: number;
@@ -151,7 +152,9 @@ export default function ProfileCommentSection({ profileId }: ProfileCommentSecti
                 ) : (
                   <span className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-xs text-gray-500 font-bold">{comment.user.username[0].toUpperCase()}</span>
                 )}
-                <span className="font-bold text-xs lowercase">{comment.user.username}</span>
+                <Link href={`/profile/${comment.user.username}`} className="font-bold text-xs lowercase hover:text-blue-600 dark:hover:text-blue-400">
+                  {comment.user.username}
+                </Link>
                 <span className="text-xs text-gray-400 ml-2">{new Date(comment.createdAt).toLocaleDateString()}</span>
                 {canDelete(comment) && (
                   <button
