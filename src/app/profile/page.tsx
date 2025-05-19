@@ -19,7 +19,10 @@ export default async function ProfilePage() {
     include: {
       reviews: {
         orderBy: { date: 'desc' },
-        include: { user: { select: { id: true, username: true, profileImage: true } } },
+        include: {
+          user: { select: { id: true, username: true, profileImage: true } },
+          _count: { select: { comments: true } },
+        },
       },
       currentlyExperiencing: {
         orderBy: { updatedAt: 'desc' },
@@ -59,6 +62,7 @@ export default async function ProfilePage() {
                 <ReviewCardDisplay
                   review={{
                     ...review,
+                    commentCount: review._count?.comments ?? 0,
                     category: review.category as import("@/types/review").ReviewCategory,
                     date: review.date.toISOString(),
                     imageUrl: review.imageUrl ?? undefined,

@@ -11,7 +11,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   if (isNaN(reviewId)) return NextResponse.json([], { status: 400 });
   const comments = await prisma.comment.findMany({
     where: { reviewId },
-    include: { user: { select: { username: true, id: true } } },
+    include: { user: { select: { username: true, id: true, profileImage: true } } },
     orderBy: { createdAt: 'asc' },
   });
   return NextResponse.json(comments);
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       reviewId,
       userId: Number(session.user.id),
     },
-    include: { user: { select: { username: true, id: true } } },
+    include: { user: { select: { username: true, id: true, profileImage: true } } },
   });
   return NextResponse.json(comment);
 }

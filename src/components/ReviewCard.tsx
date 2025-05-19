@@ -110,6 +110,12 @@ export default function ReviewCard({ review }: ReviewCardProps) {
           day: 'numeric'
         })}
       </div>
+      {typeof review.commentCount === 'number' && (
+        <div className="flex items-center gap-1 mt-2 text-xs text-gray-500">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-4-.8L3 20l.8-4A8.96 8.96 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+          {review.commentCount} comment{review.commentCount === 1 ? '' : 's'}
+        </div>
+      )}
       {canEdit && (
         <div className="mt-2 flex space-x-3">
           <Link 

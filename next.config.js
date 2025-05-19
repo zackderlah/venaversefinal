@@ -8,6 +8,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'covers.openlibrary.org' },
       { protocol: 'https', hostname: 's4.anilist.co' },
     ],
+    domains: ['res.cloudinary.com'],
   },
 };
 module.exports = nextConfig; 

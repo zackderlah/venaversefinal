@@ -7,9 +7,13 @@ export async function GET(req: NextRequest) {
   const reviews = await prisma.review.findMany({
     orderBy: { date: 'desc' },
     take: 10,
-    include: { user: { select: { id: true, username: true, profileImage: true } } },
+    include: {
+      user: { select: { id: true, username: true, profileImage: true } },
+      _count: { select: { comments: true } },
+    },
   });
-  return NextResponse.json(reviews, {
+  const reviewsWithCommentCount = reviews.map(r => ({ ...r, commentCount: r._count.comments }));
+  return NextResponse.json(reviewsWithCommentCount, {
     headers: {
       'Cache-Control': 'no-store, max-age=0',
     },

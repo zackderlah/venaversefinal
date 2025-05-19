@@ -5,7 +5,11 @@ export async function GET(req: NextRequest) {
   const reviews = await prisma.review.findMany({
     where: { category: 'other' }, // Changed category to 'other'
     orderBy: { date: 'desc' },
-    include: { user: { select: { username: true, id: true, profileImage: true } } },
+    include: {
+      user: { select: { username: true, id: true, profileImage: true } },
+      _count: { select: { comments: true } },
+    },
   });
-  return NextResponse.json(reviews);
+  const reviewsWithCommentCount = reviews.map(r => ({ ...r, commentCount: r._count.comments }));
+  return NextResponse.json(reviewsWithCommentCount);
 } 

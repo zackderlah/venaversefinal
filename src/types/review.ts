@@ -16,4 +16,5 @@ export interface Review {
     profileImage?: string | null;
   };
   userId: number;
+  commentCount?: number;
 } 

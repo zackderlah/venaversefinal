@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from 'next-auth/react';
+import Link from "next/link";
+import Image from "next/image";
 
 interface Comment {
   id: number;
   text: string;
   createdAt: string;
-  user: { id: number; username: string };
+  user: { id: number; username: string; profileImage?: string | null };
 }
 
 export default function CommentSection({ reviewId }: { reviewId: number }) {
@@ -81,8 +83,26 @@ export default function CommentSection({ reviewId }: { reviewId: number }) {
             comments.map((comment) => (
               <div key={comment.id} className="border-b border-gray-200 pb-2 flex items-start justify-between">
                 <div>
-                  <span className="font-semibold text-sm text-black dark:text-white mr-2">@{comment.user.username}</span>
-                  <span className="text-xs text-gray-500">{new Date(comment.createdAt).toLocaleString()}</span>
+                  <Link href={`/profile/${comment.user.username}`} className="inline-flex items-center gap-2 group">
+                    {comment.user.profileImage ? (
+                      <Image
+                        src={comment.user.profileImage}
+                        alt={comment.user.username}
+                        width={24}
+                        height={24}
+                        className="rounded-full object-cover border border-black dark:border-white"
+                        priority
+                      />
+                    ) : (
+                      <span className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-xs text-gray-500 font-bold">
+                        {comment.user.username[0].toUpperCase()}
+                      </span>
+                    )}
+                    <span className="font-semibold text-sm text-black dark:text-white underline group-hover:text-blue-600 lowercase">
+                      {comment.user.username}
+                    </span>
+                  </Link>
+                  <span className="text-xs text-gray-500 ml-2">{new Date(comment.createdAt).toLocaleString()}</span>
                   <div className="text-gray-700 dark:text-gray-200 mt-1 text-sm">{comment.text}</div>
                 </div>
                 {user && comment.user.id === Number(user.id) && (
