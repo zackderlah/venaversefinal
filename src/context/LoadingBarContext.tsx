@@ -1,8 +1,7 @@
 "use client";
 
-import { createContext, useContext, useCallback } from 'react';
-import NProgress from 'nprogress';
-import 'nprogress/nprogress.css';
+import { createContext, useContext, useCallback, useState } from 'react';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface LoadingBarContextType {
   start: () => void;
@@ -15,11 +14,14 @@ const LoadingBarContext = createContext<LoadingBarContextType>({
 });
 
 export function LoadingBarProvider({ children }: { children: React.ReactNode }) {
-  const start = useCallback(() => NProgress.start(), []);
-  const done = useCallback(() => NProgress.done(), []);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const start = useCallback(() => setIsLoading(true), []);
+  const done = useCallback(() => setIsLoading(false), []);
 
   return (
     <LoadingBarContext.Provider value={{ start, done }}>
+      {isLoading && <LoadingSpinner />}
       {children}
     </LoadingBarContext.Provider>
   );

@@ -77,7 +77,7 @@ export default function MusicPage() {
         <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg lowercase">
           {viewMode === 'my'
             ? (currentUser ? `a collection of music reviews written by you.` : `please log in to see your music reviews.`)
-            : `a collection of thoughts and ratings for music i've listened to.`}
+            : `a collection of thoughts and ratings for music.`}
         </p>
         <div className="space-y-8">
           <SearchBar value={search} onChange={setSearch} placeholder="search music by title..." />
@@ -86,27 +86,25 @@ export default function MusicPage() {
           </div>
         </div>
       </section>
-      <section>
-        {authLoading || reviewsLoading ? (
-          <div className="text-center text-gray-500 lowercase">loading...</div>
-        ) : (
-          <div className="space-y-4">
-            {sortedAndFilteredReviews.length > 0 ? (
-              sortedAndFilteredReviews.map((review) => (
-                <ReviewLink key={review.id} review={review}>
-                  <ReviewCardDisplay review={review} />
-                </ReviewLink>
-              ))
-            ) : (
-              <p className="text-center text-gray-500 lowercase">
-                {viewMode === 'my' && !currentUser
-                  ? 'please log in to see your reviews.'
-                  : (viewMode === 'my' && currentUser ? 'you haven\'t written any music reviews yet.' : 'no music reviews found.')}
-              </p>
-            )}
-          </div>
-        )}
-      </section>
+      {authLoading || reviewsLoading ? (
+        <div className="text-center text-gray-500 lowercase">loading...</div>
+      ) : (
+        <div className="space-y-4">
+          {sortedAndFilteredReviews.length > 0 ? (
+            sortedAndFilteredReviews.map((review) => (
+              <ReviewLink key={review.id} review={review}>
+                <ReviewCardDisplay review={review} />
+              </ReviewLink>
+            ))
+          ) : (
+            <p className="text-center text-gray-500 lowercase">
+              {viewMode === 'my' && !currentUser
+                ? 'please log in to see your reviews.'
+                : (viewMode === 'my' && currentUser ? 'you haven\'t written any music reviews yet.' : 'no music reviews found.')}
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 } 

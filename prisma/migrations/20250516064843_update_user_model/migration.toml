@@ -1,4 +1,0 @@
-# This is an empty migration.
-
-migration_name = "20250516064843_update_user_model"
-checksum = "1234567890" 

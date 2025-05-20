@@ -59,6 +59,9 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
   const titleInputRef = useRef<HTMLInputElement | null>(null);
   const creatorInputRef = useRef<HTMLInputElement | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -334,15 +337,29 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
   }
 
   async function handleDelete(id: number) {
-    if (!window.confirm('Delete this item?')) return;
+    setDeleteTarget(id);
+    setShowDeleteModal(true);
+  }
+
+  async function confirmDelete() {
+    if (deleteTarget == null) return;
+    setDeleting(true);
     setLoading(true);
-    await fetch(`/api/currently-experiencing?id=${id}`, { method: 'DELETE' });
+    await fetch(`/api/currently-experiencing?id=${deleteTarget}`, { method: 'DELETE' });
+    setShowDeleteModal(false);
+    setDeleteTarget(null);
+    setDeleting(false);
     fetch(`/api/currently-experiencing?userId=${profileId}`)
       .then(res => res.json())
       .then(data => {
         setItems(data.items || []);
         setLoading(false);
       });
+  }
+
+  function cancelDelete() {
+    setShowDeleteModal(false);
+    setDeleteTarget(null);
   }
 
   return (
@@ -509,6 +526,30 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
             </li>
           ))}
         </ul>
+      )}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white dark:bg-[#18181b] rounded-lg shadow-lg p-6 w-full max-w-xs text-center">
+            <div className="mb-4 text-lg font-bold text-gray-800 dark:text-gray-100 lowercase">delete item?</div>
+            <div className="mb-6 text-gray-600 dark:text-gray-300 text-sm">Are you sure you want to delete this item?</div>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-1 rounded text-xs font-bold lowercase border-2 border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-900 transition-colors"
+                disabled={deleting}
+              >
+                {deleting ? 'deleting...' : 'delete'}
+              </button>
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-1 rounded text-xs font-bold lowercase border-2 border-gray-400 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                disabled={deleting}
+              >
+                cancel
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -8,6 +8,7 @@ import { PrismaClient } from '@prisma/client';
 import CommentSection from '@/components/CommentSection';
 import Image from 'next/image';
 import MediaTag from '@/components/MediaTag';
+import ReviewActionsClient from '@/components/ReviewActionsClient';
 
 function capitalizeTitle(title: string) {
   return title.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
@@ -21,6 +22,8 @@ export default function ReviewPage() {
   const { user: currentUser, loading: authLoading } = useAuth();
   const [review, setReview] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     async function fetchReview() {
@@ -42,22 +45,32 @@ export default function ReviewPage() {
   const canEdit = !authLoading && currentUser && review.userId === currentUser.id;
 
   const handleDelete = async () => {
-    if (window.confirm('are you sure you want to delete this review? this action cannot be undone.')) {
-      try {
-        const res = await fetch(`/api/reviews/${review.id}`, {
-          method: 'DELETE',
-        });
-        if (res.ok) {
-          router.push('/');
-        } else {
-          const errorData = await res.json();
-          alert(`Failed to delete review: ${errorData.message || 'Unknown error'}`);
-        }
-      } catch (error) {
-        console.error('Error deleting review:', error);
-        alert('An error occurred while deleting the review.');
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/reviews/${review.id}`, {
+        method: 'DELETE',
+      });
+      setShowDeleteModal(false);
+      setDeleting(false);
+      if (res.ok) {
+        router.push('/');
+      } else {
+        const errorData = await res.json();
+        alert(`Failed to delete review: ${errorData.message || 'Unknown error'}`);
       }
+    } catch (error) {
+      setShowDeleteModal(false);
+      setDeleting(false);
+      alert('An error occurred while deleting the review.');
     }
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
   };
 
   const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(review.title + ' ' + review.creator)}`;
@@ -128,22 +141,7 @@ export default function ReviewPage() {
                 day: 'numeric',
               })}
             </div>
-            {canEdit && (
-              <div className="mt-2 flex space-x-3">
-                <Link 
-                  href={`/reviews/${review.id}/edit`}
-                  className="text-xs lowercase font-semibold text-blue-600 hover:underline"
-                >
-                  edit review
-                </Link>
-                <button 
-                  onClick={handleDelete}
-                  className="text-xs lowercase font-semibold text-red-600 hover:underline"
-                >
-                  delete
-                </button>
-              </div>
-            )}
+            <ReviewActionsClient review={review} />
           </div>
         </div>
         <CommentSection reviewId={review.id} />

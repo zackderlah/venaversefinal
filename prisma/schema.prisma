@@ -26,6 +26,8 @@ model User {
   profileCommentsAuthored ProfileComment[]        @relation("ProfileCommentAuthor")
   reviews                 Review[]
   favoriteReview          Review?                 @relation("FavoriteReview", fields: [favoriteReviewId], references: [id])
+  selectedTitle           String?                 @db.VarChar(191)
+  selectedTitleCategory   String?                 @db.VarChar(191)
 }
 
 model Review {

@@ -30,6 +30,8 @@ export default function ProfileCommentSection({ profileId }: ProfileCommentSecti
   const [posting, setPosting] = useState(false);
   const [error, setError] = useState('');
   const COMMENTS_PER_PAGE = 5;
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -80,12 +82,19 @@ export default function ProfileCommentSection({ profileId }: ProfileCommentSecti
   }
 
   async function handleDelete(commentId: number) {
-    if (!window.confirm('Delete this comment?')) return;
+    setDeleteTarget(commentId);
+    setShowDeleteModal(true);
+  }
+
+  async function confirmDelete() {
+    if (deleteTarget == null) return;
     const res = await fetch('/api/profile-comments', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ commentId }),
+      body: JSON.stringify({ commentId: deleteTarget }),
     });
+    setShowDeleteModal(false);
+    setDeleteTarget(null);
     if (res.ok) {
       // Refresh comments
       setLoading(true);
@@ -106,6 +115,11 @@ export default function ProfileCommentSection({ profileId }: ProfileCommentSecti
       }
       setError((data as any).error || 'Failed to delete comment');
     }
+  }
+
+  function cancelDelete() {
+    setShowDeleteModal(false);
+    setDeleteTarget(null);
   }
 
   const canDelete = (comment: ProfileComment) => {
@@ -130,7 +144,7 @@ export default function ProfileCommentSection({ profileId }: ProfileCommentSecti
           />
           <button
             type="submit"
-            className="px-3 py-1 text-xs font-bold border-2 border-black dark:border-white rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 lowercase hover:bg-blue-200 hover:dark:bg-blue-800 transition-all"
+            className="self-start text-xs font-bold text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 lowercase"
             disabled={posting || !newComment.trim()}
           >
             {posting ? 'posting...' : 'post comment'}
@@ -188,6 +202,28 @@ export default function ProfileCommentSection({ profileId }: ProfileCommentSecti
           >
             next
           </button>
+        </div>
+      )}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white dark:bg-[#18181b] rounded-lg shadow-lg p-6 w-full max-w-xs text-center">
+            <div className="mb-4 text-lg font-bold text-gray-800 dark:text-gray-100 lowercase">delete comment?</div>
+            <div className="mb-6 text-gray-600 dark:text-gray-300 text-sm">Are you sure you want to delete this comment?</div>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-1 rounded text-xs font-bold lowercase border-2 border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-900 transition-colors"
+              >
+                delete
+              </button>
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-1 rounded text-xs font-bold lowercase border-2 border-gray-400 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                cancel
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

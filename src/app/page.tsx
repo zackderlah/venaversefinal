@@ -5,6 +5,7 @@ import Link from 'next/link'
 import ReviewCard from '@/components/ReviewCard'
 import ReviewLink from '@/components/ReviewLink'
 import { Masonry } from 'masonic';
+import LoadingSpinner from '@/components/LoadingSpinner'
 
 export default function Home() {
   const [recentReviews, setRecentReviews] = useState<any[]>([]);
@@ -41,7 +42,7 @@ export default function Home() {
           <h2 className="text-4xl font-black tracking-tight lowercase">recent reviews</h2>
         </div>
         {loading ? (
-          <div className="text-center text-gray-500 lowercase">loading...</div>
+          <LoadingSpinner />
         ) : (
           <Masonry
             items={recentReviews}

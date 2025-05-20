@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from 'next-auth/react';
 import Link from "next/link";
 import Image from "next/image";
+import LoadingSpinner from "./LoadingSpinner";
 
 interface Comment {
   id: number;
@@ -21,6 +22,8 @@ export default function CommentSection({ reviewId }: { reviewId: number }) {
   const [loading, setLoading] = useState(true);
   const [posting, setPosting] = useState(false);
   const [error, setError] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
 
   useEffect(() => {
     fetchComments();
@@ -57,12 +60,19 @@ export default function CommentSection({ reviewId }: { reviewId: number }) {
   }
 
   async function handleDelete(commentId: number) {
-    if (!window.confirm("Delete this comment?")) return;
+    setDeleteTarget(commentId);
+    setShowDeleteModal(true);
+  }
+
+  async function confirmDelete() {
+    if (deleteTarget == null) return;
     const res = await fetch(`/api/reviews/${reviewId}/comments`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ commentId }),
+      body: JSON.stringify({ commentId: deleteTarget }),
     });
+    setShowDeleteModal(false);
+    setDeleteTarget(null);
     if (res.ok) {
       fetchComments();
     } else {
@@ -70,11 +80,16 @@ export default function CommentSection({ reviewId }: { reviewId: number }) {
     }
   }
 
+  function cancelDelete() {
+    setShowDeleteModal(false);
+    setDeleteTarget(null);
+  }
+
   return (
     <div className="mt-12">
       <h2 className="text-xl font-bold mb-4">Comments</h2>
-      {loading ? (
-        <div className="text-gray-500">Loading comments...</div>
+      {authLoading || loading ? (
+        <LoadingSpinner />
       ) : (
         <div className="space-y-4 mb-6">
           {comments.length === 0 ? (
@@ -132,9 +147,8 @@ export default function CommentSection({ reviewId }: { reviewId: number }) {
           {error && <div className="text-red-600 text-xs">{error}</div>}
           <button
             type="submit"
-            className="self-end px-6 py-2 border-2 border-black dark:border-white bg-black text-white dark:bg-white dark:text-black rounded-md text-xs font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:bg-gray-900 hover:dark:bg-gray-100 transition-all pixel-bar"
+            className="self-start text-xs font-bold text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 lowercase"
             disabled={posting || !newComment.trim()}
-            style={{ fontFamily: 'monospace', letterSpacing: '1px', imageRendering: 'pixelated', textTransform: 'lowercase' }}
           >
             {posting ? "posting..." : "post comment"}
           </button>
@@ -142,6 +156,28 @@ export default function CommentSection({ reviewId }: { reviewId: number }) {
       ) : !authLoading ? (
         <div className="text-gray-500 text-sm">Log in to post a comment.</div>
       ) : null}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white dark:bg-[#18181b] rounded-lg shadow-lg p-6 w-full max-w-xs text-center">
+            <div className="mb-4 text-lg font-bold text-gray-800 dark:text-gray-100 lowercase">delete comment?</div>
+            <div className="mb-6 text-gray-600 dark:text-gray-300 text-sm">Are you sure you want to delete this comment?</div>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-1 rounded text-xs font-bold lowercase border-2 border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-900 transition-colors"
+              >
+                delete
+              </button>
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-1 rounded text-xs font-bold lowercase border-2 border-gray-400 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
