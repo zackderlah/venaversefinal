@@ -147,6 +147,28 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
             }
             results = allResults.slice(0, 3);
           }
+        } else if (form.type === 'tv') {
+          let url = `https://www.omdbapi.com/?apikey=3c1416fe&s=${encodeURIComponent(searchValue)}&type=series`;
+          const res = await fetch(url);
+          const data = await res.json();
+          if (data.Search) {
+            const detailPromises = data.Search.slice(0, 30).map(async (m: any) => {
+              const detailRes = await fetch(`https://www.omdbapi.com/?apikey=3c1416fe&i=${m.imdbID}`);
+              const detail = await detailRes.json();
+              return {
+                title: m.Title,
+                creator: detail.Writer || detail.Director || '',
+                poster: m.Poster !== 'N/A' ? m.Poster : undefined,
+                year: m.Year,
+              };
+            });
+            let allResults = await Promise.all(detailPromises);
+            if (form.creator.trim().length > 0) {
+              const creatorLower = form.creator.trim().toLowerCase();
+              allResults = allResults.filter((r: any) => r.creator.toLowerCase().includes(creatorLower));
+            }
+            results = allResults.slice(0, 3);
+          }
         } else if (form.type === 'music') {
           let url = `https://itunes.apple.com/search?term=${encodeURIComponent(searchValue)}&entity=album,song&limit=10`;
           if (form.creator.trim().length > 0) {
@@ -215,6 +237,30 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
             directors = Object.entries(directorMap).map(([name, movies]) => ({ name, movies }));
           }
           results = directors.slice(0, 5).map(d => ({ creator: d.name, works: d.movies }));
+        } else if (form.type === 'tv') {
+          const res = await fetch(`https://www.omdbapi.com/?apikey=3c1416fe&s=${encodeURIComponent(searchValue)}&type=series`);
+          const data = await res.json();
+          let creators: { name: string; shows: string[] }[] = [];
+          if (data.Search) {
+            const detailPromises = data.Search.slice(0, 10).map(async (m: any) => {
+              const detailRes = await fetch(`https://www.omdbapi.com/?apikey=3c1416fe&i=${m.imdbID}`);
+              const detail = await detailRes.json();
+              return { creator: detail.Writer || detail.Director, title: m.Title };
+            });
+            const details = await Promise.all(detailPromises);
+            const creatorMap: Record<string, string[]> = {};
+            details.forEach(({ creator, title }) => {
+              if (creator) {
+                creator.split(',').forEach((c: string) => {
+                  const name = c.trim();
+                  if (!creatorMap[name]) creatorMap[name] = [];
+                  creatorMap[name].push(title);
+                });
+              }
+            });
+            creators = Object.entries(creatorMap).map(([name, shows]) => ({ name, shows }));
+          }
+          results = creators.slice(0, 5).map(c => ({ creator: c.name, works: c.shows }));
         } else if (form.type === 'music') {
           const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(searchValue)}&entity=musicArtist&limit=5`);
           const data = await res.json();
@@ -367,7 +413,8 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
       {isOwner && (
         <div className="mb-4">
           <button
-            className="px-3 py-1 text-xs font-bold border-2 border-black dark:border-white rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 lowercase hover:bg-blue-200 hover:dark:bg-blue-800 transition-all mb-2"
+            className="text-xs font-bold text-blue-600 hover:text-blue-800 lowercase transition-colors mb-2 bg-transparent border-none p-0 shadow-none focus:outline-none"
+            style={{ background: 'none', border: 'none', padding: 0 }}
             onClick={() => setShowForm(f => !f)}
           >
             {showForm ? 'cancel' : 'add new'}
