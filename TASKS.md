@@ -17,6 +17,7 @@
 - [x] Delete own reviews
 - [ ] Make the review field optional when creating or editing a review
 - [ ] Show 'my [category] reviews' by default when navigating to a category page
+- [x] Display comment counter on review cards (home, category, and profile pages)
 
 ## 4. Currently Experiencing Section
 - [x] Add "currently experiencing" form (type, title, creator, year, seasons, progress)

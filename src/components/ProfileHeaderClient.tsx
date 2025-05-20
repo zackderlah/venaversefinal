@@ -40,7 +40,9 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
         <div className="flex flex-wrap items-center gap-4 text-gray-500 dark:text-gray-300 text-sm mb-2 lowercase">
           <span>member since {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : "-"}</span>
           <span>•</span>
-          <span>{user?.reviews.length || 0} reviews</span>
+          <a href={`/profile/${user.username}/reviews`} className="underline hover:text-blue-600 cursor-pointer">
+            {user?.reviews.length || 0} reviews
+          </a>
         </div>
         <div className="text-gray-600 dark:text-gray-300 text-base lowercase mt-2 text-center md:text-left w-full flex items-center gap-2">
           {isOwner ? (
