@@ -60,24 +60,32 @@ export default function ReviewPage() {
     }
   };
 
+  const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(review.title + ' ' + review.creator)}`;
+
   return (
     <div className="flex min-h-screen w-full p-0 m-0 justify-center">
       <div className="w-full max-w-4xl border-2 border-black dark:border-white p-8 bg-white dark:bg-[#0A0A0A] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col">
         <div className="flex flex-col md:flex-row gap-8 items-start">
           {review.imageUrl && (
             <div className="flex-shrink-0 w-32 h-48 mx-auto md:mx-0 md:mb-0 mb-6 relative">
-              <Image
-                src={review.imageUrl}
-                alt={`Cover for ${review.title}`}
-                fill
-                className="object-cover rounded-lg"
-                sizes="128px"
-              />
+              <a href={googleSearchUrl} target="_blank" rel="noopener noreferrer">
+                <Image
+                  src={review.imageUrl}
+                  alt={`Cover for ${review.title}`}
+                  fill
+                  className="object-cover rounded-lg"
+                  sizes="128px"
+                />
+              </a>
             </div>
           )}
           <div className="flex-1">
             <div className="flex items-start justify-between mb-2">
-              <h1 className="text-3xl font-black">{capitalizeTitle(review.title)}</h1>
+              <h1 className="text-3xl font-black">
+                <a href={googleSearchUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                  {capitalizeTitle(review.title)}
+                </a>
+              </h1>
               <span className="rating text-4xl font-black ml-4">{review.rating}/10</span>
             </div>
             <div className="mb-2 text-gray-500 text-sm">
