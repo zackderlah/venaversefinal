@@ -97,7 +97,7 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
                     {review.user.username[0].toUpperCase()}
                   </span>
                 )}
-                <span className="underline hover:text-blue-600 text-xs text-black dark:text-white font-bold lowercase">{review.user.username}</span>
+                <span className="hover:text-blue-600 dark:hover:text-blue-600 text-xs text-black dark:text-white font-bold lowercase">{review.user.username}</span>
               </Link>
             )}
           </div>

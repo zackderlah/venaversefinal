@@ -551,11 +551,24 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
           {items.map(item => (
             <li key={item.id} className="border-b border-gray-200 dark:border-gray-700 pb-2">
               <div className="flex items-center gap-4">
-                {item.imageUrl && (
-                  <img src={item.imageUrl} alt={item.title} className="w-16 h-16 rounded object-cover border border-black dark:border-white" />
-                )}
+                {item.imageUrl ? (
+                  <a
+                    href={`https://www.google.com/search?q=${encodeURIComponent(item.title + ' ' + item.creator)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <img src={item.imageUrl} alt={item.title} className="w-16 h-16 rounded object-cover border border-black dark:border-white" />
+                  </a>
+                ) : null}
                 <div className="flex flex-col gap-1">
-                  <span className="font-bold text-lg">{toTitleCase(item.title)}</span>
+                  <a
+                    href={`https://www.google.com/search?q=${encodeURIComponent(item.title + ' ' + item.creator)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-bold text-lg hover:underline"
+                  >
+                    {toTitleCase(item.title)}
+                  </a>
                   <div className="flex flex-wrap gap-2 text-xs text-gray-400">
                     <span>{toTitleCase(item.type)}</span>
                     {item.year && <span>• {item.year}</span>}
