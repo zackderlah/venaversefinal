@@ -55,6 +55,8 @@
 - [x] Improved title selection modal headers and styling
 - [x] Added 'add title' placeholder and improved title alignment in profile header
 - [x] General UI/UX polish for all the above
+- [x] Added review counter to category pages
+- [x] Improved spacing and layout of category pages
 
 ## 7. API & Database
 - [x] Set up Prisma models for users, reviews, currently experiencing
