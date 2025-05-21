@@ -30,14 +30,15 @@ export async function POST(req: NextRequest) {
     if (isNaN(rating) || rating < 1 || rating > 10) {
       return NextResponse.json({ message: 'rating must be between 1 and 10' }, { status: 400 });
     }
+    let normalizedCategory = category === 'album' ? 'music' : category;
     const allowedCategories = ['film', 'music', 'anime', 'books'];
-    if (!allowedCategories.includes(category)) {
+    if (!allowedCategories.includes(normalizedCategory)) {
       return NextResponse.json({ message: 'invalid category' }, { status: 400 });
     }
 
     let imageUrl: string | undefined = clientImageUrl;
     if (!imageUrl) {
-      if (category === 'film') {
+      if (normalizedCategory === 'film') {
         try {
           const omdbRes = await fetch(`https://www.omdbapi.com/?apikey=3c1416fe&t=${encodeURIComponent(title)}&y=${encodeURIComponent(year)}`);
           const omdbData = await omdbRes.json();
@@ -49,7 +50,7 @@ export async function POST(req: NextRequest) {
         }
       }
       // Music cover fetching via MusicBrainz + Cover Art Archive
-      if (category === 'music') {
+      if (normalizedCategory === 'music') {
         try {
           const mbUrl = `https://musicbrainz.org/ws/2/release/?query=release:${encodeURIComponent(title)}%20AND%20artist=${encodeURIComponent(creator)}&fmt=json&limit=1`;
           const mbRes = await fetch(mbUrl, { headers: { 'User-Agent': 'johnnywebsite/1.0.0 ( email@example.com )' } });
@@ -69,7 +70,7 @@ export async function POST(req: NextRequest) {
         }
       }
       // Book cover fetching via Open Library
-      if (category === 'books') {
+      if (normalizedCategory === 'books') {
         try {
           const olUrl = `https://openlibrary.org/search.json?title=${encodeURIComponent(title)}&author=${encodeURIComponent(creator)}&limit=1`;
           const olRes = await fetch(olUrl);
@@ -85,7 +86,7 @@ export async function POST(req: NextRequest) {
         }
       }
       // Anime cover fetching via AniList
-      if (category === 'anime') {
+      if (normalizedCategory === 'anime') {
         try {
           const query = `query ($search: String) { Media(search: $search, type: ANIME) { coverImage { large } } }`;
           const variables = { search: title };
@@ -107,7 +108,7 @@ export async function POST(req: NextRequest) {
     const newReview = await prisma.review.create({
       data: {
         title,
-        category,
+        category: normalizedCategory,
         creator,
         year,
         rating,
