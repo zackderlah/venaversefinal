@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import Image from 'next/image';
 
 interface ReviewCardDisplayProps {
   review: Review;
@@ -68,10 +69,13 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
       <div className="flex flex-row gap-4 items-start">
         {review.imageUrl && (
           <div className="relative w-16 h-24 flex-shrink-0">
-            <img
+            <Image
               src={review.imageUrl}
               alt={`Cover for ${review.title}`}
-              className="object-cover rounded-lg w-full h-full"
+              fill
+              className="object-cover rounded-lg"
+              sizes="64px"
+              unoptimized
             />
           </div>
         )}

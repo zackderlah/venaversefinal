@@ -91,6 +91,7 @@ export default function ReviewPage() {
                   fill
                   className="object-cover rounded-lg"
                   sizes="128px"
+                  unoptimized
                 />
               </a>
             </div>
