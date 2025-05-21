@@ -98,26 +98,28 @@ export default function CommentSection({ reviewId }: { reviewId: number }) {
             comments.map((comment) => (
               <div key={comment.id} className="border-b border-gray-200 pb-2 flex items-start justify-between">
                 <div>
-                  <Link href={`/profile/${comment.user.username}`} className="inline-flex items-center gap-2 group">
-                    {comment.user.profileImage ? (
-                      <Image
-                        src={comment.user.profileImage}
-                        alt={comment.user.username}
-                        width={24}
-                        height={24}
-                        className="rounded-full object-cover border border-black dark:border-white"
-                        priority
-                      />
-                    ) : (
-                      <span className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-xs text-gray-500 font-bold">
-                        {comment.user.username[0].toUpperCase()}
+                  <div className="flex items-center gap-2 mb-1">
+                    <Link href={`/profile/${comment.user.username}`} className="inline-flex items-center gap-2 group">
+                      {comment.user.profileImage ? (
+                        <Image
+                          src={comment.user.profileImage}
+                          alt={comment.user.username}
+                          width={24}
+                          height={24}
+                          className="rounded-full object-cover border border-black dark:border-white"
+                          priority
+                        />
+                      ) : (
+                        <span className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-xs text-gray-500 font-bold">
+                          {comment.user.username[0].toUpperCase()}
+                        </span>
+                      )}
+                      <span className="font-semibold text-sm text-black dark:text-white group-hover:text-blue-600 lowercase">
+                        {comment.user.username}
                       </span>
-                    )}
-                    <span className="font-semibold text-sm text-black dark:text-white group-hover:text-blue-600 lowercase">
-                      {comment.user.username}
-                    </span>
-                  </Link>
-                  <span className="text-xs text-gray-500 ml-2">{new Date(comment.createdAt).toLocaleString()}</span>
+                    </Link>
+                    <span className="text-xs text-gray-500">{new Date(comment.createdAt).toLocaleString()}</span>
+                  </div>
                   <div className="text-gray-700 dark:text-gray-200 mt-1 text-sm">{comment.text}</div>
                 </div>
                 {user && comment.user.id === Number(user.id) && (
