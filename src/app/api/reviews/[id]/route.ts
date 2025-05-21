@@ -84,9 +84,19 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     const review = await prisma.review.findUnique({
       where: { id: reviewId },
-      include: {
-        user: { select: { username: true, profileImage: true } }
-      }
+      select: {
+        id: true,
+        title: true,
+        category: true,
+        creator: true,
+        year: true,
+        rating: true,
+        review: true,
+        date: true,
+        imageUrl: true,
+        userId: true,
+        user: { select: { username: true, profileImage: true } },
+      },
     });
 
     if (!review) {
