@@ -62,13 +62,13 @@ export default function AnimePage() {
     <div className="space-y-12">
       <section>
         <div className="flex space-x-6 border-b-2 border-black dark:border-white pb-3 mb-6">
-          <h2
+          <h2 
             className={`text-3xl font-black lowercase cursor-pointer ${viewMode === 'my' ? 'opacity-100' : 'opacity-50 hover:opacity-75'}`}
             onClick={() => setViewMode('my')}
           >
             my anime reviews
           </h2>
-          <h2
+          <h2 
             className={`text-3xl font-black lowercase cursor-pointer ${viewMode === 'all' ? 'opacity-100' : 'opacity-50 hover:opacity-75'}`}
             onClick={() => setViewMode('all')}
           >
@@ -76,7 +76,7 @@ export default function AnimePage() {
           </h2>
         </div>
         <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg lowercase">
-          {viewMode === 'my'
+          {viewMode === 'my' 
             ? (currentUser ? `a collection of anime reviews written by you.` : `please log in to see your anime reviews.`)
             : `a collection of thoughts and ratings for anime series and films.`}
         </p>
@@ -87,25 +87,25 @@ export default function AnimePage() {
           </div>
         </div>
       </section>
-      {authLoading || reviewsLoading ? (
-        <div className="text-center text-gray-500 lowercase">loading...</div>
-      ) : (
-        <div className="space-y-4">
-          {sortedAndFilteredReviews.length > 0 ? (
-            sortedAndFilteredReviews.map((review) => (
-              <ReviewLink key={review.id} review={review}>
-                <ReviewCardDisplay review={review} />
-              </ReviewLink>
-            ))
-          ) : (
-            <p className="text-center text-gray-500 lowercase">
-              {viewMode === 'my' && !currentUser
-                ? 'please log in to see your reviews.'
-                : (viewMode === 'my' && currentUser ? 'you haven\'t written any anime reviews yet.' : 'no anime reviews found.')}
-            </p>
-          )}
-        </div>
-      )}
+        {authLoading || reviewsLoading ? (
+          <div className="text-center text-gray-500 lowercase">loading...</div>
+        ) : (
+          <div className="space-y-4">
+            {sortedAndFilteredReviews.length > 0 ? (
+              sortedAndFilteredReviews.map((review) => (
+                <ReviewLink key={review.id} review={review}>
+                  <ReviewCardDisplay review={review} />
+                </ReviewLink>
+              ))
+            ) : (
+              <p className="text-center text-gray-500 lowercase">
+                {viewMode === 'my' && !currentUser 
+                  ? 'please log in to see your reviews.'
+                  : (viewMode === 'my' && currentUser ? 'you haven\'t written any anime reviews yet.' : 'no anime reviews found.')}
+              </p>
+            )}
+          </div>
+        )}
     </div>
   );
 } 

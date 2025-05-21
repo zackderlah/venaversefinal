@@ -37,7 +37,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
 
     const year = parseInt(yearStr as string);
-    const rating = parseInt(ratingStr as string);
+    const rating = parseFloat(ratingStr as string);
 
     if (isNaN(year) || String(yearStr).length !== 4) {
       return NextResponse.json({ message: 'invalid year format' }, { status: 400 });

@@ -17,7 +17,10 @@ function capitalizeTitle(title: string) {
 const prisma = new PrismaClient();
 
 export default function ReviewPage() {
-  const { id } = useParams();
+  const params = useParams();
+  // params.slug is an array, e.g. ['123-the-godfather-by-johnny']
+  const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
+  const id = slug.split('-')[0]; // get the numeric ID
   const router = useRouter();
   const { user: currentUser, loading: authLoading } = useAuth();
   const [review, setReview] = useState<any>(null);
@@ -36,7 +39,7 @@ export default function ReviewPage() {
       }
       setLoading(false);
     }
-    fetchReview();
+    if (id) fetchReview();
   }, [id]);
 
   if (loading) return <div className="text-center mt-20 text-gray-500 lowercase">loading...</div>;
@@ -131,7 +134,7 @@ export default function ReviewPage() {
                 </span>
               )}
             </div>
-            <div className="mb-6 text-gray-600 dark:text-gray-300">
+            <div className="mb-6 text-gray-600 dark:text-gray-300 whitespace-pre-line">
               {review.review}
             </div>
             <div className="review-date text-sm text-gray-500 dark:text-gray-400 mb-4">

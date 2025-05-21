@@ -304,7 +304,7 @@ export default function CreatePostPage() {
         setIsSubmitting(false);
         return;
     }
-    if (isNaN(parseInt(formData.rating)) || parseInt(formData.rating) < 1 || parseInt(formData.rating) > 10) {
+    if (isNaN(parseFloat(formData.rating)) || parseFloat(formData.rating) < 1 || parseFloat(formData.rating) > 10) {
         setError('please enter a rating between 1 and 10.');
         setIsSubmitting(false);
         return;
@@ -317,7 +317,7 @@ export default function CreatePostPage() {
         body: JSON.stringify({
           ...formData,
           year: parseInt(formData.year),
-          rating: parseInt(formData.rating),
+          rating: parseFloat(formData.rating),
           imageUrl: poster,
         }),
       });

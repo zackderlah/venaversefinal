@@ -50,7 +50,7 @@ export default function ClientLayout({
           setBgIndex(idx => (idx + 1) % BG_IMAGES.length);
           localStorage.setItem('bgIndex', String((bgIndex + 1) % BG_IMAGES.length));
         } else if (e.key.toLowerCase() === 'h') {
-          setIsContentVisible(prev => !prev);
+        setIsContentVisible(prev => !prev);
         }
       }
     };
@@ -72,21 +72,21 @@ export default function ClientLayout({
           pointerEvents: 'none',
         }}
       />
-      <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
+    <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
+      <div className="review-card">
+        <HeaderWithDarkMode />
+      </div>
+      <div className={`transition-opacity duration-300 ${isContentVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <div className="review-card">
-          <HeaderWithDarkMode />
+          <main>{children}</main>
         </div>
-        <div className={`transition-opacity duration-300 ${isContentVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-          <div className="review-card">
-            <main>{children}</main>
-          </div>
-          <div className="review-card">
-            <footer className="mt-0 text-sm text-gray-600 border-t-2 border-black pt-4">
-              <p>© venaverse</p>
-            </footer>
-          </div>
+        <div className="review-card">
+          <footer className="mt-0 text-sm text-gray-600 border-t-2 border-black pt-4">
+            <p>© venaverse</p>
+          </footer>
         </div>
       </div>
+    </div>
     </>
   );
 } 

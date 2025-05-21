@@ -92,16 +92,16 @@ export default async function ProfilePage() {
             activityFeed.map(item => (
               'review' in item ? (
                 <Link key={`review-${item.id}`} href={`/reviews/${item.review.id}`} className="block">
-                  <ReviewCardDisplay
-                    review={{
+                <ReviewCardDisplay
+                  review={{
                       ...item.review,
                       commentCount: item.review._count?.comments ?? 0,
                       category: item.review.category as import("@/types/review").ReviewCategory,
                       date: item.review.date.toISOString(),
                       imageUrl: item.review.imageUrl ?? undefined,
-                    }}
-                  />
-                </Link>
+                  }}
+                />
+              </Link>
               ) : 'comment' in item ? (
                 <div key={`comment-${item.id}`} className="border-b border-gray-200 dark:border-gray-700 pb-2">
                   <div className="flex items-center justify-between mb-1">
