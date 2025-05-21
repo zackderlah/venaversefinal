@@ -13,8 +13,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'authentication required' }, { status: 401 });
     }
 
-    const { title, category, creator, year: yearStr, rating: ratingStr, review } = await req.json();
-    console.log('Received review creation request:', { title, category, creator, yearStr, ratingStr, review });
+    const { title, category, creator, year: yearStr, rating: ratingStr, review, imageUrl: clientImageUrl } = await req.json();
+    console.log('Received review creation request:', { title, category, creator, yearStr, ratingStr, review, clientImageUrl });
 
     // Validate input
     if (!title || !category || !creator || !yearStr || !ratingStr) {
@@ -35,74 +35,72 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'invalid category' }, { status: 400 });
     }
 
-    let imageUrl: string | undefined = undefined;
-    if (category === 'film') {
-      try {
-        const omdbRes = await fetch(`https://www.omdbapi.com/?apikey=3c1416fe&t=${encodeURIComponent(title)}&y=${encodeURIComponent(year)}`);
-        const omdbData = await omdbRes.json();
-        if (omdbData && omdbData.Poster && omdbData.Poster !== 'N/A') {
-          imageUrl = omdbData.Poster;
+    let imageUrl: string | undefined = clientImageUrl;
+    if (!imageUrl) {
+      if (category === 'film') {
+        try {
+          const omdbRes = await fetch(`https://www.omdbapi.com/?apikey=3c1416fe&t=${encodeURIComponent(title)}&y=${encodeURIComponent(year)}`);
+          const omdbData = await omdbRes.json();
+          if (omdbData && omdbData.Poster && omdbData.Poster !== 'N/A') {
+            imageUrl = omdbData.Poster;
+          }
+        } catch (err) {
+          console.error('OMDb fetch error:', err);
         }
-      } catch (err) {
-        console.error('OMDb fetch error:', err);
       }
-    }
-    // Music cover fetching via MusicBrainz + Cover Art Archive
-    if (category === 'music') {
-      try {
-        // Search MusicBrainz for release by title and artist
-        const mbUrl = `https://musicbrainz.org/ws/2/release/?query=release:${encodeURIComponent(title)}%20AND%20artist:${encodeURIComponent(creator)}&fmt=json&limit=1`;
-        const mbRes = await fetch(mbUrl, { headers: { 'User-Agent': 'johnnywebsite/1.0.0 ( email@example.com )' } });
-        const mbData = await mbRes.json();
-        if (mbData.releases && mbData.releases.length > 0) {
-          const release = mbData.releases[0];
-          if (release.id) {
-            // Try to fetch cover from Cover Art Archive
-            const caaUrl = `https://coverartarchive.org/release/${release.id}/front-250`;
-            // Check if image exists (CAA returns 404 if not)
-            const caaRes = await fetch(caaUrl);
-            if (caaRes.ok) {
-              imageUrl = caaUrl;
+      // Music cover fetching via MusicBrainz + Cover Art Archive
+      if (category === 'music') {
+        try {
+          const mbUrl = `https://musicbrainz.org/ws/2/release/?query=release:${encodeURIComponent(title)}%20AND%20artist=${encodeURIComponent(creator)}&fmt=json&limit=1`;
+          const mbRes = await fetch(mbUrl, { headers: { 'User-Agent': 'johnnywebsite/1.0.0 ( email@example.com )' } });
+          const mbData = await mbRes.json();
+          if (mbData.releases && mbData.releases.length > 0) {
+            const release = mbData.releases[0];
+            if (release.id) {
+              const caaUrl = `https://coverartarchive.org/release/${release.id}/front-250`;
+              const caaRes = await fetch(caaUrl);
+              if (caaRes.ok) {
+                imageUrl = caaUrl;
+              }
             }
           }
+        } catch (err) {
+          console.error('MusicBrainz/CAA fetch error:', err);
         }
-      } catch (err) {
-        console.error('MusicBrainz/CAA fetch error:', err);
       }
-    }
-    // Book cover fetching via Open Library
-    if (category === 'books') {
-      try {
-        // Search Open Library by title and author
-        const olUrl = `https://openlibrary.org/search.json?title=${encodeURIComponent(title)}&author=${encodeURIComponent(creator)}&limit=1`;
-        const olRes = await fetch(olUrl);
-        const olData = await olRes.json();
-        if (olData.docs && olData.docs.length > 0) {
-          const doc = olData.docs[0];
-          if (doc.cover_i) {
-            imageUrl = `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg`;
+      // Book cover fetching via Open Library
+      if (category === 'books') {
+        try {
+          const olUrl = `https://openlibrary.org/search.json?title=${encodeURIComponent(title)}&author=${encodeURIComponent(creator)}&limit=1`;
+          const olRes = await fetch(olUrl);
+          const olData = await olRes.json();
+          if (olData.docs && olData.docs.length > 0) {
+            const doc = olData.docs[0];
+            if (doc.cover_i) {
+              imageUrl = `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg`;
+            }
           }
+        } catch (err) {
+          console.error('Open Library fetch error:', err);
         }
-      } catch (err) {
-        console.error('Open Library fetch error:', err);
       }
-    }
-    // Anime cover fetching via AniList
-    if (category === 'anime') {
-      try {
-        const query = `query ($search: String) { Media(search: $search, type: ANIME) { coverImage { large } } }`;
-        const variables = { search: title };
-        const anilistRes = await fetch('https://graphql.anilist.co', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query, variables }),
-        });
-        const anilistData = await anilistRes.json();
-        if (anilistData.data && anilistData.data.Media && anilistData.data.Media.coverImage && anilistData.data.Media.coverImage.large) {
-          imageUrl = anilistData.data.Media.coverImage.large;
+      // Anime cover fetching via AniList
+      if (category === 'anime') {
+        try {
+          const query = `query ($search: String) { Media(search: $search, type: ANIME) { coverImage { large } } }`;
+          const variables = { search: title };
+          const anilistRes = await fetch('https://graphql.anilist.co', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query, variables }),
+          });
+          const anilistData = await anilistRes.json();
+          if (anilistData.data && anilistData.data.Media && anilistData.data.Media.coverImage && anilistData.data.Media.coverImage.large) {
+            imageUrl = anilistData.data.Media.coverImage.large;
+          }
+        } catch (err) {
+          console.error('AniList fetch error:', err);
         }
-      } catch (err) {
-        console.error('AniList fetch error:', err);
       }
     }
 
