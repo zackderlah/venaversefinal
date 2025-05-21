@@ -48,7 +48,7 @@
 7. Printed Word Virtuoso
 8. Tome Overseer
 9. Master of Literature
-10. Book GOD
+10. Literary GOD
 
 
 ### 🏆 Generic Titles (Based on Total Reviews)
