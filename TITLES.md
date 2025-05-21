@@ -16,10 +16,10 @@
 1. Music Rookie
 2. Music Enjoyer
 3. Sound Enthusiast
-4. Sound Scholar
-5. Rhythm Responder
-6. Memories Of Melody
-7. Audio Authority
+4. Scholar of Sound
+5. Memories Of Melody
+6. Audio Authority
+7. Audiophile
 8. Sound Overlord
 9. Master of Music
 10. Music GOD
@@ -45,7 +45,7 @@
 4. Bookworm
 5. Narrative Authority
 6. Literary Scholar
-7. Printed Word Virtuoso
+7. The Librarian 
 8. Tome Overseer
 9. Master of Literature
 10. Literary GOD
@@ -93,4 +93,5 @@ Generic Titles (Based on Total Reviews Across All Categories)
 Total review count is the sum of all categories.
 
 Generic titles are awarded independent of category titles.
+
 

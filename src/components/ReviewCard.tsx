@@ -78,6 +78,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
               fill
               className="object-cover rounded-lg"
               sizes="64px"
+              unoptimized
             />
           </div>
         )}
