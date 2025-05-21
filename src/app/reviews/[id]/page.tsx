@@ -126,7 +126,7 @@ export default function ReviewPage() {
                         {review.user.username[0].toUpperCase()}
                       </span>
                     )}
-                    <span className="ml-1 underline hover:text-blue-600">{review.user.username}</span>
+                    <span className="ml-1 hover:text-blue-600">{review.user.username}</span>
                   </span>
                 </span>
               )}
