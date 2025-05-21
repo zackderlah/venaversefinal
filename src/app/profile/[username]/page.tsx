@@ -30,7 +30,7 @@ export default async function UserProfilePage({ params }: { params: { username: 
     where: { userId: user.id },
     orderBy: { createdAt: 'desc' },
     include: {
-      review: { select: { id: true, title: true, category: true } }
+      review: { select: { id: true, title: true, category: true, user: { select: { username: true, profileImage: true } } } }
     },
     take: 10,
   });
@@ -92,13 +92,28 @@ export default async function UserProfilePage({ params }: { params: { username: 
               </Link>
               ) : 'comment' in item ? (
                 <div key={`comment-${item.id}`} className="border-b border-gray-200 dark:border-gray-700 pb-2">
-                  <div className="flex items-center gap-2 mb-1 text-xs text-gray-500">
-                    <span className="text-blue-600 font-bold lowercase">commented</span>
-                    <span>on</span>
-                    <Link href={`/reviews/${item.comment.review.id}`} className="underline hover:text-blue-600 font-bold lowercase">
-                      {item.comment.review.title}
-                    </Link>
-                    <span className="ml-2 text-gray-400">{new Date(item.date).toLocaleDateString()}</span>
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-1 text-xs text-gray-500">
+                      <span className="text-blue-600 font-bold lowercase">commented</span>
+                      <span>on</span>
+                      <Link href={`/reviews/${item.comment.review.id}`} className="underline hover:text-blue-600 font-bold">
+                        {item.comment.review.title.charAt(0).toUpperCase() + item.comment.review.title.slice(1)}
+                      </Link>
+                      {item.comment.review.user && (
+                        <span className="flex items-center gap-1">
+                          <span className="text-xs text-gray-500">by</span>
+                          <Link href={`/profile/${item.comment.review.user.username}`} className="flex items-center gap-1">
+                            <img
+                              src={item.comment.review.user.profileImage || '/default-profile.png'}
+                              alt={item.comment.review.user.username}
+                              className="w-4 h-4 rounded-full object-cover"
+                            />
+                            <span className="text-xs text-gray-500">{item.comment.review.user.username}</span>
+                          </Link>
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-xs text-gray-400 ml-auto">{new Date(item.date).toLocaleDateString()}</span>
                   </div>
                   <div className="text-gray-700 dark:text-gray-200 text-sm lowercase ml-2">{item.comment.text}</div>
                 </div>
