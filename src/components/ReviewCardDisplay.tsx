@@ -43,7 +43,7 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
       setShowDeleteModal(false);
       setDeleting(false);
       if (res.ok) {
-        window.location.reload();
+        window.location.href = '/';
       } else {
         const errorData = await res.json();
         alert(`Failed to delete review: ${errorData.message || 'Unknown error'}`);
