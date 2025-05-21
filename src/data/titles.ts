@@ -46,7 +46,7 @@ export const CATEGORY_TITLES: Record<Category, string[]> = {
     'Bookworm',
     'Narrative Authority',
     'Literary Scholar',
-    'Printed Word Virtuoso',
+    'The Librarian',
     'Tome Overseer',
     'Master of Literature',
     'Literary GOD',
