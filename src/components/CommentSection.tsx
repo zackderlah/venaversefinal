@@ -113,7 +113,7 @@ export default function CommentSection({ reviewId }: { reviewId: number }) {
                         {comment.user.username[0].toUpperCase()}
                       </span>
                     )}
-                    <span className="font-semibold text-sm text-black dark:text-white underline group-hover:text-blue-600 lowercase">
+                    <span className="font-semibold text-sm text-black dark:text-white group-hover:text-blue-600 lowercase">
                       {comment.user.username}
                     </span>
                   </Link>
