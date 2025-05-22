@@ -90,25 +90,25 @@ export default function MusicPage() {
       <div className="text-lg font-bold mb-1 mt-8 lowercase">
         {sortedAndFilteredReviews.length} review{sortedAndFilteredReviews.length === 1 ? '' : 's'}
       </div>
-      {authLoading || reviewsLoading ? (
-        <div className="text-center text-gray-500 lowercase">loading...</div>
-      ) : (
-        <div className="space-y-4">
-          {sortedAndFilteredReviews.length > 0 ? (
-            sortedAndFilteredReviews.map((review) => (
-              <ReviewLink key={review.id} review={review}>
-                <ReviewCardDisplay review={review} />
-              </ReviewLink>
-            ))
-          ) : (
-            <p className="text-center text-gray-500 lowercase">
-              {viewMode === 'my' && !currentUser
-                ? 'please log in to see your reviews.'
-                : (viewMode === 'my' && currentUser ? 'you haven\'t written any music reviews yet.' : 'no music reviews found.')}
-            </p>
-          )}
-        </div>
-      )}
+        {authLoading || reviewsLoading ? (
+          <div className="text-center text-gray-500 lowercase">loading...</div>
+        ) : (
+          <div className="space-y-4">
+            {sortedAndFilteredReviews.length > 0 ? (
+              sortedAndFilteredReviews.map((review) => (
+                <ReviewLink key={review.id} review={review}>
+                  <ReviewCardDisplay review={review} />
+                </ReviewLink>
+              ))
+            ) : (
+              <p className="text-center text-gray-500 lowercase">
+                {viewMode === 'my' && !currentUser
+                  ? 'please log in to see your reviews.'
+                  : (viewMode === 'my' && currentUser ? 'you haven\'t written any music reviews yet.' : 'no music reviews found.')}
+              </p>
+            )}
+          </div>
+        )}
     </div>
   );
 } 

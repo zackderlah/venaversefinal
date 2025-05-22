@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
+import { htmlToText } from 'html-to-text';
 
 interface ReviewCardDisplayProps {
   review: Review;
@@ -28,7 +29,17 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
     return review.slice(0, maxLength) + '...';
   }
 
-  const canEdit = !authLoading && currentAuthenticatedUser && review.userId === Number(currentAuthenticatedUser.id);
+  // Helper to get a plain text preview from HTML
+  function getPreview(html: string, maxLength: number = 500) {
+    const text = htmlToText(html, { wordwrap: false, selectors: [{ selector: 'a', options: { ignoreHref: true } }] });
+    if (text.length <= maxLength) return text;
+    return text.slice(0, maxLength) + '...';
+  }
+
+  const canEdit = !authLoading && currentAuthenticatedUser && String(review.userId) === String(currentAuthenticatedUser.id);
+  if (!authLoading && !currentAuthenticatedUser) {
+    console.warn('No authenticated user found in session. Edit/delete buttons will not show.');
+  }
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -105,9 +116,12 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
               </Link>
             )}
           </div>
-          <p className="text-gray-600 mb-2 mt-2">
-            {truncateReview(review.review)}
-          </p>
+          <div className="mb-4 prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 prose-p:my-4">
+            {getPreview(review.review, 500)}
+            {htmlToText(review.review, { wordwrap: false }).length > 500 && (
+              <Link href={`/reviews/${review.id}`} className="text-blue-600 hover:underline ml-1">Read more</Link>
+            )}
+          </div>
           <div className="review-date">
             Reviewed on {new Date(review.date).toLocaleDateString('en-US', {
               year: 'numeric',

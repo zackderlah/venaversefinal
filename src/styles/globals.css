@@ -1,0 +1,5 @@
+.prose br + br {
+  margin-top: 1em;
+  display: block;
+  content: '';
+} 

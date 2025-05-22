@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { htmlToText } from 'html-to-text';
 
 function capitalizeTitle(title: string) {
   return title.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
@@ -32,7 +33,17 @@ export default function ReviewCard({ review }: ReviewCardProps) {
   //                     review.category === 'music' ? 'music' :
   //                     review.category === 'anime' ? 'anime' : 'books';
 
-  const canEdit = !authLoading && currentAuthenticatedUser && review.userId === Number(currentAuthenticatedUser.id);
+  const canEdit = !authLoading && currentAuthenticatedUser && String(review.userId) === String(currentAuthenticatedUser.id);
+  if (!authLoading && !currentAuthenticatedUser) {
+    console.warn('No authenticated user found in session. Edit/delete buttons will not show.');
+  }
+
+  console.log('[ReviewCard debug]', {
+    reviewUserId: review.userId,
+    currentAuthenticatedUserId: currentAuthenticatedUser?.id,
+    authLoading,
+    session
+  });
 
   const handleDelete = async () => {
     setShowDeleteModal(true);
@@ -62,6 +73,13 @@ export default function ReviewCard({ review }: ReviewCardProps) {
   const cancelDelete = () => {
     setShowDeleteModal(false);
   };
+
+  // Helper to get a plain text preview from HTML
+  function getPreview(html: string, maxLength: number = 400) {
+    const text = htmlToText(html, { wordwrap: false, selectors: [{ selector: 'a', options: { ignoreHref: true } }] });
+    if (text.length <= maxLength) return text;
+    return text.slice(0, maxLength) + '...';
+  }
 
   return (
     <div
@@ -119,9 +137,12 @@ export default function ReviewCard({ review }: ReviewCardProps) {
           </div>
         </div>
       </div>
-      <p className="text-gray-600 mb-2 mt-2">
-        {truncateReview(review.review)}
-      </p>
+      <div className="mb-4 mt-4 prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 prose-p:my-4">
+        {getPreview(review.review, 400)}
+        {htmlToText(review.review, { wordwrap: false }).length > 400 && (
+          <Link href={`/reviews/${review.id}`} className="text-blue-600 hover:underline ml-1">Read more</Link>
+        )}
+      </div>
       <div className="review-date">
         Reviewed on {new Date(review.date).toLocaleDateString('en-US', {
           year: 'numeric',

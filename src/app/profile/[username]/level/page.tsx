@@ -55,7 +55,11 @@ export default async function ProfileLevelPage({ params }: { params: { username:
             <li>Over 100 words: <span className="font-bold">150 XP</span></li>
             <li>Over 150 words: <span className="font-bold">200 XP</span></li>
             <li>Over 200 words: <span className="font-bold">250 XP</span></li>
-            <li>Over 250 words: <span className="font-bold">300 XP (max)</span></li>
+            <li>Over 250 words: <span className="font-bold">300 XP</span></li>
+            <li>Over 300 words: <span className="font-bold">350 XP</span></li>
+            <li>Over 350 words: <span className="font-bold">400 XP</span></li>
+            <li>Over 400 words: <span className="font-bold">450 XP</span></li>
+            <li>Over 450 words: <span className="font-bold">500 XP (max)</span></li>
           </ul>
         </p>
         <p className="mt-2">Every 100 XP = 1 level. Level badge color changes at certain breakpoints.</p>

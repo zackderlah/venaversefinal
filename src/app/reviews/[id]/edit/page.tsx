@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import RichTextEditor from '@/components/RichTextEditor';
 
 interface ReviewFormData {
   title: string;
@@ -510,7 +511,7 @@ export default function EditReviewPage() {
 
         <div>
           <label htmlFor="review" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">review</label>
-          <textarea name="review" id="review" value={formData.review} onChange={handleChange} rows={6} className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+          <RichTextEditor value={formData.review} onChange={val => setFormData(f => ({ ...f, review: val }))} />
         </div>
 
         {error && formData.title && <p className="text-red-500 text-sm lowercase">{error}</p>} {/* Show error inline if form data loaded but submission failed */}

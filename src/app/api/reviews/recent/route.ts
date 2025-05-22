@@ -17,6 +17,7 @@ export async function GET(req: NextRequest) {
       review: true,
       date: true,
       imageUrl: true,
+      userId: true,
       user: { select: { id: true, username: true, profileImage: true } },
       _count: { select: { comments: true } },
     },

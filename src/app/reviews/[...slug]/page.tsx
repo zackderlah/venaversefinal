@@ -135,8 +135,8 @@ export default function ReviewPage() {
                 </span>
               )}
             </div>
-            <div className="mb-6 text-gray-600 dark:text-gray-300 whitespace-pre-line">
-              {review.review}
+            <div className="mb-6 text-gray-600 dark:text-gray-300 prose prose-sm dark:prose-invert max-w-none prose-p:my-4">
+              <div dangerouslySetInnerHTML={{ __html: review.review }} />
             </div>
             <div className="review-date text-sm text-gray-500 dark:text-gray-400 mb-4">
               Reviewed on {new Date(review.date).toLocaleDateString('en-US', {

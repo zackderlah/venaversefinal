@@ -84,6 +84,7 @@ export default async function UserProfilePage({ params }: { params: { username: 
                 <ReviewCardDisplay
                   review={{
                       ...item.review,
+                      commentCount: Array.isArray(item.review.comments) ? item.review.comments.length : 0,
                       category: item.review.category as import("@/types/review").ReviewCategory,
                       date: item.review.date.toISOString(),
                       imageUrl: item.review.imageUrl ?? undefined,
