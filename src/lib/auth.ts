@@ -43,7 +43,8 @@ export const authOptions: NextAuthOptions = {
           id: user.id.toString(),
           email: user.email,
           name: user.username,
-          image: user.profileImage
+          image: user.profileImage,
+          isAdmin: user.isAdmin,
         };
       }
     })
@@ -61,6 +62,7 @@ export const authOptions: NextAuthOptions = {
         session.user.name = token.name as string;
         session.user.email = token.email as string;
         session.user.image = token.picture as string;
+        session.user.isAdmin = token.isAdmin as boolean;
       }
       return session;
     },
@@ -71,11 +73,13 @@ export const authOptions: NextAuthOptions = {
         token.name = user.name;
         token.email = user.email;
         token.picture = user.image;
+        token.isAdmin = user.isAdmin;
       } else if (token.email) {
         // On subsequent requests, fetch the latest profileImage from the DB
         const dbUser = await prisma.user.findUnique({ where: { email: token.email as string } });
         if (dbUser) {
           token.picture = dbUser.profileImage;
+          token.isAdmin = dbUser.isAdmin;
         }
       }
       return token;

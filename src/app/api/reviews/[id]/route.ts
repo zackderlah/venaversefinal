@@ -25,7 +25,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       return NextResponse.json({ message: 'review not found' }, { status: 404 });
     }
 
-    if (existingReview.userId !== Number(session.user.id)) {
+    if (existingReview.userId !== Number(session.user.id) && !session.user.isAdmin) {
       return NextResponse.json({ message: 'you are not authorized to edit this review' }, { status: 403 });
     }
 
@@ -130,7 +130,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       return NextResponse.json({ message: 'review not found' }, { status: 404 });
     }
 
-    if (existingReview.userId !== Number(session.user.id)) {
+    if (existingReview.userId !== Number(session.user.id) && !session.user.isAdmin) {
       return NextResponse.json({ message: 'you are not authorized to delete this review' }, { status: 403 });
     }
 

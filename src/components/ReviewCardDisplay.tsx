@@ -36,7 +36,7 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
     return text.slice(0, maxLength) + '...';
   }
 
-  const canEdit = !authLoading && currentAuthenticatedUser && String(review.userId) === String(currentAuthenticatedUser.id);
+  const canEdit = !authLoading && currentAuthenticatedUser && (String(review.userId) === String(currentAuthenticatedUser.id) || currentAuthenticatedUser.isAdmin);
   if (!authLoading && !currentAuthenticatedUser) {
     console.warn('No authenticated user found in session. Edit/delete buttons will not show.');
   }

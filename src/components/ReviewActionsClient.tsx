@@ -12,7 +12,7 @@ export default function ReviewActionsClient({ review }: { review: any }) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  const canEdit = !authLoading && currentUser && String(review.userId) === String(currentUser.id);
+  const canEdit = !authLoading && currentUser && (String(review.userId) === String(currentUser.id) || currentUser.isAdmin);
 
   const handleDelete = () => {
     setShowDeleteModal(true);
