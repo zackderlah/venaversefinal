@@ -28,6 +28,10 @@
 - [x] Edit/delete buttons and modal added to individual review page, with correct client-side session logic
 - [x] Fixed userId type mismatch in edit/delete permissions
 - [x] Themed confirmation modals for destructive actions (delete review, etc.)
+- [x] Show word count in the review editor
+- [x] Limit review preview to 400/500 characters in recent reviews/profile activity
+- [x] Display comment count on all review cards (including profile activity)
+- [x] Fix edit/delete button logic and userId issues
 
 ## 4. Currently Experiencing Section
 - [x] Add "currently experiencing" form (type, title, creator, year, seasons, progress)
@@ -57,12 +61,15 @@
 - [x] General UI/UX polish for all the above
 - [x] Added review counter to category pages
 - [x] Improved spacing and layout of category pages
+- [x] Improve editor padding and initial height
+- [x] General UI/UX polish for review cards and editor
 
 ## 7. API & Database
 - [x] Set up Prisma models for users, reviews, currently experiencing
 - [x] Implement API routes for CRUD operations
 - [x] Sync database schema
 - [x] Update API routes to include profile images and comment counts
+- [x] Bug fixes for review card display and permissions
 
 ## 8. Miscellaneous
 - [x] Add validation for form fields (e.g., year, rating)

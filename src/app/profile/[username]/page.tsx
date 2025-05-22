@@ -16,7 +16,10 @@ export default async function UserProfilePage({ params }: { params: { username: 
     include: {
       reviews: {
         orderBy: { date: 'desc' },
-        include: { user: { select: { id: true, username: true, profileImage: true } } },
+        include: {
+          user: { select: { id: true, username: true, profileImage: true } },
+          _count: { select: { comments: true } },
+        },
       },
       currentlyExperiencing: {
         orderBy: { updatedAt: 'desc' },
@@ -84,7 +87,7 @@ export default async function UserProfilePage({ params }: { params: { username: 
                 <ReviewCardDisplay
                   review={{
                       ...item.review,
-                      commentCount: Array.isArray(item.review.comments) ? item.review.comments.length : 0,
+                      commentCount: item.review._count?.comments ?? 0,
                       category: item.review.category as import("@/types/review").ReviewCategory,
                       date: item.review.date.toISOString(),
                       imageUrl: item.review.imageUrl ?? undefined,
