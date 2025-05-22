@@ -47,8 +47,18 @@ export default async function ProfileLevelPage({ params }: { params: { username:
         ))}
       </div>
       <div className="mt-6 text-xs text-gray-500">
-        <p>Reviews &lt; 50 words: <span className="font-bold">50 XP</span> | Reviews ≥ 50 words: <span className="font-bold">100 XP</span></p>
-        <p>Every 100 XP = 1 level. Level badge color changes at certain breakpoints.</p>
+        <p>
+          <span className="font-bold">XP System:</span> Each review grants XP based on its length:
+          <ul className="list-disc ml-6 mt-1">
+            <li>Any review: <span className="font-bold">50 XP</span> minimum</li>
+            <li>Over 50 words: <span className="font-bold">100 XP</span></li>
+            <li>Over 100 words: <span className="font-bold">150 XP</span></li>
+            <li>Over 150 words: <span className="font-bold">200 XP</span></li>
+            <li>Over 200 words: <span className="font-bold">250 XP</span></li>
+            <li>Over 250 words: <span className="font-bold">300 XP (max)</span></li>
+          </ul>
+        </p>
+        <p className="mt-2">Every 100 XP = 1 level. Level badge color changes at certain breakpoints.</p>
       </div>
     </div>
   );
