@@ -7,6 +7,7 @@ import GlobalLoadingBar from '../components/GlobalLoadingBar'
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import SessionClientProvider from '../components/SessionClientProvider'
+import TrailingCursor from '../components/TrailingCursor'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -74,6 +75,7 @@ export default async function RootLayout({
         />
       </head>
       <body className={`${inter.className} ${notoSansJP.variable} bg-gray-50 text-gray-900 min-h-screen`}>
+        <TrailingCursor />
         <GlobalLoadingBar />
         <LoadingBarProvider>
           <SessionClientProvider session={session}>
