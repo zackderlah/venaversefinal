@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 
 const CURSOR_PATH = 'M2 2L20 12L13 13L17 22L11 14L2 22Z';
 const TRAIL_LENGTH = 8;
@@ -51,6 +51,7 @@ const TrailingCursor: React.FC = () => {
     };
     window.addEventListener('mousemove', handleMouseMove);
 
+    let animationFrameId: number;
     const animate = () => {
       // The first ghost follows the mouse, the rest follow the previous
       trail.current.forEach((pos, i) => {
@@ -70,11 +71,12 @@ const TrailingCursor: React.FC = () => {
         setShowTrail(false);
       }
 
-      requestAnimationFrame(animate);
+      animationFrameId = requestAnimationFrame(animate);
     };
     animate();
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
     };
   }, [cursorStyle]);
 
@@ -92,7 +94,7 @@ const TrailingCursor: React.FC = () => {
     return getCursorImage(isDark ? 'white' : 'black');
   };
 
-  const cursorImage = getCursorImageForStyle();
+  const cursorImage = useMemo(() => getCursorImageForStyle(), [cursorStyle, isDark]);
 
   return (
     <>
