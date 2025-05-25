@@ -16,7 +16,7 @@ export default function MediaTag({ category }: MediaTagProps) {
       case 'anime':
         return 'Anime';
       case 'books':
-        return 'Books';
+        return 'Book';
       case 'other':
         return 'Other';
     }
@@ -25,20 +25,20 @@ export default function MediaTag({ category }: MediaTagProps) {
   const getCategoryColor = (category: ReviewCategory) => {
     switch (category) {
       case 'film':
-        return 'bg-blue-100 text-blue-800';
+        return 'text-blue-800';
       case 'music':
-        return 'bg-purple-100 text-purple-800';
+        return 'text-purple-800';
       case 'anime':
-        return 'bg-pink-100 text-pink-800';
+        return 'text-pink-800';
       case 'books':
-        return 'bg-green-100 text-green-800';
+        return 'text-green-800';
       case 'other':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'text-yellow-800';
     }
   };
 
   return (
-    <span className={`inline-block px-2 py-1 text-xs font-bold rounded-full ${getCategoryColor(category)}`}>
+    <span className={`inline-block text-xs font-bold lowercase ${getCategoryColor(category)}`}>
       {getCategoryLabel(category)}
     </span>
   );
