@@ -108,12 +108,13 @@ export default function ReviewCard({ review }: ReviewCardProps) {
               </h3>
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-sm text-gray-500">
-                  {review.creator}, {review.year}
+                  {review.creator}, {review.year} <MediaTag category={review.category} />
                 </span>
-                <MediaTag category={review.category} />
-                {review.user?.username ? (
+              </div>
+              {review.user?.username ? (
+                <div className="mt-1">
                   <span className="text-xs text-black dark:text-white font-bold lowercase flex items-center gap-1">
-                    <Link href={`/profile/${review.user.username}`} className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+                    <Link href={`/profile/${review.user.username}`} className="flex items-center gap-0.5" onClick={e => e.stopPropagation()}>
                       {review.user.profileImage ? (
                         <img
                           src={review.user.profileImage}
@@ -125,11 +126,11 @@ export default function ReviewCard({ review }: ReviewCardProps) {
                           {review.user.username[0].toUpperCase()}
                         </span>
                       )}
-                      <span className="ml-1 hover:text-blue-600">{review.user.username}</span>
+                      <span className="ml-0.5 hover:text-blue-600">{review.user.username}</span>
                     </Link>
                   </span>
-                ) : null}
-              </div>
+                </div>
+              ) : null}
             </div>
             <div className="flex flex-col items-end gap-2">
               <span className="rating shrink-0 ml-2">{review.rating}/10</span>

@@ -94,13 +94,12 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
           <h3 className="text-xl font-black mb-1 truncate">
             <Link href={`/reviews/${review.id}`} onClick={e => e.stopPropagation()}>{capitalizeTitle(review.title)}</Link>
           </h3>
-          <div className="text-sm text-gray-500 mb-1">
-            {review.creator}, {review.year}
-          </div>
-          <div className="flex items-center gap-2 mb-2">
-            <MediaTag category={review.category} />
-            {review.user?.username && (
-              <Link href={`/profile/${review.user.username}`} className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+          <span className="text-sm text-gray-500 mb-1">
+            {review.creator}, {review.year} <MediaTag category={review.category} />
+          </span>
+          {review.user?.username && (
+            <div className="mb-2">
+              <Link href={`/profile/${review.user.username}`} className="flex items-center gap-0.5" onClick={e => e.stopPropagation()}>
                 {review.user.profileImage ? (
                   <img
                     src={review.user.profileImage}
@@ -112,10 +111,10 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
                     {review.user.username[0].toUpperCase()}
                   </span>
                 )}
-                <span className="hover:text-blue-600 dark:hover:text-blue-600 text-xs text-black dark:text-white font-bold lowercase">{review.user.username}</span>
+                <span className="hover:text-blue-600 dark:hover:text-blue-600 text-xs text-black dark:text-white font-bold lowercase ml-0.5">{review.user.username}</span>
               </Link>
-            )}
-          </div>
+            </div>
+          )}
           <div className="mb-4 prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 prose-p:my-4">
             {getPreview(review.review, 500)}
             {htmlToText(review.review, { wordwrap: false }).length > 500 && (
