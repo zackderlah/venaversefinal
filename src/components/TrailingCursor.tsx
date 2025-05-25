@@ -5,7 +5,7 @@ const getCursorImage = (color: string) =>
   `data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='${encodeURIComponent(color)}' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 2L20 12L13 13L17 21L11 14L3 21V2Z'/%3E%3C/svg%3E`;
 
 const TRAIL_LENGTH = 8;
-const LERP = 0.045;
+const LERP = 0.12;
 
 const TrailingCursor: React.FC = () => {
   const [isDark, setIsDark] = useState(false);
