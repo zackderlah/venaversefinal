@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "analyze": "ANALYZE=true next build"
   },
   "keywords": [],
   "author": "",
@@ -52,6 +53,7 @@
     "typescript": "^5.3.3"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^14.1.0",
     "@types/bcrypt": "^5.0.2",
     "@types/html-to-text": "^9.0.4",
     "@types/node": "^20.11.19",
