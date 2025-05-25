@@ -1,13 +1,14 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
 
-const getCursorImage = (color: string) =>
-  `data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='${encodeURIComponent(color)}' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 2L20 12L13 13L17 22L11 14L2 22Z'/%3E%3C/svg%3E`;
-
+const CURSOR_PATH = 'M2 2L20 12L13 13L17 22L11 14L2 22Z';
 const TRAIL_LENGTH = 8;
 const LERP = 0.12;
 const CATCHUP_DIST = 2; // px
 const IDLE_TIME = 60; // ms
+
+const getCursorImage = (color: string) =>
+  `data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='${encodeURIComponent(color)}' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='${CURSOR_PATH}'/%3E%3C/svg%3E`;
 
 const TrailingCursor: React.FC = () => {
   const [isDark, setIsDark] = useState(false);
