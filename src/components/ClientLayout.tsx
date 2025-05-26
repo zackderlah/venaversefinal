@@ -39,10 +39,13 @@ export default function ClientLayout({
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (
-        document.activeElement?.tagName !== 'INPUT' &&
-        document.activeElement?.tagName !== 'TEXTAREA'
-      ) {
+      const active = document.activeElement;
+      const isTyping =
+        active &&
+        ((active.tagName === 'INPUT') ||
+         (active.tagName === 'TEXTAREA') ||
+         (active as HTMLElement).isContentEditable);
+      if (!isTyping) {
         if (e.key === 'ArrowLeft') {
           setBgIndex(idx => (idx - 1 + BG_IMAGES.length) % BG_IMAGES.length);
           localStorage.setItem('bgIndex', String((bgIndex - 1 + BG_IMAGES.length) % BG_IMAGES.length));
@@ -50,7 +53,7 @@ export default function ClientLayout({
           setBgIndex(idx => (idx + 1) % BG_IMAGES.length);
           localStorage.setItem('bgIndex', String((bgIndex + 1) % BG_IMAGES.length));
         } else if (e.key.toLowerCase() === 'h') {
-        setIsContentVisible(prev => !prev);
+          setIsContentVisible(prev => !prev);
         }
       }
     };
