@@ -13,9 +13,7 @@ export default function OtherPage() {
   const currentUser = session?.user;
   const authLoading = status === 'loading';
   
-  // Debug session info
-  console.log('Session status:', status);
-  console.log('Current user:', currentUser);
+
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('date-desc');
   const [allOtherReviews, setAllOtherReviews] = useState<Review[]>([]);
@@ -58,15 +56,7 @@ export default function OtherPage() {
       }
     });
 
-  // Debug display info
-  console.log('Display info:', {
-    viewMode,
-    allOtherReviewsCount: allOtherReviews.length,
-    filteredByViewModeCount: filteredByViewMode.length,
-    sortedAndFilteredReviewsCount: sortedAndFilteredReviews.length,
-    search,
-    sortBy
-  });
+
 
   useEffect(() => {
     if (window.location.hash) {
