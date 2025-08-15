@@ -358,12 +358,13 @@ export default function CreatePostPage() {
           } else if (formData.category === 'other') {
             // Search for brands, manufacturers, and developers
             try {
+              let brands: Record<string, string[]> = {};
+              
               // Search for food brands using Open Food Facts
               const foodUrl = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(searchValue)}&search_simple=1&action=process&json=1&page_size=10`;
               const foodRes = await fetch(foodUrl);
               const foodData = await foodRes.json();
               
-              let brands: Record<string, string[]> = {};
               if (foodData.products) {
                 foodData.products.forEach((product: any) => {
                   const brand = product.brands || product.manufacturer;
@@ -372,6 +373,23 @@ export default function CreatePostPage() {
                     brands[brand].push(product.product_name || product.product_name_en || 'Unknown Product');
                   }
                 });
+              }
+              
+              // Search for beer breweries using Punk API
+              try {
+                const beerUrl = `https://api.punkapi.com/v2/beers?beer_name=${encodeURIComponent(searchValue)}&per_page=10`;
+                const beerRes = await fetch(beerUrl);
+                const beerData = await beerRes.json();
+                
+                if (beerData && beerData.length > 0) {
+                  beerData.forEach((beer: any) => {
+                    const brewery = beer.brewery || 'Craft Brewery';
+                    if (!brands[brewery]) brands[brewery] = [];
+                    brands[brewery].push(beer.name);
+                  });
+                }
+              } catch (error) {
+                console.error('Error fetching beer breweries:', error);
               }
               
               // Search for game developers using GiantBomb
