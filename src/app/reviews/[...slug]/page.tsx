@@ -45,7 +45,7 @@ export default function ReviewPage() {
   if (loading) return <div className="text-center mt-20 text-gray-500 lowercase">loading...</div>;
   if (!review) return <div className="text-center mt-20 text-red-600 lowercase">review not found</div>;
 
-  const canEdit = !authLoading && currentUser && review.userId === currentUser.id;
+  const canEdit = !authLoading && currentUser && review.userId === Number(currentUser.id);
 
   const handleDelete = async () => {
     setShowDeleteModal(true);

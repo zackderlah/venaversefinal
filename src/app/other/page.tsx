@@ -24,6 +24,10 @@ export default function OtherPage() {
       .then((data: Review[]) => {
         setAllOtherReviews(data);
         setReviewsLoading(false);
+      })
+      .catch(error => {
+        console.error('Error fetching other reviews:', error);
+        setReviewsLoading(false);
       });
   }, []);
 
