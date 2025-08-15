@@ -12,6 +12,10 @@ export default function OtherPage() {
   const { data: session, status } = useSession();
   const currentUser = session?.user;
   const authLoading = status === 'loading';
+  
+  // Debug session info
+  console.log('Session status:', status);
+  console.log('Current user:', currentUser);
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('date-desc');
   const [allOtherReviews, setAllOtherReviews] = useState<Review[]>([]);
@@ -22,7 +26,6 @@ export default function OtherPage() {
     fetch('/api/reviews/other')
       .then(res => res.json())
       .then((data: Review[]) => {
-        console.log('Fetched other reviews:', data);
         setAllOtherReviews(data);
         setReviewsLoading(false);
       })
@@ -33,18 +36,7 @@ export default function OtherPage() {
   }, []);
 
   const filteredByViewMode = viewMode === 'my' && currentUser
-    ? allOtherReviews.filter(review => {
-        const isMatch = review.userId === Number(currentUser.id);
-        console.log('User ID comparison:', {
-          reviewUserId: review.userId,
-          reviewUserIdType: typeof review.userId,
-          currentUserId: currentUser.id,
-          currentUserIdType: typeof currentUser.id,
-          currentUserIdNumber: Number(currentUser.id),
-          isMatch
-        });
-        return isMatch;
-      })
+    ? allOtherReviews.filter(review => review.userId === Number(currentUser.id))
     : allOtherReviews;
 
 
@@ -65,6 +57,16 @@ export default function OtherPage() {
           return 0;
       }
     });
+
+  // Debug display info
+  console.log('Display info:', {
+    viewMode,
+    allOtherReviewsCount: allOtherReviews.length,
+    filteredByViewModeCount: filteredByViewMode.length,
+    sortedAndFilteredReviewsCount: sortedAndFilteredReviews.length,
+    search,
+    sortBy
+  });
 
   useEffect(() => {
     if (window.location.hash) {
