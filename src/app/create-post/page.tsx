@@ -258,8 +258,17 @@ export default function CreatePostPage() {
               const searchRes = await fetch(searchUrl);
               const searchData = await searchRes.json();
               
-              if (searchData.results) {
-                results = searchData.results.map((item: any) => ({
+              if (searchData.results && searchData.results.length > 0) {
+                // Prioritize food/drink results over games
+                const foodDrinkResults = searchData.results.filter((item: any) => 
+                  item.type === 'food' || item.type === 'drink' || item.type === 'beer'
+                );
+                const gameResults = searchData.results.filter((item: any) => item.type === 'game');
+                
+                // Combine results with food/drinks first, then games
+                const prioritizedResults = [...foodDrinkResults, ...gameResults];
+                
+                results = prioritizedResults.map((item: any) => ({
                   title: item.title,
                   creator: item.creator,
                   poster: item.poster,
@@ -267,6 +276,24 @@ export default function CreatePostPage() {
                   type: item.type,
                   description: item.description
                 }));
+              } else {
+                // If no results from product search, try games as fallback
+                try {
+                  const gameUrl = `/api/giantbomb-proxy?query=${encodeURIComponent(searchValue)}`;
+                  const gameRes = await fetch(gameUrl);
+                  const gameData = await gameRes.json();
+                  if (gameData.results) {
+                    results = gameData.results.map((game: any) => ({
+                      title: game.name,
+                      creator: game.developer || '',
+                      poster: game.image?.super_url,
+                      year: game.original_release_date ? game.original_release_date.slice(0, 4) : '',
+                      type: 'game'
+                    }));
+                  }
+                } catch (fallbackError) {
+                  console.error('Fallback game search also failed:', fallbackError);
+                }
               }
             } catch (error) {
               console.error('Error fetching from product search API:', error);

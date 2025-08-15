@@ -56,27 +56,38 @@ export async function GET(req: NextRequest) {
         console.error('Error fetching drink data:', error);
       }
 
-      // Search for beer specifically using a beer database
-      try {
-        // Using Punk API (free beer database)
-        const beerUrl = `https://api.punkapi.com/v2/beers?beer_name=${encodeURIComponent(query)}&per_page=5`;
-        const beerRes = await fetch(beerUrl);
-        const beerData = await beerRes.json();
-        
-        if (beerData && beerData.length > 0) {
-          const beerResults = beerData.map((beer: any) => ({
-            title: beer.name,
-            creator: beer.brewery || beer.brewer_tips || 'Craft Brewery',
-            poster: beer.image_url,
-            year: beer.first_brewed ? beer.first_brewed.split('/')[1] || new Date().getFullYear().toString() : new Date().getFullYear().toString(),
-            type: 'beer',
-            description: beer.description || beer.tagline || ''
-          }));
-          results.push(...beerResults);
-        }
-      } catch (error) {
-        console.error('Error fetching beer data:', error);
-      }
+             // Search for beer specifically using a beer database
+       try {
+         // Using Punk API (free beer database) - try both full query and just "beer"
+         let beerQueries = [query];
+         if (query.toLowerCase().includes('beer')) {
+           // If query contains "beer", also search for just the brand name
+           const brandName = query.toLowerCase().replace('beer', '').trim();
+           if (brandName) {
+             beerQueries.push(brandName);
+           }
+         }
+         
+         for (const beerQuery of beerQueries) {
+           const beerUrl = `https://api.punkapi.com/v2/beers?beer_name=${encodeURIComponent(beerQuery)}&per_page=5`;
+           const beerRes = await fetch(beerUrl);
+           const beerData = await beerRes.json();
+           
+           if (beerData && beerData.length > 0) {
+             const beerResults = beerData.map((beer: any) => ({
+               title: beer.name,
+               creator: beer.brewery || beer.brewer_tips || 'Craft Brewery',
+               poster: beer.image_url,
+               year: beer.first_brewed ? beer.first_brewed.split('/')[1] || new Date().getFullYear().toString() : new Date().getFullYear().toString(),
+               type: 'beer',
+               description: beer.description || beer.tagline || ''
+             }));
+             results.push(...beerResults);
+           }
+         }
+       } catch (error) {
+         console.error('Error fetching beer data:', error);
+       }
     }
 
     // 2. Products - Using a free product search API
@@ -136,50 +147,63 @@ export async function GET(req: NextRequest) {
       index === self.findIndex(r => r.title === result.title && r.creator === result.creator)
     );
 
-    // If no results found, provide some common suggestions based on the query
-    if (uniqueResults.length === 0) {
-      const lowerQuery = query.toLowerCase();
-      
-      // Common beer suggestions
-      if (lowerQuery.includes('beer') || lowerQuery.includes('lager') || lowerQuery.includes('ale')) {
-        uniqueResults.push(
-          {
-            title: query,
-            creator: 'Various Breweries',
-            poster: undefined,
-            year: new Date().getFullYear().toString(),
-            type: 'beer',
-            description: `Beer product: ${query}`
-          }
-        );
-      }
-      // Common food suggestions
-      else if (lowerQuery.includes('food') || lowerQuery.includes('snack') || lowerQuery.includes('meal')) {
-        uniqueResults.push(
-          {
-            title: query,
-            creator: 'Various Brands',
-            poster: undefined,
-            year: new Date().getFullYear().toString(),
-            type: 'food',
-            description: `Food product: ${query}`
-          }
-        );
-      }
-      // Generic product suggestion
-      else {
-        uniqueResults.push(
-          {
-            title: query,
-            creator: 'Various Brands',
-            poster: undefined,
-            year: new Date().getFullYear().toString(),
-            type: 'product',
-            description: `Product: ${query}`
-          }
-        );
-      }
-    }
+         // If no results found, provide some common suggestions based on the query
+     if (uniqueResults.length === 0) {
+       const lowerQuery = query.toLowerCase();
+       
+       // Specific brand suggestions for well-known products
+       if (lowerQuery.includes('asahi')) {
+         uniqueResults.push(
+           {
+             title: 'Asahi Super Dry',
+             creator: 'Asahi Breweries',
+             poster: undefined,
+             year: new Date().getFullYear().toString(),
+             type: 'beer',
+             description: 'Japanese lager beer by Asahi Breweries'
+           }
+         );
+       }
+       // Common beer suggestions
+       else if (lowerQuery.includes('beer') || lowerQuery.includes('lager') || lowerQuery.includes('ale')) {
+         uniqueResults.push(
+           {
+             title: query,
+             creator: 'Various Breweries',
+             poster: undefined,
+             year: new Date().getFullYear().toString(),
+             type: 'beer',
+             description: `Beer product: ${query}`
+           }
+         );
+       }
+       // Common food suggestions
+       else if (lowerQuery.includes('food') || lowerQuery.includes('snack') || lowerQuery.includes('meal')) {
+         uniqueResults.push(
+           {
+             title: query,
+             creator: 'Various Brands',
+             poster: undefined,
+             year: new Date().getFullYear().toString(),
+             type: 'food',
+             description: `Food product: ${query}`
+           }
+         );
+       }
+       // Generic product suggestion
+       else {
+         uniqueResults.push(
+           {
+             title: query,
+             creator: 'Various Brands',
+             poster: undefined,
+             year: new Date().getFullYear().toString(),
+             type: 'product',
+             description: `Product: ${query}`
+           }
+         );
+       }
+     }
 
     return NextResponse.json({ 
       results: uniqueResults.slice(0, 10),
