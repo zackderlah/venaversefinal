@@ -15,6 +15,14 @@ export async function POST(req: NextRequest) {
 
     const { title, category, creator, year: yearStr, rating: ratingStr, review, imageUrl: clientImageUrl } = await req.json();
     console.log('Received review creation request:', { title, category, creator, yearStr, ratingStr, review, clientImageUrl });
+    console.log('Category debugging:', { 
+      category, 
+      categoryType: typeof category, 
+      categoryLength: category?.length,
+      categoryCharCodes: category?.split('').map((c: string) => c.charCodeAt(0)),
+      trimmedCategory: category?.trim(),
+      trimmedLength: category?.trim()?.length
+    });
 
     // Validate input
     if (!title || !category || !creator || !yearStr || !ratingStr) {
@@ -30,8 +38,15 @@ export async function POST(req: NextRequest) {
     if (isNaN(rating) || rating < 1 || rating > 10) {
       return NextResponse.json({ message: 'rating must be between 1 and 10' }, { status: 400 });
     }
-    let normalizedCategory = category === 'album' ? 'music' : category;
-    const allowedCategories = ['film', 'music', 'anime', 'books'];
+    let normalizedCategory = (category === 'album' ? 'music' : category).trim();
+    const allowedCategories = ['film', 'music', 'anime', 'books', 'other'];
+    console.log('Category validation debugging:', {
+      originalCategory: category,
+      normalizedCategory,
+      allowedCategories,
+      isIncluded: allowedCategories.includes(normalizedCategory),
+      exactMatches: allowedCategories.map(cat => ({ category: cat, matches: cat === normalizedCategory }))
+    });
     if (!allowedCategories.includes(normalizedCategory)) {
       return NextResponse.json({ message: 'invalid category' }, { status: 400 });
     }

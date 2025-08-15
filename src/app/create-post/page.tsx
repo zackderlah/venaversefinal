@@ -251,6 +251,19 @@ export default function CreatePostPage() {
               }
               results = allResults.slice(0, 5);
             }
+          } else if (formData.category === 'other') {
+            // Use local API route to proxy GiantBomb API
+            let url = `/api/giantbomb-proxy?query=${encodeURIComponent(searchValue)}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            if (data.results) {
+              results = data.results.map((game: any) => ({
+                title: game.name,
+                creator: game.developer || '',
+                poster: game.image?.super_url,
+                year: game.original_release_date ? game.original_release_date.slice(0, 4) : '',
+              }));
+            }
           }
         } else if (activeSearchField === 'creator') {
           // New logic for creator search (search for creators only)

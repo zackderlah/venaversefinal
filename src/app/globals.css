@@ -25,7 +25,8 @@
   }
   
   .dark body {
-    @apply bg-black text-gray-50;
+    @apply text-gray-50;
+    background-color: #222222 !important;
     background-image: url('/bg2.jpg');
   }
 
@@ -82,7 +83,8 @@
   }
 
   .dark .review-card {
-    @apply border-gray-100 bg-[#0A0A0A];
+    @apply border-gray-100;
+    background-color: #222222 !important;
     box-shadow: 4px 4px 0px 0px rgba(255,255,255,0.8);
   }
 
@@ -218,7 +220,8 @@
   }
 
   .dark .category-button {
-    @apply border-white bg-[#0A0A0A] text-white;
+    @apply border-white text-white;
+    background-color: #222222 !important;
     box-shadow: 2px 2px 0px 0px rgba(255,255,255,0.8);
   }
 
