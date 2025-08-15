@@ -22,6 +22,7 @@ export default function OtherPage() {
     fetch('/api/reviews/other')
       .then(res => res.json())
       .then((data: Review[]) => {
+        console.log('Fetched other reviews:', data);
         setAllOtherReviews(data);
         setReviewsLoading(false);
       })
@@ -32,8 +33,21 @@ export default function OtherPage() {
   }, []);
 
   const filteredByViewMode = viewMode === 'my' && currentUser
-    ? allOtherReviews.filter(review => review.userId === Number(currentUser.id))
+    ? allOtherReviews.filter(review => {
+        const isMatch = review.userId === Number(currentUser.id);
+        console.log('User ID comparison:', {
+          reviewUserId: review.userId,
+          reviewUserIdType: typeof review.userId,
+          currentUserId: currentUser.id,
+          currentUserIdType: typeof currentUser.id,
+          currentUserIdNumber: Number(currentUser.id),
+          isMatch
+        });
+        return isMatch;
+      })
     : allOtherReviews;
+
+
 
   const sortedAndFilteredReviews = filteredByViewMode
     .filter(r => r.title.toLowerCase().includes(search.toLowerCase()))
