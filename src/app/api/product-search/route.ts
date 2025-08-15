@@ -169,72 +169,181 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Remove duplicates and limit results
-    const uniqueResults = results.filter((result, index, self) => 
-      index === self.findIndex(r => r.title === result.title && r.creator === result.creator)
-    );
+         // Remove duplicates and limit results
+     const uniqueResults = results.filter((result, index, self) => 
+       index === self.findIndex(r => r.title === result.title && r.creator === result.creator)
+     );
 
-         // If no results found, provide some common suggestions based on the query
+     // For beer searches, prioritize our fallback data with correct historical years
+     const lowerQuery = query.toLowerCase();
+     if (lowerQuery.includes('asahi') || lowerQuery.includes('heineken') || lowerQuery.includes('corona') || 
+         lowerQuery.includes('budweiser') || lowerQuery.includes('guinness') || lowerQuery.includes('beer')) {
+       
+       // Remove any existing results with incorrect years for these brands
+       const filteredResults = uniqueResults.filter(result => {
+         const resultTitle = result.title.toLowerCase();
+         const resultCreator = result.creator.toLowerCase();
+         
+         // If it's a known beer brand, only keep results that have reasonable years (before 2000 for most)
+         if (lowerQuery.includes('asahi') && (resultTitle.includes('asahi') || resultCreator.includes('asahi'))) {
+           const year = parseInt(result.year);
+           return year < 1990; // Asahi Super Dry was released in 1987
+         }
+         if (lowerQuery.includes('heineken') && (resultTitle.includes('heineken') || resultCreator.includes('heineken'))) {
+           const year = parseInt(result.year);
+           return year < 1900; // Heineken was founded in 1873
+         }
+         if (lowerQuery.includes('corona') && (resultTitle.includes('corona') || resultCreator.includes('corona'))) {
+           const year = parseInt(result.year);
+           return year < 1930; // Corona was founded in 1925
+         }
+         if (lowerQuery.includes('budweiser') && (resultTitle.includes('budweiser') || resultCreator.includes('budweiser'))) {
+           const year = parseInt(result.year);
+           return year < 1900; // Budweiser was founded in 1876
+         }
+         if (lowerQuery.includes('guinness') && (resultTitle.includes('guinness') || resultCreator.includes('guinness'))) {
+           const year = parseInt(result.year);
+           return year < 1800; // Guinness was founded in 1759
+         }
+         
+         return true; // Keep other results
+       });
+       
+       // Replace filtered results
+       uniqueResults.length = 0;
+       uniqueResults.push(...filteredResults);
+     }
+
+     // Always include correct historical data for beer searches, even if there are API results
+     if (lowerQuery.includes('asahi') || lowerQuery.includes('heineken') || lowerQuery.includes('corona') || 
+         lowerQuery.includes('budweiser') || lowerQuery.includes('guinness')) {
+       
+       // Check if we already have the correct historical data
+       const hasCorrectHistoricalData = uniqueResults.some(result => {
+         const resultTitle = result.title.toLowerCase();
+         const resultCreator = result.creator.toLowerCase();
+         
+         if (lowerQuery.includes('asahi') && resultTitle.includes('asahi super dry') && result.year === '1987') return true;
+         if (lowerQuery.includes('heineken') && resultTitle.includes('heineken lager') && result.year === '1873') return true;
+         if (lowerQuery.includes('corona') && resultTitle.includes('corona extra') && result.year === '1925') return true;
+         if (lowerQuery.includes('budweiser') && resultTitle.includes('budweiser') && result.year === '1876') return true;
+         if (lowerQuery.includes('guinness') && resultTitle.includes('guinness draught') && result.year === '1759') return true;
+         
+         return false;
+       });
+       
+       // If we don't have the correct historical data, add it
+       if (!hasCorrectHistoricalData) {
+         if (lowerQuery.includes('asahi')) {
+           uniqueResults.unshift({
+             title: 'Asahi Super Dry',
+             creator: 'Asahi Breweries',
+             poster: undefined,
+             year: '1987',
+             type: 'beer',
+             description: 'Japanese lager beer by Asahi Breweries, first brewed in 1987'
+           });
+         } else if (lowerQuery.includes('heineken')) {
+           uniqueResults.unshift({
+             title: 'Heineken Lager',
+             creator: 'Heineken International',
+             poster: undefined,
+             year: '1873',
+             type: 'beer',
+             description: 'Dutch pale lager beer, first brewed in 1873'
+           });
+         } else if (lowerQuery.includes('corona')) {
+           uniqueResults.unshift({
+             title: 'Corona Extra',
+             creator: 'Grupo Modelo',
+             poster: undefined,
+             year: '1925',
+             type: 'beer',
+             description: 'Mexican pale lager, first brewed in 1925'
+           });
+         } else if (lowerQuery.includes('budweiser')) {
+           uniqueResults.unshift({
+             title: 'Budweiser',
+             creator: 'Anheuser-Busch',
+             poster: undefined,
+             year: '1876',
+             type: 'beer',
+             description: 'American-style lager, first brewed in 1876'
+           });
+         } else if (lowerQuery.includes('guinness')) {
+           uniqueResults.unshift({
+             title: 'Guinness Draught',
+             creator: 'Diageo',
+             poster: undefined,
+             year: '1759',
+             type: 'beer',
+             description: 'Irish dry stout, first brewed in 1759'
+           });
+         }
+       }
+     }
+     
+     // If no results found, provide some common suggestions based on the query
      if (uniqueResults.length === 0) {
        const lowerQuery = query.toLowerCase();
        
-               // Specific brand suggestions for well-known products
-        if (lowerQuery.includes('asahi')) {
-          uniqueResults.push(
-            {
-              title: 'Asahi Super Dry',
-              creator: 'Asahi Breweries',
-              poster: undefined,
-              year: '1987',
-              type: 'beer',
-              description: 'Japanese lager beer by Asahi Breweries, first brewed in 1987'
-            }
-          );
-        } else if (lowerQuery.includes('heineken')) {
-          uniqueResults.push(
-            {
-              title: 'Heineken Lager',
-              creator: 'Heineken International',
-              poster: undefined,
-              year: '1873',
-              type: 'beer',
-              description: 'Dutch pale lager beer, first brewed in 1873'
-            }
-          );
-        } else if (lowerQuery.includes('corona')) {
-          uniqueResults.push(
-            {
-              title: 'Corona Extra',
-              creator: 'Grupo Modelo',
-              poster: undefined,
-              year: '1925',
-              type: 'beer',
-              description: 'Mexican pale lager, first brewed in 1925'
-            }
-          );
-        } else if (lowerQuery.includes('budweiser')) {
-          uniqueResults.push(
-            {
-              title: 'Budweiser',
-              creator: 'Anheuser-Busch',
-              poster: undefined,
-              year: '1876',
-              type: 'beer',
-              description: 'American-style lager, first brewed in 1876'
-            }
-          );
-        } else if (lowerQuery.includes('guinness')) {
-          uniqueResults.push(
-            {
-              title: 'Guinness Draught',
-              creator: 'Diageo',
-              poster: undefined,
-              year: '1759',
-              type: 'beer',
-              description: 'Irish dry stout, first brewed in 1759'
-            }
-          );
-        }
+       // Specific brand suggestions for well-known products (fallback only)
+       if (lowerQuery.includes('asahi')) {
+         uniqueResults.push(
+           {
+             title: 'Asahi Super Dry',
+             creator: 'Asahi Breweries',
+             poster: undefined,
+             year: '1987',
+             type: 'beer',
+             description: 'Japanese lager beer by Asahi Breweries, first brewed in 1987'
+           }
+         );
+       } else if (lowerQuery.includes('heineken')) {
+         uniqueResults.push(
+           {
+             title: 'Heineken Lager',
+             creator: 'Heineken International',
+             poster: undefined,
+             year: '1873',
+             type: 'beer',
+             description: 'Dutch pale lager beer, first brewed in 1873'
+           }
+         );
+       } else if (lowerQuery.includes('corona')) {
+         uniqueResults.push(
+           {
+             title: 'Corona Extra',
+             creator: 'Grupo Modelo',
+             poster: undefined,
+             year: '1925',
+             type: 'beer',
+             description: 'Mexican pale lager, first brewed in 1925'
+           }
+         );
+       } else if (lowerQuery.includes('budweiser')) {
+         uniqueResults.push(
+           {
+             title: 'Budweiser',
+             creator: 'Anheuser-Busch',
+             poster: undefined,
+             year: '1876',
+             type: 'beer',
+             description: 'American-style lager, first brewed in 1876'
+           }
+         );
+       } else if (lowerQuery.includes('guinness')) {
+         uniqueResults.push(
+           {
+             title: 'Guinness Draught',
+             creator: 'Diageo',
+             poster: undefined,
+             year: '1759',
+             type: 'beer',
+             description: 'Irish dry stout, first brewed in 1759'
+           }
+         );
+       }
        // Common beer suggestions
        else if (lowerQuery.includes('beer') || lowerQuery.includes('lager') || lowerQuery.includes('ale')) {
          uniqueResults.push(
