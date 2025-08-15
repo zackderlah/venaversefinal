@@ -19,8 +19,8 @@ const prisma = new PrismaClient();
 export default function ReviewPage() {
   const params = useParams();
   // params.slug is an array, e.g. ['123-the-godfather-by-johnny']
-  const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
-  const id = slug.split('-')[0]; // get the numeric ID
+  const slug = Array.isArray(params?.slug) ? params.slug[0] : params?.slug;
+  const id = slug?.split('-')[0]; // get the numeric ID
   const router = useRouter();
   const { user: currentUser, loading: authLoading } = useAuth();
   const [review, setReview] = useState<any>(null);

@@ -16,7 +16,7 @@ interface ReviewFormData {
 export default function EditReviewPage() {
   const router = useRouter();
   const params = useParams();
-  const reviewId = params.id;
+  const reviewId = params?.id as string;
 
   const [formData, setFormData] = useState<ReviewFormData>({
     title: '',

@@ -98,12 +98,12 @@ export default function HeaderWithDarkMode() {
       <nav className={`${isMenuOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row gap-6 text-sm items-start md:items-center lowercase`}>
         <div className="flex flex-col md:flex-row md:items-center w-full">
           <Link href="/" className={`nav-link text-gray-900 w-full md:w-auto${pathname === '/' ? ' active' : ''}`}>home</Link>
-          <Link href="/films" className={`nav-link text-blue-600 w-full md:w-auto${pathname.startsWith('/films') ? ' active' : ''}`}>films</Link>
-          <Link href="/music" className={`nav-link text-purple-600 w-full md:w-auto${pathname.startsWith('/music') ? ' active' : ''}`}>music</Link>
-          <Link href="/anime" className={`nav-link text-red-600 w-full md:w-auto${pathname.startsWith('/anime') ? ' active' : ''}`}>anime</Link>
-          <Link href="/books" className={`nav-link text-green-600 w-full md:w-auto${pathname.startsWith('/books') ? ' active' : ''}`}>books</Link>
-          <Link href="/other" className={`nav-link text-yellow-600 w-full md:w-auto${pathname.startsWith('/other') ? ' active' : ''}`}>other</Link>
-          <Link href="/community" className={`nav-link text-pink-600 w-full md:w-auto${pathname.startsWith('/community') ? ' active' : ''}`}>community</Link>
+          <Link href="/films" className={`nav-link text-blue-600 w-full md:w-auto${pathname?.startsWith('/films') ? ' active' : ''}`}>films</Link>
+          <Link href="/music" className={`nav-link text-purple-600 w-full md:w-auto${pathname?.startsWith('/music') ? ' active' : ''}`}>music</Link>
+          <Link href="/anime" className={`nav-link text-red-600 w-full md:w-auto${pathname?.startsWith('/anime') ? ' active' : ''}`}>anime</Link>
+          <Link href="/books" className={`nav-link text-green-600 w-full md:w-auto${pathname?.startsWith('/books') ? ' active' : ''}`}>books</Link>
+          <Link href="/other" className={`nav-link text-yellow-600 w-full md:w-auto${pathname?.startsWith('/other') ? ' active' : ''}`}>other</Link>
+          <Link href="/community" className={`nav-link text-pink-600 w-full md:w-auto${pathname?.startsWith('/community') ? ' active' : ''}`}>community</Link>
           <div className="flex gap-2 mt-4 md:mt-0 ml-auto">
             {user ? (
               <>

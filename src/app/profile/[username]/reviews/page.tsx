@@ -9,7 +9,8 @@ import SortSelect from "@/components/SortSelect";
 import { Review } from "@/types/review";
 
 export default function UserReviewsPage() {
-  const { username } = useParams();
+  const params = useParams();
+  const username = params?.username as string;
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
