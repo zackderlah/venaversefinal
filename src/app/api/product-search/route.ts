@@ -20,17 +20,30 @@ export async function GET(req: NextRequest) {
         const foodRes = await fetch(foodUrl);
         const foodData = await foodRes.json();
         
-        if (foodData.products) {
-          const foodResults = foodData.products.map((product: any) => ({
-            title: product.product_name || product.product_name_en || query,
-            creator: product.brands || product.manufacturer || 'Unknown',
-            poster: product.image_front_url || product.image_url,
-            year: product.created_t || new Date().getFullYear().toString(),
-            type: 'food',
-            description: product.generic_name || product.product_name_en || ''
-          }));
-          results.push(...foodResults);
-        }
+                 if (foodData.products) {
+           const foodResults = foodData.products.map((product: any) => {
+             // Convert timestamp to year if it exists
+             let year = new Date().getFullYear().toString();
+             if (product.created_t) {
+               try {
+                 year = new Date(product.created_t * 1000).getFullYear().toString();
+               } catch (e) {
+                 // If timestamp conversion fails, use current year
+                 year = new Date().getFullYear().toString();
+               }
+             }
+             
+             return {
+               title: product.product_name || product.product_name_en || query,
+               creator: product.brands || product.manufacturer || 'Unknown',
+               poster: product.image_front_url || product.image_url,
+               year: year,
+               type: 'food',
+               description: product.generic_name || product.product_name_en || ''
+             };
+           });
+           results.push(...foodResults);
+         }
       } catch (error) {
         console.error('Error fetching food data:', error);
       }
@@ -56,38 +69,52 @@ export async function GET(req: NextRequest) {
         console.error('Error fetching drink data:', error);
       }
 
-             // Search for beer specifically using a beer database
-       try {
-         // Using Punk API (free beer database) - try both full query and just "beer"
-         let beerQueries = [query];
-         if (query.toLowerCase().includes('beer')) {
-           // If query contains "beer", also search for just the brand name
-           const brandName = query.toLowerCase().replace('beer', '').trim();
-           if (brandName) {
-             beerQueries.push(brandName);
-           }
-         }
-         
-         for (const beerQuery of beerQueries) {
-           const beerUrl = `https://api.punkapi.com/v2/beers?beer_name=${encodeURIComponent(beerQuery)}&per_page=5`;
-           const beerRes = await fetch(beerUrl);
-           const beerData = await beerRes.json();
-           
-           if (beerData && beerData.length > 0) {
-             const beerResults = beerData.map((beer: any) => ({
-               title: beer.name,
-               creator: beer.brewery || beer.brewer_tips || 'Craft Brewery',
-               poster: beer.image_url,
-               year: beer.first_brewed ? beer.first_brewed.split('/')[1] || new Date().getFullYear().toString() : new Date().getFullYear().toString(),
-               type: 'beer',
-               description: beer.description || beer.tagline || ''
-             }));
-             results.push(...beerResults);
-           }
-         }
-       } catch (error) {
-         console.error('Error fetching beer data:', error);
-       }
+                    // Search for beer specifically using a beer database
+        try {
+          // Using Punk API (free beer database) - try both full query and just "beer"
+          let beerQueries = [query];
+          if (query.toLowerCase().includes('beer')) {
+            // If query contains "beer", also search for just the brand name
+            const brandName = query.toLowerCase().replace('beer', '').trim();
+            if (brandName) {
+              beerQueries.push(brandName);
+            }
+          }
+          
+          for (const beerQuery of beerQueries) {
+                         try {
+               const beerUrl = `https://api.punkapi.com/v2/beers?beer_name=${encodeURIComponent(beerQuery)}&per_page=5`;
+               const beerRes = await fetch(beerUrl, { 
+                 headers: { 'User-Agent': 'johnnywebsite/1.0.0' }
+               });
+              
+              if (!beerRes.ok) {
+                console.warn(`Punk API returned ${beerRes.status} for query: ${beerQuery}`);
+                continue;
+              }
+              
+              const beerData = await beerRes.json();
+              
+              if (beerData && beerData.length > 0) {
+                const beerResults = beerData.map((beer: any) => ({
+                  title: beer.name,
+                  creator: beer.brewery || beer.brewer_tips || 'Craft Brewery',
+                  poster: beer.image_url,
+                  year: beer.first_brewed ? beer.first_brewed.split('/')[1] || new Date().getFullYear().toString() : new Date().getFullYear().toString(),
+                  type: 'beer',
+                  description: beer.description || beer.tagline || ''
+                }));
+                results.push(...beerResults);
+              }
+                         } catch (beerError) {
+               console.warn(`Failed to fetch beer data for query "${beerQuery}":`, beerError instanceof Error ? beerError.message : 'Unknown error');
+               // Continue with next query instead of failing completely
+               continue;
+             }
+          }
+        } catch (error) {
+          console.error('Error in beer search:', error);
+        }
     }
 
     // 2. Products - Using a free product search API
@@ -151,19 +178,63 @@ export async function GET(req: NextRequest) {
      if (uniqueResults.length === 0) {
        const lowerQuery = query.toLowerCase();
        
-       // Specific brand suggestions for well-known products
-       if (lowerQuery.includes('asahi')) {
-         uniqueResults.push(
-           {
-             title: 'Asahi Super Dry',
-             creator: 'Asahi Breweries',
-             poster: undefined,
-             year: new Date().getFullYear().toString(),
-             type: 'beer',
-             description: 'Japanese lager beer by Asahi Breweries'
-           }
-         );
-       }
+               // Specific brand suggestions for well-known products
+        if (lowerQuery.includes('asahi')) {
+          uniqueResults.push(
+            {
+              title: 'Asahi Super Dry',
+              creator: 'Asahi Breweries',
+              poster: undefined,
+              year: '1987',
+              type: 'beer',
+              description: 'Japanese lager beer by Asahi Breweries, first brewed in 1987'
+            }
+          );
+        } else if (lowerQuery.includes('heineken')) {
+          uniqueResults.push(
+            {
+              title: 'Heineken Lager',
+              creator: 'Heineken International',
+              poster: undefined,
+              year: '1873',
+              type: 'beer',
+              description: 'Dutch pale lager beer, first brewed in 1873'
+            }
+          );
+        } else if (lowerQuery.includes('corona')) {
+          uniqueResults.push(
+            {
+              title: 'Corona Extra',
+              creator: 'Grupo Modelo',
+              poster: undefined,
+              year: '1925',
+              type: 'beer',
+              description: 'Mexican pale lager, first brewed in 1925'
+            }
+          );
+        } else if (lowerQuery.includes('budweiser')) {
+          uniqueResults.push(
+            {
+              title: 'Budweiser',
+              creator: 'Anheuser-Busch',
+              poster: undefined,
+              year: '1876',
+              type: 'beer',
+              description: 'American-style lager, first brewed in 1876'
+            }
+          );
+        } else if (lowerQuery.includes('guinness')) {
+          uniqueResults.push(
+            {
+              title: 'Guinness Draught',
+              creator: 'Diageo',
+              poster: undefined,
+              year: '1759',
+              type: 'beer',
+              description: 'Irish dry stout, first brewed in 1759'
+            }
+          );
+        }
        // Common beer suggestions
        else if (lowerQuery.includes('beer') || lowerQuery.includes('lager') || lowerQuery.includes('ale')) {
          uniqueResults.push(
