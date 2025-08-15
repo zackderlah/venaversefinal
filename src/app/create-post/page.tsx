@@ -252,17 +252,41 @@ export default function CreatePostPage() {
               results = allResults.slice(0, 5);
             }
           } else if (formData.category === 'other') {
-            // Use local API route to proxy GiantBomb API
-            let url = `/api/giantbomb-proxy?query=${encodeURIComponent(searchValue)}`;
-            const res = await fetch(url);
-            const data = await res.json();
-            if (data.results) {
-              results = data.results.map((game: any) => ({
-                title: game.name,
-                creator: game.developer || '',
-                poster: game.image?.super_url,
-                year: game.original_release_date ? game.original_release_date.slice(0, 4) : '',
-              }));
+            // Use the new product search API that includes food, drinks, and products
+            try {
+              const searchUrl = `/api/product-search?query=${encodeURIComponent(searchValue)}&category=all`;
+              const searchRes = await fetch(searchUrl);
+              const searchData = await searchRes.json();
+              
+              if (searchData.results) {
+                results = searchData.results.map((item: any) => ({
+                  title: item.title,
+                  creator: item.creator,
+                  poster: item.poster,
+                  year: item.year,
+                  type: item.type,
+                  description: item.description
+                }));
+              }
+            } catch (error) {
+              console.error('Error fetching from product search API:', error);
+              // Fallback to just games if the new API fails
+              try {
+                const gameUrl = `/api/giantbomb-proxy?query=${encodeURIComponent(searchValue)}`;
+                const gameRes = await fetch(gameUrl);
+                const gameData = await gameRes.json();
+                if (gameData.results) {
+                  results = gameData.results.map((game: any) => ({
+                    title: game.name,
+                    creator: game.developer || '',
+                    poster: game.image?.super_url,
+                    year: game.original_release_date ? game.original_release_date.slice(0, 4) : '',
+                    type: 'game'
+                  }));
+                }
+              } catch (fallbackError) {
+                console.error('Fallback game search also failed:', fallbackError);
+              }
             }
           }
         } else if (activeSearchField === 'creator') {
@@ -330,6 +354,52 @@ export default function CreatePostPage() {
                 creator: studio.name,
                 works: studio.media.nodes.map((m: any) => m.title.romaji),
               }));
+            }
+          } else if (formData.category === 'other') {
+            // Search for brands, manufacturers, and developers
+            try {
+              // Search for food brands using Open Food Facts
+              const foodUrl = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(searchValue)}&search_simple=1&action=process&json=1&page_size=10`;
+              const foodRes = await fetch(foodUrl);
+              const foodData = await foodRes.json();
+              
+              let brands: Record<string, string[]> = {};
+              if (foodData.products) {
+                foodData.products.forEach((product: any) => {
+                  const brand = product.brands || product.manufacturer;
+                  if (brand) {
+                    if (!brands[brand]) brands[brand] = [];
+                    brands[brand].push(product.product_name || product.product_name_en || 'Unknown Product');
+                  }
+                });
+              }
+              
+              // Search for game developers using GiantBomb
+              try {
+                const apiKey = "4ad067883d9d052b144b74cec0dcedb2c1c48431";
+                const gameUrl = `https://www.giantbomb.com/api/search/?api_key=${apiKey}&format=json&query=${encodeURIComponent(searchValue)}&resources=game`;
+                const gameRes = await fetch(gameUrl, { headers: { 'User-Agent': 'johnnywebsite' } });
+                const gameData = await gameRes.json();
+                
+                if (gameData.results) {
+                  gameData.results.forEach((game: any) => {
+                    const developer = game.developer;
+                    if (developer) {
+                      if (!brands[developer]) brands[developer] = [];
+                      brands[developer].push(game.name);
+                    }
+                  });
+                }
+              } catch (error) {
+                console.error('Error fetching game developers:', error);
+              }
+              
+              results = Object.entries(brands).map(([name, works]) => ({ 
+                creator: name, 
+                works: works.slice(0, 3) // Limit to 3 works per creator
+              }));
+            } catch (error) {
+              console.error('Error searching for creators in other category:', error);
             }
           }
         }
