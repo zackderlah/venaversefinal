@@ -84,7 +84,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
   return (
     <div
       id={`review-${review.id}`}
-      className="review-card cursor-pointer"
+      className="review-card review-card-item cursor-pointer"
       onClick={() => router.push(`/reviews/${review.id}`)}
     >
       <div className="flex flex-row gap-4 items-start">

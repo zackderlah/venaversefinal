@@ -31,7 +31,7 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#0A0A0A] px-4">
-      <div className="w-full max-w-md border-2 border-black dark:border-white bg-white dark:bg-[#0A0A0A] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-lg p-8">
+      <div className="w-full max-w-md review-card content-card rounded-lg p-8">
         <h2 className="text-center text-2xl font-black mb-6 lowercase text-black dark:text-white tracking-tight">create account</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">

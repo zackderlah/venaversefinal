@@ -6,7 +6,7 @@ export default function UserBanner({ user }: { user: any }) {
   const { level } = calculateUserXPAndLevel(user.reviews || []);
   return (
     <Link href={`/profile/${user.username}`} className="block">
-      <div className="review-card flex flex-row items-center gap-6 p-4 hover:shadow-lg transition-shadow cursor-pointer">
+      <div className="review-card review-card-item flex flex-row items-center gap-6 p-4 cursor-pointer">
         <div className="relative w-20 h-20 rounded-full overflow-hidden border border-black dark:border-white bg-gray-100 dark:bg-gray-800 flex-shrink-0">
           {user.profileImage ? (
             <img

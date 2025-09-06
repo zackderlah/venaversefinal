@@ -8,6 +8,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import SessionClientProvider from '../components/SessionClientProvider'
 import TrailingCursor from '../components/TrailingCursor'
+import VantaGlobeBackground from '../components/VantaGlobeBackground'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -74,7 +75,10 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.className} ${notoSansJP.variable} bg-gray-50 text-gray-900 min-h-screen`}>
+      <body className={`${inter.className} ${notoSansJP.variable} text-gray-900 min-h-screen`}>
+        <VantaGlobeBackground 
+          isActive={true}
+        />
         <TrailingCursor />
         <GlobalLoadingBar />
         <LoadingBarProvider>

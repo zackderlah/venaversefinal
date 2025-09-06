@@ -28,7 +28,7 @@ export default function Home() {
   );
 
   return (
-    <div className="space-y-16 px-4 py-8 max-w-[1000px] mx-auto border-x-2 border-black dark:border-gray-100 min-h-screen">
+    <div className="space-y-16">
       <section className="border-b-2 border-black dark:border-gray-100 pb-8">
         <h2 className="text-4xl font-black mb-4 tracking-tight lowercase">note</h2>
         <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg leading-relaxed lowercase">

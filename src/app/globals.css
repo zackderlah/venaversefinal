@@ -14,20 +14,15 @@
 
 @layer base {
   body {
-    @apply antialiased bg-gray-50 text-gray-900;
+    @apply antialiased text-gray-900;
     font-family: 'Neue Montreal', sans-serif;
-    background-image: url('/bg2.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+    background-color: transparent !important;
   }
   
   .dark body {
     @apply text-gray-50;
-    background-color: #222222 !important;
-    background-image: url('/bg2.jpg');
+    background-color: transparent !important;
   }
 
   h1, h2, h3 {
@@ -64,6 +59,39 @@
     position: relative;
   }
 
+  .review-card.header-card {
+    background-color: rgba(255, 255, 255, 0.3) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: none !important;
+  }
+
+  .review-card.header-card::before {
+    display: none !important;
+  }
+
+  .review-card.content-card {
+    background-color: rgba(255, 255, 255, 0.3) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: none !important;
+  }
+
+  .review-card.content-card::before {
+    display: none !important;
+  }
+
+  .review-card.review-card-item {
+    background-color: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: none !important;
+  }
+
+  .review-card.review-card-item::before {
+    display: none !important;
+  }
+
   .review-card::before {
     content: '';
     position: absolute;
@@ -86,6 +114,39 @@
     @apply border-gray-100;
     background-color: #222222 !important;
     box-shadow: 4px 4px 0px 0px rgba(255,255,255,0.8);
+  }
+
+  .dark .review-card.header-card {
+    background-color: rgba(34, 34, 34, 0.3) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: none !important;
+  }
+
+  .dark .review-card.header-card::before {
+    display: none !important;
+  }
+
+  .dark .review-card.content-card {
+    background-color: rgba(34, 34, 34, 0.3) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: none !important;
+  }
+
+  .dark .review-card.content-card::before {
+    display: none !important;
+  }
+
+  .dark .review-card.review-card-item {
+    background-color: rgba(34, 34, 34, 0.6) !important;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: none !important;
+  }
+
+  .dark .review-card.review-card-item::before {
+    display: none !important;
   }
 
   .dark .review-card::before {

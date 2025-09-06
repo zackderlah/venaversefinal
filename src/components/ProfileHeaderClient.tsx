@@ -54,7 +54,7 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
   };
 
   return (
-    <div className="review-card flex flex-col md:flex-row items-center md:items-start gap-8 mb-4 border-2 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white dark:bg-[#0A0A0A] relative">
+    <div className="review-card content-card flex flex-col md:flex-row items-center md:items-start gap-8 mb-4 relative">
       <div className="flex flex-col items-center gap-2 mr-0 md:mr-8">
         <div className="relative w-32 h-32 rounded-full overflow-hidden border border-black dark:border-white bg-gray-100 dark:bg-gray-800">
           {user.profileImage ? (
