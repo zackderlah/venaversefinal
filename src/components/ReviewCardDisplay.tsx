@@ -137,60 +137,61 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
                 )}
               </p>
             </div>
-          <div className="review-date">
-            Reviewed on {new Date(review.date).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}
-          </div>
-          {typeof review.commentCount === 'number' && (
-            <div className="flex items-center gap-1 mt-2 text-xs text-gray-500">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-4-.8L3 20l.8-4A8.96 8.96 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
-              {review.commentCount} comment{review.commentCount === 1 ? '' : 's'}
+            <div className="review-date">
+              Reviewed on {new Date(review.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
             </div>
-          )}
-          {canEdit && (
-            <div className="mt-2 flex space-x-3">
-              <Link 
-                href={`/reviews/${review.id}/edit`}
-                onClick={e => { e.stopPropagation(); e.preventDefault(); router.push(`/reviews/${review.id}/edit`); }}
-                className="text-xs lowercase font-semibold text-blue-600 hover:underline"
-              >
-                edit review
-              </Link>
-              <button 
-                onClick={e => { e.stopPropagation(); e.preventDefault(); handleDelete(e); }}
-                className="text-xs lowercase font-semibold text-red-600 hover:underline"
-              >
-                delete
-              </button>
-            </div>
-          )}
-          {showDeleteModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-              <div className="bg-white dark:bg-[#18181b] rounded-lg shadow-lg p-6 w-full max-w-xs text-center">
-                <div className="mb-4 text-lg font-bold text-gray-800 dark:text-gray-100 lowercase">delete review?</div>
-                <div className="mb-6 text-gray-600 dark:text-gray-300 text-sm">Are you sure you want to delete this review? This action cannot be undone.</div>
-                <div className="flex justify-center gap-4">
-                  <button
-                    onClick={confirmDelete}
-                    className="px-4 py-1 rounded text-xs font-bold lowercase border-2 border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-900 transition-colors"
-                    disabled={deleting}
-                  >
-                    {deleting ? 'deleting...' : 'delete'}
-                  </button>
-                  <button
-                    onClick={cancelDelete}
-                    className="px-4 py-1 rounded text-xs font-bold lowercase border-2 border-gray-400 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                    disabled={deleting}
-                  >
-                    cancel
-                  </button>
+            {typeof review.commentCount === 'number' && (
+              <div className="flex items-center gap-1 mt-2 text-xs text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-4-.8L3 20l.8-4A8.96 8.96 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                {review.commentCount} comment{review.commentCount === 1 ? '' : 's'}
+              </div>
+            )}
+            {canEdit && (
+              <div className="mt-2 flex space-x-3">
+                <Link 
+                  href={`/reviews/${review.id}/edit`}
+                  onClick={e => { e.stopPropagation(); e.preventDefault(); router.push(`/reviews/${review.id}/edit`); }}
+                  className="text-xs lowercase font-semibold text-blue-600 hover:underline"
+                >
+                  edit review
+                </Link>
+                <button 
+                  onClick={e => { e.stopPropagation(); e.preventDefault(); handleDelete(e); }}
+                  className="text-xs lowercase font-semibold text-red-600 hover:underline"
+                >
+                  delete
+                </button>
+              </div>
+            )}
+            {showDeleteModal && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+                <div className="bg-white dark:bg-[#18181b] rounded-lg shadow-lg p-6 w-full max-w-xs text-center">
+                  <div className="mb-4 text-lg font-bold text-gray-800 dark:text-gray-100 lowercase">delete review?</div>
+                  <div className="mb-6 text-gray-600 dark:text-gray-300 text-sm">Are you sure you want to delete this review? This action cannot be undone.</div>
+                  <div className="flex justify-center gap-4">
+                    <button
+                      onClick={confirmDelete}
+                      className="px-4 py-1 rounded text-xs font-bold lowercase border-2 border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-900 transition-colors"
+                      disabled={deleting}
+                    >
+                      {deleting ? 'deleting...' : 'delete'}
+                    </button>
+                    <button
+                      onClick={cancelDelete}
+                      className="px-4 py-1 rounded text-xs font-bold lowercase border-2 border-gray-400 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                      disabled={deleting}
+                    >
+                      cancel
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
         <span className="rating shrink-0 ml-2 text-2xl md:text-3xl font-extrabold mt-1 hidden md:block">{review.rating}/10</span>
       </div>
