@@ -87,52 +87,56 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
       className="review-card review-card-item cursor-pointer"
       onClick={() => router.push(`/reviews/${review.id}`)}
     >
-      <div className="flex flex-row gap-4 items-start">
-        {review.imageUrl && (
-          <div className="relative w-16 h-24 flex-shrink-0">
-            <Image
-              src={review.imageUrl}
-              alt={`Cover for ${review.title}`}
-              fill
-              className="object-cover rounded-lg"
-              sizes="64px"
-              unoptimized
-            />
-          </div>
-        )}
-        <div className="flex-1 min-w-0 flex flex-col justify-start">
-          <h3 className="text-xl font-black mb-1 truncate">
-            <Link href={`/reviews/${review.id}`} onClick={e => e.stopPropagation()}>{capitalizeTitle(review.title)}</Link>
-          </h3>
-          <span className="text-sm text-gray-500 mb-1">
-            {review.creator}, {review.year} <MediaTag category={review.category} />
-          </span>
-          {review.user?.username && (
-            <div className="mb-2">
-              <Link href={`/profile/${review.user.username}`} className="flex items-center gap-0.5" onClick={e => e.stopPropagation()}>
-                {review.user.profileImage ? (
-                  <img
-                    src={review.user.profileImage}
-                    alt={review.user.username}
-                    className="w-6 h-6 rounded-full object-cover border border-black dark:border-white"
-                  />
-                ) : (
-                  <span className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-xs text-gray-500 font-bold">
-                    {review.user.username[0].toUpperCase()}
-                  </span>
-                )}
-                <span className="hover:text-blue-600 dark:hover:text-blue-600 text-xs text-black dark:text-white font-bold lowercase ml-0.5">{review.user.username}</span>
-              </Link>
+      <div className="flex flex-col md:flex-row gap-4 items-start w-full">
+        <div className="flex flex-row gap-4 items-start w-full md:w-auto">
+          {review.imageUrl && (
+            <div className="relative w-16 h-24 flex-shrink-0">
+              <Image
+                src={review.imageUrl}
+                alt={`Cover for ${review.title}`}
+                fill
+                className="object-cover rounded-lg"
+                sizes="64px"
+                unoptimized
+              />
             </div>
           )}
-          <div className="mb-4 prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 prose-p:my-4">
-            <p>
-              {isMobile ? getPreview(review.review, 200) : getPreview(review.review, 500)}
-              {htmlToText(review.review, { wordwrap: false }).length > (isMobile ? 200 : 500) && (
-                <Link href={`/reviews/${review.id}`} className="text-blue-600 hover:underline ml-1">Read more</Link>
-              )}
-            </p>
-          </div>
+          <div className="flex-1 min-w-0 flex flex-col justify-start">
+            <div className="flex items-start justify-between gap-2 mb-1">
+              <h3 className="text-xl font-black truncate flex-1">
+                <Link href={`/reviews/${review.id}`} onClick={e => e.stopPropagation()}>{capitalizeTitle(review.title)}</Link>
+              </h3>
+              <span className="rating shrink-0 text-2xl md:text-3xl font-extrabold md:hidden">{review.rating}/10</span>
+            </div>
+            <span className="text-sm text-gray-500 mb-1">
+              {review.creator}, {review.year} <MediaTag category={review.category} />
+            </span>
+            {review.user?.username && (
+              <div className="mb-2">
+                <Link href={`/profile/${review.user.username}`} className="flex items-center gap-0.5" onClick={e => e.stopPropagation()}>
+                  {review.user.profileImage ? (
+                    <img
+                      src={review.user.profileImage}
+                      alt={review.user.username}
+                      className="w-6 h-6 rounded-full object-cover border border-black dark:border-white"
+                    />
+                  ) : (
+                    <span className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-xs text-gray-500 font-bold">
+                      {review.user.username[0].toUpperCase()}
+                    </span>
+                  )}
+                  <span className="hover:text-blue-600 dark:hover:text-blue-600 text-xs text-black dark:text-white font-bold lowercase ml-0.5">{review.user.username}</span>
+                </Link>
+              </div>
+            )}
+            <div className="mb-4 text-gray-700 dark:text-gray-300">
+              <p className="text-sm leading-relaxed break-words whitespace-normal">
+                {isMobile ? getPreview(review.review, 200) : getPreview(review.review, 500)}
+                {htmlToText(review.review, { wordwrap: false }).length > (isMobile ? 200 : 500) && (
+                  <Link href={`/reviews/${review.id}`} className="text-blue-600 hover:underline ml-1">Read more</Link>
+                )}
+              </p>
+            </div>
           <div className="review-date">
             Reviewed on {new Date(review.date).toLocaleDateString('en-US', {
               year: 'numeric',
@@ -188,7 +192,7 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
             </div>
           )}
         </div>
-        <span className="rating shrink-0 ml-2 text-3xl font-extrabold mt-1">{review.rating}/10</span>
+        <span className="rating shrink-0 ml-2 text-2xl md:text-3xl font-extrabold mt-1 hidden md:block">{review.rating}/10</span>
       </div>
     </div>
   );

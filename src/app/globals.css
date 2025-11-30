@@ -167,6 +167,10 @@
     @apply text-gray-600;
     position: relative;
     z-index: 2;
+    word-wrap: break-word;
+    word-break: normal;
+    white-space: normal;
+    overflow-wrap: break-word;
   }
 
   .dark .review-card p {
