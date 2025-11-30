@@ -5,7 +5,7 @@ import MediaTag from './MediaTag';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { htmlToText } from 'html-to-text';
 
@@ -20,6 +20,16 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
   const router = useRouter();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   function capitalizeTitle(title: string) {
     return title.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
@@ -116,10 +126,12 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
             </div>
           )}
           <div className="mb-4 prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 prose-p:my-4">
-            {getPreview(review.review, 500)}
-            {htmlToText(review.review, { wordwrap: false }).length > 500 && (
-              <Link href={`/reviews/${review.id}`} className="text-blue-600 hover:underline ml-1">Read more</Link>
-            )}
+            <p>
+              {isMobile ? getPreview(review.review, 200) : getPreview(review.review, 500)}
+              {htmlToText(review.review, { wordwrap: false }).length > (isMobile ? 200 : 500) && (
+                <Link href={`/reviews/${review.id}`} className="text-blue-600 hover:underline ml-1">Read more</Link>
+              )}
+            </p>
           </div>
           <div className="review-date">
             Reviewed on {new Date(review.date).toLocaleDateString('en-US', {
