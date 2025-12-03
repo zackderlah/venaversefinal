@@ -151,7 +151,7 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
               </div>
             )}
             {canEdit && (
-              <div className="mt-2 flex items-center space-x-3">
+              <div className="mt-2 flex flex-col">
                 <Link 
                   href={`/reviews/${review.id}/edit`}
                   onClick={e => { e.stopPropagation(); e.preventDefault(); router.push(`/reviews/${review.id}/edit`); }}
@@ -161,7 +161,7 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
                 </Link>
                 <button 
                   onClick={e => { e.stopPropagation(); e.preventDefault(); handleDelete(e); }}
-                  className="text-xs lowercase font-semibold text-red-600 hover:underline"
+                  className="text-xs lowercase font-semibold text-red-600 hover:underline self-start"
                 >
                   delete
                 </button>
