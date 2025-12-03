@@ -81,29 +81,72 @@ export default function NativeAppFeatures() {
     };
   }, [router, isNative]);
 
-  // Add haptic feedback to interactive elements
+  // Add haptic feedback to all clickable/interactive elements
   useEffect(() => {
     if (!isNative) return;
 
-    const addHapticsToButtons = () => {
-      const buttons = document.querySelectorAll('button, a[href], .review-card-item');
-      const handleInteraction = () => {
+    const addHapticsToClickableElements = () => {
+      // Select all clickable elements
+      const clickableSelectors = [
+        'button',
+        'a[href]',
+        '.review-card-item',
+        '[role="button"]',
+        '[onclick]',
+        'input[type="button"]',
+        'input[type="submit"]',
+        'input[type="reset"]',
+        'label[for]', // Labels that trigger inputs
+        '.nav-link',
+        '.category-button',
+        '[data-clickable]', // Any element marked as clickable
+      ].join(', ');
+
+      const clickableElements = document.querySelectorAll(clickableSelectors);
+      
+      const handleInteraction = (e: TouchEvent) => {
+        // Only trigger on actual touch, not programmatic touches
+        if (e.touches && e.touches.length > 0) {
+          Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
+        }
+      };
+
+      // Also handle click events for elements that might not have touch events
+      const handleClick = () => {
         Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
       };
 
-      buttons.forEach(button => {
-        button.addEventListener('touchstart', handleInteraction, { passive: true });
+      clickableElements.forEach(element => {
+        element.addEventListener('touchstart', handleInteraction, { passive: true });
+        element.addEventListener('click', handleClick, { passive: true });
       });
 
       return () => {
-        buttons.forEach(button => {
-          button.removeEventListener('touchstart', handleInteraction);
+        clickableElements.forEach(element => {
+          element.removeEventListener('touchstart', handleInteraction);
+          element.removeEventListener('click', handleClick);
         });
       };
     };
 
-    const cleanup = addHapticsToButtons();
-    return cleanup;
+    // Use MutationObserver to handle dynamically added elements
+    const observer = new MutationObserver(() => {
+      // Re-run when DOM changes
+      const cleanup = addHapticsToClickableElements();
+      return cleanup;
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    const cleanup = addHapticsToClickableElements();
+    
+    return () => {
+      cleanup();
+      observer.disconnect();
+    };
   }, [pathname, isNative]);
 
   return null;
