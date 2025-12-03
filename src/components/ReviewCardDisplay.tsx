@@ -84,11 +84,11 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
   return (
     <div
       id={`review-${review.id}`}
-      className="review-card review-card-item cursor-pointer"
+      className="review-card review-card-item cursor-pointer overflow-hidden"
       onClick={() => router.push(`/reviews/${review.id}`)}
     >
       <div className="flex flex-col md:flex-row gap-4 items-start w-full">
-        <div className="flex flex-row gap-4 items-start w-full md:w-auto">
+        <div className="flex flex-row gap-3 md:gap-4 items-start w-full md:w-auto min-w-0">
           {review.imageUrl && (
             <div className="relative w-16 h-24 flex-shrink-0">
               <Image
@@ -101,14 +101,14 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
               />
             </div>
           )}
-          <div className="flex-1 min-w-0 flex flex-col justify-start">
-            <div className="flex items-start justify-between gap-2 mb-1">
-              <h3 className="text-xl font-black truncate flex-1">
+          <div className="flex-1 min-w-0 flex flex-col justify-start overflow-hidden">
+            <div className="flex items-start justify-between gap-2 mb-1 min-w-0 w-full">
+              <h3 className="text-lg md:text-xl font-black truncate flex-1 min-w-0">
                 <Link href={`/reviews/${review.id}`} onClick={e => e.stopPropagation()}>{capitalizeTitle(review.title)}</Link>
               </h3>
-              <span className="rating shrink-0 text-2xl md:text-3xl font-extrabold md:hidden">{review.rating}/10</span>
+              <span className="rating shrink-0 text-xl md:text-3xl font-extrabold md:hidden ml-2">{review.rating}/10</span>
             </div>
-            <span className="text-sm text-gray-500 mb-1">
+            <span className="text-xs md:text-sm text-gray-500 mb-1 truncate">
               {review.creator}, {review.year} <MediaTag category={review.category} />
             </span>
             {review.user?.username && (
@@ -129,8 +129,8 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
                 </Link>
               </div>
             )}
-            <div className="mb-4 text-gray-700 dark:text-gray-300">
-              <p className="text-sm leading-relaxed break-words whitespace-normal">
+            <div className="mb-4 text-gray-700 dark:text-gray-300 overflow-hidden">
+              <p className="text-xs md:text-sm leading-relaxed break-words whitespace-normal">
                 {isMobile ? getPreview(review.review, 200) : getPreview(review.review, 500)}
                 {htmlToText(review.review, { wordwrap: false }).length > (isMobile ? 200 : 500) && (
                   <Link href={`/reviews/${review.id}`} className="text-blue-600 hover:underline ml-1">Read more</Link>
