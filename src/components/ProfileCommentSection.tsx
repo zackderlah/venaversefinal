@@ -159,7 +159,7 @@ export default function ProfileCommentSection({ profileId }: ProfileCommentSecti
       ) : (
         <ul className="space-y-4">
           {comments.map(comment => (
-            <li key={comment.id} className="border-b border-gray-200 dark:border-gray-700 pb-2">
+            <li key={comment.id} className="border border-gray-300 dark:border-gray-600 rounded-lg p-3 bg-gray-50 dark:bg-gray-900/30">
               <div className="flex items-center gap-2 mb-1">
                 {comment.user.profileImage ? (
                   <img src={comment.user.profileImage} alt={comment.user.username} className="w-6 h-6 rounded-full object-cover border border-black dark:border-white flex-shrink-0" />
