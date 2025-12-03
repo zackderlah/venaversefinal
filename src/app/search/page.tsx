@@ -9,7 +9,7 @@ import { Masonry } from 'masonic';
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
-  const query = searchParams.get('q') || '';
+  const query = searchParams?.get('q') || '';
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
