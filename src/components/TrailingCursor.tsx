@@ -14,12 +14,25 @@ const TrailingCursor: React.FC = () => {
   const [isDark, setIsDark] = useState(false);
   const [showTrail, setShowTrail] = useState(true);
   const [cursorStyle, setCursorStyle] = useState('default');
+  const [isMobile, setIsMobile] = useState(false);
   const lastMove = useRef(Date.now());
   const trailRefs = useRef<(HTMLImageElement | null)[]>([]);
   const mouse = useRef({ x: 0, y: 0 });
   const trail = useRef(
     Array.from({ length: TRAIL_LENGTH }, () => ({ x: 0, y: 0 }))
   );
+
+  // Detect mobile/touch devices
+  useEffect(() => {
+    const checkMobile = () => {
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const isSmallScreen = window.innerWidth < 768;
+      setIsMobile(isTouchDevice || isSmallScreen);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     // Detect dark mode
@@ -33,6 +46,9 @@ const TrailingCursor: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    // Don't set up mouse tracking on mobile
+    if (isMobile) return;
+
     const handleMouseMove = (e: MouseEvent) => {
       mouse.current.x = e.clientX;
       mouse.current.y = e.clientY;
@@ -78,7 +94,7 @@ const TrailingCursor: React.FC = () => {
       window.removeEventListener('mousemove', handleMouseMove);
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
     };
-  }, [cursorStyle]);
+  }, [cursorStyle, isMobile]);
 
   // Get the appropriate cursor image based on the current style
   const getCursorImageForStyle = () => {
@@ -95,6 +111,11 @@ const TrailingCursor: React.FC = () => {
   };
 
   const cursorImage = useMemo(() => getCursorImageForStyle(), [cursorStyle, isDark]);
+
+  // Don't render on mobile devices
+  if (isMobile) {
+    return null;
+  }
 
   return (
     <>
