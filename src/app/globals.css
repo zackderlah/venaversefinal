@@ -149,6 +149,28 @@
   /* Remove any white line or gap */
   nav > div > div {
     border-bottom: none !important;
+    border-top: none !important;
+  }
+  
+  /* Remove any potential white line from safe area */
+  nav .safe-area-bottom {
+    border-bottom: none !important;
+  }
+  
+  /* Ensure nav bar background extends to bottom */
+  nav > div {
+    position: relative;
+  }
+  
+  nav > div::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-bottom, 0);
+    background-color: inherit;
+    border: none !important;
   }
 
   .review-card::before {
