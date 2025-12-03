@@ -1,44 +1,83 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import ReviewCard from '@/components/ReviewCard'
 import ReviewLink from '@/components/ReviewLink'
 import { Masonry } from 'masonic';
-import LoadingSpinner from '@/components/LoadingSpinner'
+import SkeletonCard from '@/components/SkeletonCard'
 import PullToRefresh from '@/components/PullToRefresh'
 
 export default function Home() {
   const [recentReviews, setRecentReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    totalPages: 1,
-    totalCount: 0,
-    hasNextPage: false,
-    hasPreviousPage: false,
-  });
+  const [hasMore, setHasMore] = useState(true);
+  const observerTarget = useRef<HTMLDivElement>(null);
+
+  const fetchReviews = useCallback(async (page: number, append: boolean = false) => {
+    try {
+      if (append) {
+        setLoadingMore(true);
+      } else {
+        setLoading(true);
+      }
+      const res = await fetch(`/api/reviews/recent?page=${page}`);
+      const data = await res.json();
+      
+      if (append) {
+        setRecentReviews(prev => [...prev, ...(data.reviews || [])]);
+      } else {
+        setRecentReviews(data.reviews || []);
+      }
+      
+      const pagination = data.pagination || {
+        currentPage: 1,
+        totalPages: 1,
+        hasNextPage: false,
+      };
+      
+      setHasMore(pagination.hasNextPage);
+      setCurrentPage(page);
+      
+      if (append) {
+        setLoadingMore(false);
+      } else {
+        setLoading(false);
+      }
+    } catch (err) {
+      console.error('Error fetching reviews:', err);
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  }, []);
 
   useEffect(() => {
-    setLoading(true);
-    fetch(`/api/reviews/recent?page=${currentPage}`)
-      .then(res => res.json())
-      .then(data => {
-        setRecentReviews(data.reviews || []);
-        setPagination(data.pagination || {
-          currentPage: 1,
-          totalPages: 1,
-          totalCount: 0,
-          hasNextPage: false,
-          hasPreviousPage: false,
-        });
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Error fetching reviews:', err);
-        setLoading(false);
-      });
-  }, [currentPage]);
+    fetchReviews(1, false);
+  }, [fetchReviews]);
+
+  // Infinite scroll observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore && !loading) {
+          fetchReviews(currentPage + 1, true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentTarget = observerTarget.current;
+    if (currentTarget) {
+      observer.observe(currentTarget);
+    }
+
+    return () => {
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
+      }
+    };
+  }, [hasMore, loadingMore, loading, currentPage, fetchReviews]);
 
   // Render function for each review
   const renderReview = ({ data }: { data: any }) => (
@@ -47,73 +86,10 @@ export default function Home() {
     </ReviewLink>
   );
 
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= pagination.totalPages && page !== currentPage) {
-      setCurrentPage(page);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
   const handleRefresh = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/reviews/recent?page=${currentPage}`);
-      const data = await res.json();
-      setRecentReviews(data.reviews || []);
-      setPagination(data.pagination || {
-        currentPage: 1,
-        totalPages: 1,
-        totalCount: 0,
-        hasNextPage: false,
-        hasPreviousPage: false,
-      });
-    } catch (err) {
-      console.error('Error fetching reviews:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Generate page numbers to display
-  const getPageNumbers = () => {
-    const totalPages = pagination.totalPages;
-    const current = pagination.currentPage;
-    const pages: (number | string)[] = [];
-
-    if (totalPages <= 7) {
-      // Show all pages if 7 or fewer
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      // Always show first page
-      pages.push(1);
-
-      if (current <= 3) {
-        // Near the start
-        for (let i = 2; i <= 4; i++) {
-          pages.push(i);
-        }
-        pages.push('...');
-        pages.push(totalPages);
-      } else if (current >= totalPages - 2) {
-        // Near the end
-        pages.push('...');
-        for (let i = totalPages - 3; i <= totalPages; i++) {
-          pages.push(i);
-        }
-      } else {
-        // In the middle
-        pages.push('...');
-        for (let i = current - 1; i <= current + 1; i++) {
-          pages.push(i);
-        }
-        pages.push('...');
-        pages.push(totalPages);
-      }
-    }
-
-    return pages;
+    setCurrentPage(1);
+    setHasMore(true);
+    await fetchReviews(1, false);
   };
 
   return (
@@ -132,7 +108,11 @@ export default function Home() {
           <h2 className="text-4xl font-black tracking-tight lowercase">recent reviews</h2>
         </div>
         {loading ? (
-          <LoadingSpinner />
+          <div className="space-y-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
         ) : (
           <>
             <Masonry
@@ -142,56 +122,17 @@ export default function Home() {
               overscanBy={2}
               render={renderReview}
             />
-            {pagination.totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2 mt-12 pt-8">
-                <button
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={!pagination.hasPreviousPage}
-                  className={`px-3 py-1 text-sm lowercase tracking-tight transition-opacity ${
-                    pagination.hasPreviousPage
-                      ? 'text-black dark:text-gray-100 hover:opacity-60 cursor-pointer'
-                      : 'text-gray-400 dark:text-gray-600 cursor-not-allowed'
-                  }`}
-                >
-                  ←
-                </button>
-                <div className="flex items-center gap-1">
-                  {getPageNumbers().map((page, index) => {
-                    if (page === '...') {
-                      return (
-                        <span key={`ellipsis-${index}`} className="px-2 text-gray-400 dark:text-gray-600">
-                          ...
-                        </span>
-                      );
-                    }
-                    const pageNum = page as number;
-                    const isActive = pageNum === currentPage;
-                    return (
-                      <button
-                        key={pageNum}
-                        onClick={() => handlePageChange(pageNum)}
-                        className={`min-w-[32px] px-2 py-1 text-sm lowercase tracking-tight transition-colors ${
-                          isActive
-                            ? 'bg-black dark:bg-gray-100 text-white dark:text-black font-semibold'
-                            : 'text-black dark:text-gray-100 hover:opacity-60'
-                        }`}
-                      >
-                        {pageNum}
-                      </button>
-                    );
-                  })}
-                </div>
-                <button
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={!pagination.hasNextPage}
-                  className={`px-3 py-1 text-sm lowercase tracking-tight transition-opacity ${
-                    pagination.hasNextPage
-                      ? 'text-black dark:text-gray-100 hover:opacity-60 cursor-pointer'
-                      : 'text-gray-400 dark:text-gray-600 cursor-not-allowed'
-                  }`}
-                >
-                  →
-                </button>
+            {loadingMore && (
+              <div className="mt-8 space-y-4">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <SkeletonCard key={i} />
+                ))}
+              </div>
+            )}
+            <div ref={observerTarget} className="h-4" />
+            {!hasMore && recentReviews.length > 0 && (
+              <div className="text-center text-gray-500 dark:text-gray-400 text-sm mt-8 pb-8 lowercase">
+                no more reviews to load
               </div>
             )}
           </>

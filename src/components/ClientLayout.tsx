@@ -30,7 +30,7 @@ export default function ClientLayout({
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto px-3 md:px-4 py-4 md:py-8 space-y-4 md:space-y-8">
+    <div className="max-w-4xl mx-auto px-3 md:px-4 py-4 md:py-8 pb-20 md:pb-8 space-y-4 md:space-y-8">
       <div className="review-card header-card">
         <HeaderWithDarkMode />
       </div>

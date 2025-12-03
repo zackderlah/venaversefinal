@@ -10,6 +10,7 @@ import SessionClientProvider from '../components/SessionClientProvider'
 import TrailingCursor from '../components/TrailingCursor'
 import VantaGlobeBackground from '../components/VantaGlobeBackground'
 import NativeAppFeatures from '../components/NativeAppFeatures'
+import BottomNavigation from '../components/BottomNavigation'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -92,6 +93,7 @@ export default async function RootLayout({
         <LoadingBarProvider>
           <SessionClientProvider session={session}>
             <ClientLayout>{children}</ClientLayout>
+            <BottomNavigation />
           </SessionClientProvider>
         </LoadingBarProvider>
       </body>

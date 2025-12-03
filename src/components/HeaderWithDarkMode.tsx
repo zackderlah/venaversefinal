@@ -5,14 +5,26 @@ import Link from 'next/link';
 import Clock from './Clock';
 import { usePathname, useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
+import SearchBar from './SearchBar';
+import BottomSheet from './BottomSheet';
 
 export default function HeaderWithDarkMode() {
   const [isDark, setIsDark] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const { data: session, status } = useSession();
   const user = session?.user;
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     // Check localStorage first
@@ -52,22 +64,47 @@ export default function HeaderWithDarkMode() {
   };
 
   return (
-    <header className="mb-6">
-      <div className="mb-4">
-        <div className="flex flex-row justify-between items-center w-full sm:hidden">
-          <h1 className="text-4xl font-black tracking-tight lowercase">vena/verse</h1>
-          <button
-            onClick={toggleDark}
-            className="px-3 py-1 border border-black bg-gray-100 dark:bg-gray-800 dark:text-yellow-300 dark:border-gray-400 transition-colors duration-150 hover:bg-gray-200 hover:dark:bg-gray-700 ml-2"
-            aria-label="toggle dark mode"
-            type="button"
-          >
-            {isDark ? '🌙' : '☀️'}
-          </button>
-        </div>
+    <>
+      <header className={`sticky top-0 z-30 bg-white dark:bg-[#0A0A0A] transition-shadow mb-6 ${isScrolled ? 'shadow-md' : ''} safe-area-top`}>
+        <div className="mb-4">
+          <div className="flex flex-row justify-between items-center w-full sm:hidden gap-2">
+            <h1 className="text-4xl font-black tracking-tight lowercase flex-1">vena/verse</h1>
+            <button
+              onClick={() => setIsSearchOpen(true)}
+              className="p-2 border border-black dark:border-white"
+              aria-label="search"
+              type="button"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </button>
+            <button
+              onClick={toggleDark}
+              className="px-3 py-1 border border-black bg-gray-100 dark:bg-gray-800 dark:text-yellow-300 dark:border-gray-400 transition-colors duration-150 hover:bg-gray-200 hover:dark:bg-gray-700"
+              aria-label="toggle dark mode"
+              type="button"
+            >
+              {isDark ? '🌙' : '☀️'}
+            </button>
+          </div>
         <div className="sm:flex justify-between items-center hidden">
           <h1 className="text-4xl font-black tracking-tight lowercase">vena/verse</h1>
           <div className="flex items-center gap-4">
+            <div className="hidden md:block w-64">
+              <SearchBar />
+            </div>
             <Clock />
             <button
               onClick={toggleDark}
@@ -117,6 +154,12 @@ export default function HeaderWithDarkMode() {
           </div>
         </div>
       </nav>
-    </header>
+      </header>
+      <BottomSheet isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} title="search">
+        <div className="p-4">
+          <SearchBar onClose={() => setIsSearchOpen(false)} isMobile={true} />
+        </div>
+      </BottomSheet>
+    </>
   );
 } 
