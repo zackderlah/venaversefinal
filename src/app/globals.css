@@ -121,6 +121,8 @@
   /* Bottom nav bar - completely remove all review-card styling */
   nav > div {
     border: none !important;
+    border-top: none !important;
+    border-bottom: none !important;
     box-shadow: none !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -135,6 +137,18 @@
   
   nav > div::after {
     display: none !important;
+  }
+  
+  /* Ensure nav bar is flush with bottom */
+  nav {
+    bottom: 0 !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  
+  /* Remove any white line or gap */
+  nav > div > div {
+    border-bottom: none !important;
   }
 
   .review-card::before {

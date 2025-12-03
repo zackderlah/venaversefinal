@@ -56,9 +56,9 @@ export default function BottomNavigation() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden" style={{ margin: 0, padding: 0 }}>
-      <div className="backdrop-blur-[10px] bg-white/30 dark:bg-[#222222]/30" style={{ margin: 0, padding: 0, border: 'none', outline: 'none', boxShadow: 'none', borderRadius: 0 }}>
-        <div className="flex items-center justify-center h-20 px-4" style={{ paddingBottom: `calc(1rem + env(safe-area-inset-bottom, 0))` }}>
+    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden" style={{ margin: 0, padding: 0, bottom: 0 }}>
+      <div className="backdrop-blur-[10px] bg-white/30 dark:bg-[#222222]/30" style={{ margin: 0, padding: 0, border: 'none', outline: 'none', boxShadow: 'none', borderRadius: 0, borderTop: 'none', borderBottom: 'none' }}>
+        <div className="flex items-center justify-center h-20 px-4" style={{ paddingBottom: `calc(1rem + env(safe-area-inset-bottom, 0))`, minHeight: '80px' }}>
           {navItems.map((item) => {
             const active = isActive(item.href);
             return (
