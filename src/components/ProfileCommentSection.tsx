@@ -170,8 +170,8 @@ export default function ProfileCommentSection({ profileId }: ProfileCommentSecti
                   {comment.user.username}
                 </Link>
               </div>
-              <div className="text-xs text-gray-400 mb-2 ml-8">{new Date(comment.createdAt).toLocaleDateString()}</div>
-              <div className="text-gray-700 dark:text-gray-200 text-sm lowercase mb-2">{comment.text}</div>
+              <div className="text-xs text-gray-400 mb-1 ml-8">{new Date(comment.createdAt).toLocaleDateString()}</div>
+              <div className="text-gray-700 dark:text-gray-200 text-sm lowercase mb-2 ml-8">{comment.text}</div>
               {canDelete(comment) && (
                 <button
                   onClick={() => handleDelete(comment.id)}
