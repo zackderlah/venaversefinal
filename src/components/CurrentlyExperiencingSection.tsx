@@ -638,7 +638,7 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
       )}
       {showDeleteModal && (
         <div 
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-40"
+          className="fixed inset-0 z-[9999] bg-black bg-opacity-40"
           style={{ 
             position: 'fixed', 
             top: 0, 
@@ -665,7 +665,8 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
             style={{ 
               zIndex: 10000, 
               position: 'relative',
-              margin: 0
+              margin: '0 auto',
+              flexShrink: 0
             }}
             onClick={(e) => e.stopPropagation()}
           >
