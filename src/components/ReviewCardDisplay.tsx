@@ -151,7 +151,7 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
               </div>
             )}
             {canEdit && (
-              <div className={`mt-2 flex ${isMobile ? 'flex-col gap-2' : 'space-x-3'}`}>
+              <div className="mt-2 flex space-x-3">
                 <Link 
                   href={`/reviews/${review.id}/edit`}
                   onClick={e => { e.stopPropagation(); e.preventDefault(); router.push(`/reviews/${review.id}/edit`); }}

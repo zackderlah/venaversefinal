@@ -169,18 +169,18 @@ export default function ProfileCommentSection({ profileId }: ProfileCommentSecti
                 <Link href={`/profile/${comment.user.username}`} className="font-bold text-xs lowercase hover:text-blue-600 dark:hover:text-blue-400">
                   {comment.user.username}
                 </Link>
-                <span className="text-xs text-gray-400 ml-2">{new Date(comment.createdAt).toLocaleDateString()}</span>
-                {canDelete(comment) && (
-                  <button
-                    onClick={() => handleDelete(comment.id)}
-                    className="ml-2 text-xs font-bold text-red-600 lowercase hover:underline bg-transparent border-none p-0 shadow-none focus:outline-none"
-                    style={{ background: 'none', border: 'none', padding: 0 }}
-                  >
-                    delete
-                  </button>
-                )}
               </div>
-              <div className="text-gray-700 dark:text-gray-200 text-sm lowercase">{comment.text}</div>
+              <div className="text-xs text-gray-400 mb-2 ml-8">{new Date(comment.createdAt).toLocaleDateString()}</div>
+              <div className="text-gray-700 dark:text-gray-200 text-sm lowercase mb-2">{comment.text}</div>
+              {canDelete(comment) && (
+                <button
+                  onClick={() => handleDelete(comment.id)}
+                  className="ml-8 text-xs font-bold text-red-600 lowercase hover:underline bg-transparent border-none p-0 shadow-none focus:outline-none"
+                  style={{ background: 'none', border: 'none', padding: 0 }}
+                >
+                  delete
+                </button>
+              )}
             </li>
           ))}
         </ul>
