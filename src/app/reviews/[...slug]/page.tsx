@@ -9,6 +9,7 @@ import CommentSection from '@/components/CommentSection';
 import Image from 'next/image';
 import MediaTag from '@/components/MediaTag';
 import ReviewActionsClient from '@/components/ReviewActionsClient';
+import ShareButton from '@/components/ShareButton';
 
 function capitalizeTitle(title: string) {
   return title.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
@@ -145,7 +146,14 @@ export default function ReviewPage() {
                 day: 'numeric',
               })}
             </div>
-            <ReviewActionsClient review={review} />
+            <div className="flex items-center gap-3 mb-4">
+              <ShareButton 
+                title={review.title}
+                url={`/reviews/${review.id}`}
+                text={`Check out this ${review.category} review: ${review.title} by ${review.creator}`}
+              />
+              <ReviewActionsClient review={review} />
+            </div>
           </div>
         </div>
         <CommentSection reviewId={review.id} />

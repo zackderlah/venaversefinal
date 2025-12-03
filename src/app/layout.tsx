@@ -9,6 +9,7 @@ import { authOptions } from "@/lib/auth"
 import SessionClientProvider from '../components/SessionClientProvider'
 import TrailingCursor from '../components/TrailingCursor'
 import VantaGlobeBackground from '../components/VantaGlobeBackground'
+import NativeAppFeatures from '../components/NativeAppFeatures'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -86,6 +87,7 @@ export default async function RootLayout({
           isActive={true}
         />
         <TrailingCursor />
+        <NativeAppFeatures />
         <GlobalLoadingBar />
         <LoadingBarProvider>
           <SessionClientProvider session={session}>

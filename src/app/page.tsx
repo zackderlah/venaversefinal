@@ -5,6 +5,7 @@ import ReviewCard from '@/components/ReviewCard'
 import ReviewLink from '@/components/ReviewLink'
 import { Masonry } from 'masonic';
 import LoadingSpinner from '@/components/LoadingSpinner'
+import PullToRefresh from '@/components/PullToRefresh'
 
 export default function Home() {
   const [recentReviews, setRecentReviews] = useState<any[]>([]);
@@ -53,6 +54,26 @@ export default function Home() {
     }
   };
 
+  const handleRefresh = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/reviews/recent?page=${currentPage}`);
+      const data = await res.json();
+      setRecentReviews(data.reviews || []);
+      setPagination(data.pagination || {
+        currentPage: 1,
+        totalPages: 1,
+        totalCount: 0,
+        hasNextPage: false,
+        hasPreviousPage: false,
+      });
+    } catch (err) {
+      console.error('Error fetching reviews:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Generate page numbers to display
   const getPageNumbers = () => {
     const totalPages = pagination.totalPages;
@@ -96,16 +117,17 @@ export default function Home() {
   };
 
   return (
-    <div className="space-y-16">
-      <section className="border-b-2 border-black dark:border-gray-100 pb-8">
-        <h2 className="text-4xl font-black mb-4 tracking-tight lowercase">note</h2>
-        <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg leading-relaxed lowercase">
-          this website is a collection of reviews for films, music, anime, and books that you and others have experienced.
-          each review should include one's thoughts, ratings, and analysis of the work. 
-        </p>
-      </section>
+    <PullToRefresh onRefresh={handleRefresh}>
+      <div className="space-y-16">
+        <section className="border-b-2 border-black dark:border-gray-100 pb-8">
+          <h2 className="text-4xl font-black mb-4 tracking-tight lowercase">note</h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg leading-relaxed lowercase">
+            this website is a collection of reviews for films, music, anime, and books that you and others have experienced.
+            each review should include one's thoughts, ratings, and analysis of the work. 
+          </p>
+        </section>
 
-      <section>
+        <section>
         <div className="flex items-baseline justify-between mb-12 border-b-2 border-black dark:border-gray-100 pb-4">
           <h2 className="text-4xl font-black tracking-tight lowercase">recent reviews</h2>
         </div>
@@ -176,6 +198,7 @@ export default function Home() {
         )}
       </section>
     </div>
+    </PullToRefresh>
   )
 }
 
