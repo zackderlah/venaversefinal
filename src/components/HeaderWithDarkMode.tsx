@@ -66,7 +66,7 @@ export default function HeaderWithDarkMode() {
   return (
     <>
       <header className={`mb-6 md:static sticky top-0 z-30 md:bg-transparent bg-white dark:bg-[#0A0A0A] md:dark:bg-transparent transition-shadow ${isScrolled ? 'shadow-md' : ''} safe-area-top`}>
-        <div className="mb-4">
+        <div className="mb-4 md:px-0">
           <div className="flex flex-row justify-between items-center w-full sm:hidden gap-2">
             <h1 className="text-4xl font-black tracking-tight lowercase flex-1">vena/verse</h1>
             <button
