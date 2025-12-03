@@ -20,20 +20,11 @@ export default function BottomNavigation() {
       )
     },
     { 
-      href: '/films', 
-      label: 'films', 
+      href: '/create-post', 
+      label: 'new', 
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-        </svg>
-      )
-    },
-    { 
-      href: '/music', 
-      label: 'music', 
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
         </svg>
       )
     },
@@ -66,7 +57,7 @@ export default function BottomNavigation() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden safe-area-bottom">
-      <div className="review-card review-card-item !border-b-0 !rounded-t-none !rounded-b-none backdrop-blur-[10px] bg-white/30 dark:bg-[#222222]/30 border-t-0 border-x-0 border-b-0">
+      <div className="review-card review-card-item !border-0 !rounded-t-none !rounded-b-none backdrop-blur-[10px] bg-white/30 dark:bg-[#222222]/30">
         <div className="flex items-center justify-around h-16 px-2">
           {navItems.map((item) => {
             const active = isActive(item.href);
