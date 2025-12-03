@@ -639,13 +639,18 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
       {showDeleteModal && (
         <div 
           className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-40"
+          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999 }}
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               cancelDelete();
             }
           }}
         >
-          <div className="bg-white dark:bg-[#18181b] rounded-lg shadow-lg p-6 w-full max-w-xs text-center z-[10000]">
+          <div 
+            className="bg-white dark:bg-[#18181b] rounded-lg shadow-lg p-6 w-full max-w-xs text-center"
+            style={{ zIndex: 10000, position: 'relative' }}
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="mb-4 text-lg font-bold text-gray-800 dark:text-gray-100 lowercase">delete item?</div>
             <div className="mb-6 text-gray-600 dark:text-gray-300 text-sm">Are you sure you want to delete this item?</div>
             <div className="flex justify-center gap-4">
