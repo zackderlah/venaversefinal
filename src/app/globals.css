@@ -118,6 +118,11 @@
     display: none !important;
   }
 
+  /* Bottom nav bar - no border */
+  nav .review-card.review-card-item {
+    border: none !important;
+  }
+
   .review-card::before {
     content: '';
     position: absolute;
