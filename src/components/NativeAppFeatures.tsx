@@ -85,68 +85,121 @@ export default function NativeAppFeatures() {
   useEffect(() => {
     if (!isNative) return;
 
+    // Track elements that already have haptics to avoid duplicates
+    const hapticsElements = new WeakSet<Element>();
+    let lastHapticTime = 0;
+    const HAPTIC_COOLDOWN = 50; // Prevent multiple haptics within 50ms
+
+    const triggerHaptic = () => {
+      const now = Date.now();
+      if (now - lastHapticTime < HAPTIC_COOLDOWN) return;
+      lastHapticTime = now;
+      
+      Haptics.impact({ style: ImpactStyle.Light }).catch((err) => {
+        console.log('Haptics error:', err);
+      });
+    };
+
+    const addHapticsToElement = (element: Element) => {
+      // Skip if already processed
+      if (hapticsElements.has(element)) return;
+      hapticsElements.add(element);
+
+      // Handle touch events (primary for mobile)
+      const handleTouchStart = (e: TouchEvent) => {
+        e.stopPropagation(); // Prevent event bubbling issues
+        triggerHaptic();
+      };
+
+      // Handle click events (fallback)
+      const handleClick = (e: MouseEvent) => {
+        // Only trigger if it's not from a touch event (to avoid double haptics)
+        if (!(e as any).isTrusted || (e as any).sourceCapabilities?.firesTouchEvents) {
+          return;
+        }
+        triggerHaptic();
+      };
+
+      element.addEventListener('touchstart', handleTouchStart, { passive: true });
+      element.addEventListener('click', handleClick, { passive: true });
+    };
+
     const addHapticsToClickableElements = () => {
       // Select all clickable elements
       const clickableSelectors = [
-        'button',
-        'a[href]',
+        'button:not([disabled])',
+        'a[href]:not([href=""])',
         '.review-card-item',
-        '[role="button"]',
-        '[onclick]',
-        'input[type="button"]',
-        'input[type="submit"]',
-        'input[type="reset"]',
-        'label[for]', // Labels that trigger inputs
+        '[role="button"]:not([aria-disabled="true"])',
+        'input[type="button"]:not([disabled])',
+        'input[type="submit"]:not([disabled])',
+        'input[type="reset"]:not([disabled])',
+        'label[for]',
         '.nav-link',
         '.category-button',
-        '[data-clickable]', // Any element marked as clickable
-      ].join(', ');
+        '[data-clickable]',
+        'Link', // Next.js Link components
+      ];
 
-      const clickableElements = document.querySelectorAll(clickableSelectors);
-      
-      const handleInteraction = (e: Event) => {
-        // Only trigger on actual touch, not programmatic touches
-        const touchEvent = e as TouchEvent;
-        if (touchEvent.touches && touchEvent.touches.length > 0) {
-          Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
+      clickableSelectors.forEach(selector => {
+        try {
+          const elements = document.querySelectorAll(selector);
+          elements.forEach(addHapticsToElement);
+        } catch (err) {
+          console.log('Error selecting elements:', selector, err);
         }
-      };
-
-      // Also handle click events for elements that might not have touch events
-      const handleClick = () => {
-        Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
-      };
-
-      clickableElements.forEach(element => {
-        element.addEventListener('touchstart', handleInteraction as EventListener, { passive: true });
-        element.addEventListener('click', handleClick, { passive: true });
       });
-
-      return () => {
-        clickableElements.forEach(element => {
-          element.removeEventListener('touchstart', handleInteraction as EventListener);
-          element.removeEventListener('click', handleClick);
-        });
-      };
     };
 
+    // Initial setup
+    addHapticsToClickableElements();
+
     // Use MutationObserver to handle dynamically added elements
-    const observer = new MutationObserver(() => {
-      // Re-run when DOM changes
-      const cleanup = addHapticsToClickableElements();
-      return cleanup;
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            const element = node as Element;
+            // Check if the added element itself is clickable
+            const clickableSelectors = [
+              'button',
+              'a[href]',
+              '.review-card-item',
+              '[role="button"]',
+              'input[type="button"]',
+              'input[type="submit"]',
+              'input[type="reset"]',
+              'label[for]',
+              '.nav-link',
+              '.category-button',
+              '[data-clickable]',
+            ];
+            
+            clickableSelectors.forEach(selector => {
+              if (element.matches && element.matches(selector)) {
+                addHapticsToElement(element);
+              }
+            });
+            
+            // Also check children
+            clickableSelectors.forEach(selector => {
+              const children = element.querySelectorAll?.(selector);
+              children?.forEach(addHapticsToElement);
+            });
+          }
+        });
+      });
     });
 
     observer.observe(document.body, {
       childList: true,
       subtree: true,
     });
-
-    const cleanup = addHapticsToClickableElements();
     
     return () => {
-      cleanup();
       observer.disconnect();
+      // Note: We don't remove event listeners here because elements might be removed from DOM
+      // and WeakSet will handle cleanup automatically
     };
   }, [pathname, isNative]);
 
