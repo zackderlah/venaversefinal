@@ -162,11 +162,11 @@ export default function ProfileCommentSection({ profileId }: ProfileCommentSecti
             <li key={comment.id} className="border-b border-gray-200 dark:border-gray-700 pb-2">
               <div className="flex items-center gap-2 mb-1">
                 {comment.user.profileImage ? (
-                  <img src={comment.user.profileImage} alt={comment.user.username} className="w-6 h-6 rounded-full object-cover border border-black dark:border-white" />
+                  <img src={comment.user.profileImage} alt={comment.user.username} className="w-6 h-6 rounded-full object-cover border border-black dark:border-white flex-shrink-0" />
                 ) : (
-                  <span className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-xs text-gray-500 font-bold">{comment.user.username[0].toUpperCase()}</span>
+                  <span className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-xs text-gray-500 font-bold flex-shrink-0">{comment.user.username[0].toUpperCase()}</span>
                 )}
-                <Link href={`/profile/${comment.user.username}`} className="font-bold text-xs lowercase hover:text-blue-600 dark:hover:text-blue-400">
+                <Link href={`/profile/${comment.user.username}`} className="font-bold text-xs lowercase hover:text-blue-600 dark:hover:text-blue-400 flex items-center">
                   {comment.user.username}
                 </Link>
               </div>
