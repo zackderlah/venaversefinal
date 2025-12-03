@@ -56,8 +56,8 @@ export default function BottomNavigation() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden safe-area-bottom">
-      <div className="review-card review-card-item !border-0 !rounded-t-none !rounded-b-none backdrop-blur-[10px] bg-white/30 dark:bg-[#222222]/30">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+      <div className="review-card review-card-item !border-0 !rounded-t-none !rounded-b-none backdrop-blur-[10px] bg-white/30 dark:bg-[#222222]/30 safe-area-bottom">
         <div className="flex items-center justify-around h-16 px-2">
           {navItems.map((item) => {
             const active = isActive(item.href);
