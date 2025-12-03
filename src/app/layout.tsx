@@ -72,11 +72,12 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                if (localStorage.getItem('theme') === 'dark' ||
-                    (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                  document.documentElement.classList.add('dark');
-                } else {
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'light') {
                   document.documentElement.classList.remove('dark');
+                } else {
+                  // Default to dark mode if no preference is saved
+                  document.documentElement.classList.add('dark');
                 }
               } catch (e) {}
             `,

@@ -9,7 +9,7 @@ import SearchBar from './SearchBar';
 import BottomSheet from './BottomSheet';
 
 export default function HeaderWithDarkMode() {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true); // Default to dark mode
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -29,14 +29,14 @@ export default function HeaderWithDarkMode() {
   useEffect(() => {
     // Check localStorage first
     const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
-    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-      document.documentElement.classList.add('dark');
-      setIsDark(true);
-    } else {
+    if (savedTheme === 'light') {
       document.documentElement.classList.remove('dark');
       setIsDark(false);
+    } else {
+      // Default to dark mode if no preference is saved
+      document.documentElement.classList.add('dark');
+      setIsDark(true);
     }
   }, []);
 
