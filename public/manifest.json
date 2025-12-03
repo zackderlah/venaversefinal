@@ -1,0 +1,43 @@
+{
+  "name": "vena/verse",
+  "short_name": "venaverse",
+  "description": "Personal reviews of films, music, anime, and books",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0A0A",
+  "theme_color": "#0A0A0A",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["entertainment", "social"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Films",
+      "short_name": "Films",
+      "description": "View film reviews",
+      "url": "/films",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Music",
+      "short_name": "Music",
+      "description": "View music reviews",
+      "url": "/music",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}
+

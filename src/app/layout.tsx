@@ -26,9 +26,15 @@ const notoSansJP = Noto_Sans_JP({
 export const metadata: Metadata = {
   title: 'vena/verse',
   description: 'Personal reviews of films, music, anime, and books',
+  manifest: '/manifest.json',
   icons: {
-    icon: '/girl2.png',
-    apple: '/girl2.png',
+    icon: [
+      { url: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512x512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+    ],
   },
   viewport: {
     width: 'device-width',
