@@ -155,13 +155,13 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
                 <Link 
                   href={`/reviews/${review.id}/edit`}
                   onClick={e => { e.stopPropagation(); e.preventDefault(); router.push(`/reviews/${review.id}/edit`); }}
-                  className="text-xs lowercase font-semibold text-blue-600 hover:underline leading-tight"
+                  className="text-xs lowercase font-semibold text-blue-600 hover:underline leading-none"
                 >
                   edit review
                 </Link>
                 <button 
                   onClick={e => { e.stopPropagation(); e.preventDefault(); handleDelete(e); }}
-                  className="text-xs lowercase font-semibold text-red-600 hover:underline self-start leading-tight mt-[5px]"
+                  className="text-xs lowercase font-semibold text-red-600 hover:underline self-start leading-none mt-0.5"
                 >
                   delete
                 </button>
