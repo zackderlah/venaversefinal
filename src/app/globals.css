@@ -118,24 +118,23 @@
     display: none !important;
   }
 
-  /* Bottom nav bar - no border, no shadow, no gap, no outline */
-  nav .review-card.review-card-item {
+  /* Bottom nav bar - completely remove all review-card styling */
+  nav > div {
     border: none !important;
     box-shadow: none !important;
     margin: 0 !important;
     padding: 0 !important;
     outline: none !important;
     outline-offset: 0 !important;
+    border-radius: 0 !important;
   }
   
-  nav .review-card.review-card-item::before {
+  nav > div::before {
     display: none !important;
   }
   
-  /* Remove any potential glow from backdrop-filter */
-  nav .review-card.review-card-item {
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+  nav > div::after {
+    display: none !important;
   }
 
   .review-card::before {

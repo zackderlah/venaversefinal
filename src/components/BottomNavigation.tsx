@@ -57,7 +57,7 @@ export default function BottomNavigation() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden" style={{ margin: 0, padding: 0 }}>
-      <div className="review-card review-card-item !border-0 !rounded-none !shadow-none backdrop-blur-[10px] bg-white/30 dark:bg-[#222222]/30" style={{ margin: 0, padding: 0, border: 'none', outline: 'none', boxShadow: 'none' }}>
+      <div className="backdrop-blur-[10px] bg-white/30 dark:bg-[#222222]/30" style={{ margin: 0, padding: 0, border: 'none', outline: 'none', boxShadow: 'none', borderRadius: 0 }}>
         <div className="flex items-center justify-around h-16 px-2" style={{ paddingBottom: `calc(1rem + env(safe-area-inset-bottom, 0))` }}>
           {navItems.map((item) => {
             const active = isActive(item.href);
