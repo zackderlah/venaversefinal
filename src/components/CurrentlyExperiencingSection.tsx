@@ -396,20 +396,35 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
         const errorData = await res.json().catch(() => ({ error: 'Failed to delete item' }));
         alert(`Failed to delete item: ${errorData.error || 'Unknown error'}`);
         setDeleting(false);
+        setShowDeleteModal(false);
+        setDeleteTarget(null);
         return;
       }
+      
+      // Close modal first
       setShowDeleteModal(false);
       setDeleteTarget(null);
       setDeleting(false);
+      
+      // Refresh the list
       setLoading(true);
-      const refreshRes = await fetch(`/api/currently-experiencing?userId=${profileId}`);
-      const refreshData = await refreshRes.json();
-      setItems(refreshData.items || []);
-      setLoading(false);
+      try {
+        const refreshRes = await fetch(`/api/currently-experiencing?userId=${profileId}`);
+        if (refreshRes.ok) {
+          const refreshData = await refreshRes.json();
+          setItems(refreshData.items || []);
+        }
+      } catch (refreshError) {
+        console.error('Error refreshing list:', refreshError);
+      } finally {
+        setLoading(false);
+      }
     } catch (error) {
       console.error('Error deleting item:', error);
       alert('An error occurred while deleting the item.');
       setDeleting(false);
+      setShowDeleteModal(false);
+      setDeleteTarget(null);
       setLoading(false);
     }
   }
