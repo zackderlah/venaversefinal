@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { App } from '@capacitor/app';
-import { Keyboard } from '@capacitor/keyboard';
+import { Keyboard, KeyboardStyle } from '@capacitor/keyboard';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import { Capacitor } from '@capacitor/core';
 
@@ -64,7 +64,7 @@ export default function NativeAppFeatures() {
       try {
         Keyboard.setAccessoryBarVisible({ isVisible: true });
         Keyboard.setScroll({ isDisabled: false });
-        Keyboard.setStyle({ style: 'DARK' });
+        Keyboard.setStyle({ style: KeyboardStyle.Dark });
       } catch (error) {
         console.log('Keyboard not available:', error);
       }
