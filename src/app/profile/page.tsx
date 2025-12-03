@@ -85,13 +85,13 @@ export default async function ProfilePage() {
       </div>
 
       {/* Recent Activity */}
-      <div className="review-card">
+      <div className="review-card overflow-hidden">
         <h2 className="text-xl md:text-2xl font-black tracking-tight lowercase mb-2">recent activity</h2>
-        <div className="grid gap-2 md:gap-6">
+        <div className="grid gap-2 md:gap-6 w-full">
           {activityFeed.length ? (
             activityFeed.map(item => (
               'review' in item ? (
-                <Link key={`review-${item.id}`} href={`/reviews/${item.review.id}`} className="block">
+                <Link key={`review-${item.id}`} href={`/reviews/${item.review.id}`} className="block w-full overflow-hidden">
                 <ReviewCardDisplay
                   review={{
                       ...item.review,

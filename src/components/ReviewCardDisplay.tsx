@@ -84,11 +84,11 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
   return (
     <div
       id={`review-${review.id}`}
-      className="review-card review-card-item cursor-pointer overflow-hidden"
+      className="review-card review-card-item cursor-pointer overflow-hidden w-full max-w-full"
       onClick={() => router.push(`/reviews/${review.id}`)}
     >
-      <div className="flex flex-col md:flex-row gap-4 items-start w-full">
-        <div className="flex flex-row gap-3 md:gap-4 items-start w-full md:w-auto min-w-0">
+      <div className="flex flex-col md:flex-row gap-4 items-start w-full max-w-full">
+        <div className="flex flex-row gap-3 md:gap-4 items-start w-full md:w-auto min-w-0 max-w-full">
           {review.imageUrl && (
             <div className="relative w-16 h-24 flex-shrink-0">
               <Image
