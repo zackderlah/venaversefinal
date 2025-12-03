@@ -35,9 +35,9 @@ export default function CommunityClient({ users }: { users: UserWithLevel[] }) {
     .sort((a, b) => compareUsers(a, b, sortOrder));
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      <h1 className="text-4xl font-black mb-6 tracking-tight lowercase">community</h1>
-      <div className="flex flex-col md:flex-row gap-4 mb-8">
+    <div className="max-w-3xl mx-auto px-3 md:px-4 py-4 md:py-8">
+      <h1 className="text-2xl md:text-4xl font-black mb-4 md:mb-6 tracking-tight lowercase">community</h1>
+      <div className="flex flex-col md:flex-row gap-2 md:gap-4 mb-4 md:mb-8">
         <input
           type="text"
           placeholder="search by username..."
@@ -55,7 +55,7 @@ export default function CommunityClient({ users }: { users: UserWithLevel[] }) {
           </button>
         </div>
       </div>
-      <div className="space-y-6">
+      <div className="space-y-2 md:space-y-6">
         {filtered.length ? (
           filtered.map(user => <UserBanner key={user.id} user={user} />)
         ) : (
