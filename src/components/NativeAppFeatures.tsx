@@ -104,9 +104,10 @@ export default function NativeAppFeatures() {
 
       const clickableElements = document.querySelectorAll(clickableSelectors);
       
-      const handleInteraction = (e: TouchEvent) => {
+      const handleInteraction = (e: Event) => {
         // Only trigger on actual touch, not programmatic touches
-        if (e.touches && e.touches.length > 0) {
+        const touchEvent = e as TouchEvent;
+        if (touchEvent.touches && touchEvent.touches.length > 0) {
           Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
         }
       };
@@ -117,13 +118,13 @@ export default function NativeAppFeatures() {
       };
 
       clickableElements.forEach(element => {
-        element.addEventListener('touchstart', handleInteraction, { passive: true });
+        element.addEventListener('touchstart', handleInteraction as EventListener, { passive: true });
         element.addEventListener('click', handleClick, { passive: true });
       });
 
       return () => {
         clickableElements.forEach(element => {
-          element.removeEventListener('touchstart', handleInteraction);
+          element.removeEventListener('touchstart', handleInteraction as EventListener);
           element.removeEventListener('click', handleClick);
         });
       };
