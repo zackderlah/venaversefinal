@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useSession } from 'next-auth/react';
 
 const TYPE_OPTIONS = [
@@ -62,6 +63,12 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Ensure we're mounted before rendering portal
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Debug: Log when modal state changes
   useEffect(() => {
@@ -636,7 +643,7 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
           ))}
         </ul>
       )}
-      {showDeleteModal && (
+      {showDeleteModal && mounted && createPortal(
         <div 
           style={{ 
             position: 'fixed', 
@@ -704,7 +711,8 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
