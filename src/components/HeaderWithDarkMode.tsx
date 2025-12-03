@@ -65,7 +65,7 @@ export default function HeaderWithDarkMode() {
 
   return (
     <>
-      <header className={`sticky top-0 z-30 bg-white dark:bg-[#0A0A0A] transition-shadow mb-6 ${isScrolled ? 'shadow-md' : ''} safe-area-top`}>
+      <header className={`md:static sticky top-0 z-30 bg-white dark:bg-[#0A0A0A] transition-shadow mb-6 ${isScrolled ? 'shadow-md' : ''} safe-area-top`}>
         <div className="mb-4">
           <div className="flex flex-row justify-between items-center w-full sm:hidden gap-2">
             <h1 className="text-4xl font-black tracking-tight lowercase flex-1">vena/verse</h1>
@@ -102,9 +102,6 @@ export default function HeaderWithDarkMode() {
         <div className="sm:flex justify-between items-center hidden">
           <h1 className="text-4xl font-black tracking-tight lowercase">vena/verse</h1>
           <div className="flex items-center gap-4">
-            <div className="hidden md:block w-64">
-              <SearchBar />
-            </div>
             <Clock />
             <button
               onClick={toggleDark}
