@@ -44,8 +44,8 @@ export default function ProfileImageUpload({ profileImage }: { profileImage?: st
   };
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      <label htmlFor="profile-upload" className="px-4 py-2 bg-white dark:bg-[#0A0A0A] border-2 border-black dark:border-white rounded-lg font-black text-xs lowercase cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 hover:dark:bg-gray-900 transition-all">
+    <div className="flex flex-col items-center gap-2 w-full">
+      <label htmlFor="profile-upload" className="w-full md:w-auto px-4 py-2 bg-white dark:bg-[#0A0A0A] border-2 border-black dark:border-white rounded-lg font-black text-xs lowercase cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 hover:dark:bg-gray-900 transition-all text-center">
         {uploading ? 'uploading...' : 'change profile photo'}
         <input
           id="profile-upload"
@@ -56,7 +56,7 @@ export default function ProfileImageUpload({ profileImage }: { profileImage?: st
           className="hidden"
         />
       </label>
-      {error && <p className="text-red-500 text-xs font-bold lowercase mt-1">{error}</p>}
+      {error && <p className="text-red-500 text-xs font-bold lowercase mt-1 text-center">{error}</p>}
     </div>
   );
 } 
