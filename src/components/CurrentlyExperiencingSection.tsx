@@ -649,7 +649,10 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
             width: '100vw',
             height: '100vh',
             margin: 0,
-            padding: 0
+            padding: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
           }}
           onClick={(e) => {
             if (e.target === e.currentTarget) {
@@ -658,11 +661,11 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
           }}
         >
           <div 
-            className="bg-white dark:bg-[#18181b] rounded-lg shadow-lg p-6 w-full max-w-xs text-center mx-auto"
+            className="bg-white dark:bg-[#18181b] rounded-lg shadow-lg p-6 w-full max-w-xs text-center"
             style={{ 
               zIndex: 10000, 
               position: 'relative',
-              margin: 'auto'
+              margin: 0
             }}
             onClick={(e) => e.stopPropagation()}
           >
