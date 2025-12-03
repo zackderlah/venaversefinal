@@ -80,6 +80,15 @@
     box-shadow: none !important;
   }
 
+  @media (min-width: 768px) {
+    .review-card.header-card {
+      background-color: transparent !important;
+      backdrop-filter: none !important;
+      border: none !important;
+      padding: 0 !important;
+    }
+  }
+
   .review-card.header-card::before {
     display: none !important;
   }
