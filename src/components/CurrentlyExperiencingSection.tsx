@@ -638,7 +638,6 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
       )}
       {showDeleteModal && (
         <div 
-          className="fixed inset-0 z-[9999] bg-black bg-opacity-40"
           style={{ 
             position: 'fixed', 
             top: 0, 
@@ -652,7 +651,8 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
             padding: 0,
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.4)'
           }}
           onClick={(e) => {
             if (e.target === e.currentTarget) {
@@ -661,12 +661,17 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
           }}
         >
           <div 
-            className="bg-white dark:bg-[#18181b] rounded-lg shadow-lg p-6 w-full max-w-xs text-center"
+            className="bg-white dark:bg-[#18181b] rounded-lg shadow-lg p-6 text-center"
             style={{ 
               zIndex: 10000, 
               position: 'relative',
-              margin: '0 auto',
-              flexShrink: 0
+              width: '90%',
+              maxWidth: '20rem',
+              margin: 0,
+              flexShrink: 0,
+              left: 'auto',
+              right: 'auto',
+              transform: 'none'
             }}
             onClick={(e) => e.stopPropagation()}
           >
