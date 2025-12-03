@@ -382,9 +382,11 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
     }
   }
 
-  async function handleDelete(id: number) {
+  function handleDelete(id: number) {
+    console.log('handleDelete called with id:', id);
     setDeleteTarget(id);
     setShowDeleteModal(true);
+    console.log('Modal should be showing now');
   }
 
   async function confirmDelete() {
@@ -604,7 +606,17 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
                   </div>
                 </div>
                 {isOwner && (
-                  <button onClick={() => handleDelete(item.id)} className="ml-auto text-xs font-bold text-red-600 lowercase hover:underline bg-transparent border-none p-0 shadow-none focus:outline-none" style={{ background: 'none', border: 'none', padding: 0 }}>
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log('Delete button clicked for item:', item.id);
+                      handleDelete(item.id);
+                    }} 
+                    className="ml-auto text-xs font-bold text-red-600 lowercase hover:underline bg-transparent border-none p-0 shadow-none focus:outline-none cursor-pointer" 
+                    style={{ background: 'none', border: 'none', padding: 0 }}
+                    type="button"
+                  >
                     delete
                   </button>
                 )}
