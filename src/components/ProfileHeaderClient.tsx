@@ -116,7 +116,7 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
         </div>
         
         {/* Member Info - Better spacing on mobile */}
-        <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 md:gap-4 text-gray-500 dark:text-gray-300 text-xs md:text-sm lowercase">
+        <div className="flex flex-col md:flex-row items-center md:items-center justify-center md:justify-start gap-1 md:gap-4 text-gray-500 dark:text-gray-300 text-xs md:text-sm lowercase">
           <span>member since {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : "-"}</span>
           <span className="hidden md:inline">•</span>
           <a href={`/profile/${user.username}/reviews`} className="underline hover:text-blue-600 cursor-pointer">
