@@ -390,17 +390,28 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
   async function confirmDelete() {
     if (deleteTarget == null) return;
     setDeleting(true);
-    setLoading(true);
-    await fetch(`/api/currently-experiencing?id=${deleteTarget}`, { method: 'DELETE' });
-    setShowDeleteModal(false);
-    setDeleteTarget(null);
-    setDeleting(false);
-    fetch(`/api/currently-experiencing?userId=${profileId}`)
-      .then(res => res.json())
-      .then(data => {
-        setItems(data.items || []);
-        setLoading(false);
-      });
+    try {
+      const res = await fetch(`/api/currently-experiencing?id=${deleteTarget}`, { method: 'DELETE' });
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({ error: 'Failed to delete item' }));
+        alert(`Failed to delete item: ${errorData.error || 'Unknown error'}`);
+        setDeleting(false);
+        return;
+      }
+      setShowDeleteModal(false);
+      setDeleteTarget(null);
+      setDeleting(false);
+      setLoading(true);
+      const refreshRes = await fetch(`/api/currently-experiencing?userId=${profileId}`);
+      const refreshData = await refreshRes.json();
+      setItems(refreshData.items || []);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      alert('An error occurred while deleting the item.');
+      setDeleting(false);
+      setLoading(false);
+    }
   }
 
   function cancelDelete() {
