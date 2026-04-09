@@ -45,7 +45,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     if (isNaN(rating) || rating < 1 || rating > 10) {
       return NextResponse.json({ message: 'rating must be between 1 and 10' }, { status: 400 });
     }
-    const allowedCategories = ['film', 'music', 'anime', 'books', 'other'];
+    const allowedCategories = ['film', 'music', 'anime', 'books', 'games', 'other'];
     if (!allowedCategories.includes(category)) {
       return NextResponse.json({ message: 'invalid category' }, { status: 400 });
     }

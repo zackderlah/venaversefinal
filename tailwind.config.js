@@ -16,6 +16,10 @@ module.exports = {
         'xl': '1280px',
         '2xl': '1536px',
       },
+      maxWidth: {
+        // 20% wider than max-w-4xl (56rem) for md+ layout shell
+        layout: '67.2rem',
+      },
       spacing: {
         'safe-top': 'env(safe-area-inset-top)',
         'safe-bottom': 'env(safe-area-inset-bottom)',

@@ -65,7 +65,7 @@ export default function HeaderWithDarkMode() {
 
   return (
     <>
-      <header className={`mb-6 md:static sticky top-0 z-30 bg-transparent dark:bg-transparent transition-shadow ${isScrolled ? 'shadow-md' : ''} safe-area-top md:px-6`}>
+      <header className={`mb-6 min-w-0 max-w-full overflow-x-clip md:static sticky top-0 z-30 bg-transparent dark:bg-transparent transition-shadow ${isScrolled ? 'shadow-md' : ''} safe-area-top md:px-6`}>
         <div className="mb-4">
           <div className="flex flex-row justify-between items-center w-full sm:hidden gap-2">
             <h1 className="text-4xl font-black tracking-tight lowercase flex-1">vena/verse</h1>
@@ -129,24 +129,27 @@ export default function HeaderWithDarkMode() {
         </span>
       </button>
       {/* Navigation Links */}
-      <nav className={`${isMenuOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row gap-6 text-sm items-start md:items-center lowercase`}>
-        <div className="flex flex-col md:flex-row md:items-center w-full">
-          <Link href="/" className={`nav-link text-gray-900 w-full md:w-auto${pathname === '/' ? ' active' : ''}`}>home</Link>
-          <Link href="/films" className={`nav-link text-blue-600 w-full md:w-auto${pathname?.startsWith('/films') ? ' active' : ''}`}>films</Link>
-          <Link href="/music" className={`nav-link text-purple-600 w-full md:w-auto${pathname?.startsWith('/music') ? ' active' : ''}`}>music</Link>
-          <Link href="/anime" className={`nav-link text-red-600 w-full md:w-auto${pathname?.startsWith('/anime') ? ' active' : ''}`}>anime</Link>
-          <Link href="/books" className={`nav-link text-green-600 w-full md:w-auto${pathname?.startsWith('/books') ? ' active' : ''}`}>books</Link>
-          <Link href="/other" className={`nav-link text-yellow-600 w-full md:w-auto${pathname?.startsWith('/other') ? ' active' : ''}`}>other</Link>
-          <Link href="/community" className={`nav-link text-pink-600 w-full md:w-auto${pathname?.startsWith('/community') ? ' active' : ''}`}>community</Link>
-          <div className="flex gap-2 mt-4 md:mt-0 ml-auto">
+      <nav className={`${isMenuOpen ? 'flex' : 'hidden'} md:flex w-full min-w-0 max-w-full flex-col gap-4 text-sm items-start lowercase`}>
+        <div className="flex w-full min-w-0 max-w-full flex-col gap-4">
+          <div className="flex min-w-0 w-full flex-wrap items-center gap-x-2 gap-y-1 md:gap-x-3 lg:gap-x-4">
+            <Link href="/" className={`nav-link text-gray-900 w-full md:w-auto${pathname === '/' ? ' active' : ''}`}>home</Link>
+            <Link href="/films" className={`nav-link text-blue-600 w-full md:w-auto${pathname?.startsWith('/films') ? ' active' : ''}`}>films</Link>
+            <Link href="/music" className={`nav-link text-purple-600 w-full md:w-auto${pathname?.startsWith('/music') ? ' active' : ''}`}>music</Link>
+            <Link href="/anime" className={`nav-link text-red-600 w-full md:w-auto${pathname?.startsWith('/anime') ? ' active' : ''}`}>anime</Link>
+            <Link href="/books" className={`nav-link text-green-600 w-full md:w-auto${pathname?.startsWith('/books') ? ' active' : ''}`}>books</Link>
+            <Link href="/games" className={`nav-link text-cyan-600 w-full md:w-auto${pathname?.startsWith('/games') ? ' active' : ''}`}>games</Link>
+            <Link href="/other" className={`nav-link text-yellow-600 w-full md:w-auto${pathname?.startsWith('/other') ? ' active' : ''}`}>other</Link>
+            <Link href="/community" className={`nav-link text-pink-600 w-full md:w-auto${pathname?.startsWith('/community') ? ' active' : ''}`}>community</Link>
+          </div>
+          <div className="flex w-full shrink-0 flex-wrap gap-2 justify-start md:justify-end">
             {user ? (
               <>
-                <Link href="/create-post" className="border-2 border-black dark:border-white px-3 py-1 font-bold bg-white dark:bg-[#0A0A0A] text-black dark:text-white hover:bg-gray-100 hover:dark:bg-gray-900 transition-colors text-xs lowercase">create post</Link>
-                <Link href="/profile" className="border-2 border-black dark:border-white px-3 py-1 font-bold bg-white dark:bg-[#0A0A0A] text-black dark:text-white hover:bg-gray-100 hover:dark:bg-gray-900 transition-colors text-xs lowercase">profile</Link>
-                <button onClick={handleLogout} className="border-2 border-black dark:border-white px-3 py-1 font-bold bg-black dark:bg-white text-white dark:text-black hover:bg-gray-900 hover:dark:bg-gray-200 transition-colors text-xs lowercase">logout</button>
+                <Link href="/create-post" className="inline-flex items-center justify-center whitespace-nowrap border-2 border-black bg-white px-3 py-1 text-xs font-bold lowercase text-black transition-colors hover:bg-gray-100 dark:border-white dark:bg-[#0A0A0A] dark:text-white hover:dark:bg-gray-900 text-center">create post</Link>
+                <Link href="/profile" className="inline-flex items-center justify-center whitespace-nowrap border-2 border-black bg-white px-3 py-1 text-xs font-bold lowercase text-black transition-colors hover:bg-gray-100 dark:border-white dark:bg-[#0A0A0A] dark:text-white hover:dark:bg-gray-900 text-center">profile</Link>
+                <button type="button" onClick={handleLogout} className="inline-flex items-center justify-center whitespace-nowrap border-2 border-black bg-black px-3 py-1 text-xs font-bold lowercase text-center text-white transition-colors hover:bg-gray-900 dark:border-white dark:bg-white dark:text-black hover:dark:bg-gray-200">logout</button>
               </>
             ) : (
-              <Link href="/login" className="border-2 border-black dark:border-white px-3 py-1 font-bold bg-black dark:bg-white text-white dark:text-black hover:bg-gray-900 hover:dark:bg-gray-200 transition-colors text-xs lowercase">login</Link>
+              <Link href="/login" className="inline-flex items-center justify-center whitespace-nowrap border-2 border-black px-3 py-1 text-xs font-bold lowercase text-white transition-colors hover:bg-gray-900 dark:border-white dark:bg-white dark:text-black hover:dark:bg-gray-200 text-center">login</Link>
             )}
           </div>
         </div>

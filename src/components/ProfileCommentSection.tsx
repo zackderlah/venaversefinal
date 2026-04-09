@@ -159,23 +159,27 @@ export default function ProfileCommentSection({ profileId }: ProfileCommentSecti
       ) : (
         <ul className="space-y-4">
           {comments.map(comment => (
-            <li key={comment.id} className="border border-gray-300 dark:border-gray-600 rounded-lg p-3 bg-gray-50 dark:bg-gray-900/30">
-              <div className="flex items-center gap-2 mb-1">
+            <li key={comment.id} className="border border-gray-300 dark:border-gray-600 rounded-lg p-3 bg-gray-50 dark:bg-gray-900/30 text-left">
+              <div className="flex min-h-6 items-center gap-2">
                 {comment.user.profileImage ? (
-                  <img src={comment.user.profileImage} alt={comment.user.username} className="w-6 h-6 rounded-full object-cover border border-black dark:border-white flex-shrink-0" />
+                  <img src={comment.user.profileImage} alt={comment.user.username} className="h-6 w-6 flex-shrink-0 rounded-full border border-black object-cover dark:border-white" />
                 ) : (
-                  <span className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-xs text-gray-500 font-bold flex-shrink-0">{comment.user.username[0].toUpperCase()}</span>
+                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gray-300 text-xs font-bold text-gray-500 dark:bg-gray-700">{comment.user.username[0].toUpperCase()}</span>
                 )}
-                <Link href={`/profile/${comment.user.username}`} className="font-bold text-xs lowercase hover:text-blue-600 dark:hover:text-blue-400 flex items-center">
+                <Link
+                  href={`/profile/${comment.user.username}`}
+                  className="inline-flex h-6 items-center text-xs font-bold lowercase leading-none hover:text-blue-600 dark:hover:text-blue-400"
+                >
                   {comment.user.username}
                 </Link>
               </div>
-              <div className="text-xs text-gray-400 mb-1 ml-8">{new Date(comment.createdAt).toLocaleDateString()}</div>
-              <div className="text-gray-700 dark:text-gray-200 text-sm lowercase mb-2 ml-8">{comment.text}</div>
+              <div className="mt-2 text-xs text-gray-400">{new Date(comment.createdAt).toLocaleDateString()}</div>
+              <p className="mt-1 text-sm lowercase leading-snug text-gray-700 dark:text-gray-200 break-words">{comment.text}</p>
               {canDelete(comment) && (
                 <button
+                  type="button"
                   onClick={() => handleDelete(comment.id)}
-                  className="ml-8 text-xs font-bold text-red-600 lowercase hover:underline bg-transparent border-none p-0 shadow-none focus:outline-none"
+                  className="mt-2 text-xs font-bold lowercase text-red-600 hover:underline bg-transparent p-0 shadow-none focus:outline-none border-0"
                   style={{ background: 'none', border: 'none', padding: 0 }}
                 >
                   delete

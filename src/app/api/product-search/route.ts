@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { searchVideogames } from '@/lib/videogameSearch';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -145,25 +146,19 @@ export async function GET(req: NextRequest) {
 
 
 
-    // 4. Games - Using existing GiantBomb API
+    // 4. Games — RAWG + GiantBomb via shared videogame search
     if (category === 'all' || category === 'games') {
       try {
-        const apiKey = "4ad067883d9d052b144b74cec0dcedb2c1c48431";
-        const gameUrl = `https://www.giantbomb.com/api/search/?api_key=${apiKey}&format=json&query=${encodeURIComponent(query)}&resources=game`;
-        const gameRes = await fetch(gameUrl, { headers: { 'User-Agent': 'johnnywebsite' } });
-        const gameData = await gameRes.json();
-        
-        if (gameData.results) {
-          const gameResults = gameData.results.slice(0, 3).map((game: any) => ({
-            title: game.name,
-            creator: game.developer || 'Unknown Developer',
-            poster: game.image?.super_url,
-            year: game.original_release_date ? game.original_release_date.slice(0, 4) : new Date().getFullYear().toString(),
-            type: 'game',
-            description: game.deck || ''
-          }));
-          results.push(...gameResults);
-        }
+        const hits = await searchVideogames(query);
+        const gameResults = hits.slice(0, 3).map((game) => ({
+          title: game.name,
+          creator: game.developer || 'Unknown Developer',
+          poster: game.image?.super_url,
+          year: game.original_release_date ? game.original_release_date.slice(0, 4) : new Date().getFullYear().toString(),
+          type: 'game',
+          description: '',
+        }));
+        results.push(...gameResults);
       } catch (error) {
         console.error('Error fetching game data:', error);
       }

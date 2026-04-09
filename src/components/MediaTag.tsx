@@ -17,6 +17,8 @@ export default function MediaTag({ category }: MediaTagProps) {
         return 'Anime';
       case 'books':
         return 'Book';
+      case 'games':
+        return 'Game';
       case 'other':
         return 'Other';
     }
@@ -32,6 +34,8 @@ export default function MediaTag({ category }: MediaTagProps) {
         return 'text-pink-800';
       case 'books':
         return 'text-green-800';
+      case 'games':
+        return 'text-cyan-800';
       case 'other':
         return 'text-yellow-800';
     }

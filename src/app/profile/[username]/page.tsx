@@ -65,7 +65,7 @@ export default async function UserProfilePage({ params }: { params: { username: 
   const activityFeed = [...reviewFeed, ...commentFeed].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
-    <div className="max-w-4xl mx-auto px-3 md:px-4 py-4 md:py-8 space-y-4 md:space-y-8">
+    <div className="mx-auto max-w-4xl px-3 md:max-w-layout md:px-4 py-4 md:py-8 space-y-4 md:space-y-8">
       {/* Profile Header */}
       <ProfileHeaderClient user={user} session={session} isOwner={isOwner} />
 

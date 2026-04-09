@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { firstVideogameCoverImageUrl } from '@/lib/videogameSearch';
 
 export const dynamic = 'force-dynamic';
 
@@ -48,7 +49,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'rating must be between 1 and 10' }, { status: 400 });
     }
     let normalizedCategory = (category === 'album' ? 'music' : category).trim();
-    const allowedCategories = ['film', 'music', 'anime', 'books', 'other'];
+    const allowedCategories = ['film', 'music', 'anime', 'books', 'games', 'other'];
     console.log('Category validation debugging:', {
       originalCategory: category,
       normalizedCategory,
@@ -107,6 +108,15 @@ export async function POST(req: NextRequest) {
           }
         } catch (err) {
           console.error('Open Library fetch error:', err);
+        }
+      }
+      // Game cover: RAWG (if RAWG_API_KEY) + GiantBomb fallback via videogameSearch
+      if (normalizedCategory === 'games') {
+        try {
+          const cover = await firstVideogameCoverImageUrl(title);
+          if (cover) imageUrl = cover;
+        } catch (err) {
+          console.error('Videogame cover fetch error:', err);
         }
       }
       // Anime cover fetching via AniList

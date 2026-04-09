@@ -47,7 +47,7 @@ export default function ReviewActionsClient({ review }: { review: any }) {
 
   return (
     <>
-      <div className="mt-2 flex flex-row flex-nowrap items-center gap-3">
+      <div className="flex flex-row flex-nowrap items-center gap-3">
         <button
           type="button"
           onClick={e => { e.stopPropagation(); e.preventDefault(); router.push(`/reviews/${review.id}/edit`); }}

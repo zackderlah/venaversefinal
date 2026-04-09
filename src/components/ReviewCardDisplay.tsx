@@ -84,11 +84,12 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
   return (
     <div
       id={`review-${review.id}`}
-      className="review-card review-card-item cursor-pointer overflow-hidden w-full max-w-full"
+      className="review-card review-card-item cursor-pointer overflow-hidden w-full max-w-full text-left"
       onClick={() => router.push(`/reviews/${review.id}`)}
     >
+      {/* Top row: poster + title/meta (matches homepage ReviewCard header row) */}
       <div className="flex flex-col md:flex-row gap-4 items-start w-full max-w-full">
-        <div className="flex flex-row gap-3 md:gap-4 items-start w-full md:w-auto min-w-0 max-w-full">
+        <div className="flex flex-row gap-3 md:gap-4 items-start w-full min-w-0 flex-1 max-w-full">
           {review.imageUrl && (
             <div className="relative w-16 h-24 flex-shrink-0">
               <Image
@@ -112,7 +113,7 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
               {review.creator}, {review.year} <MediaTag category={review.category} />
             </span>
             {review.user?.username && (
-              <div className="mb-2">
+              <div className="mb-0">
                 <Link href={`/profile/${review.user.username}`} className="flex items-center gap-0.5" onClick={e => e.stopPropagation()}>
                   {review.user.profileImage ? (
                     <img
@@ -129,73 +130,77 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
                 </Link>
               </div>
             )}
-            <div className="mb-4 text-gray-700 dark:text-gray-300 overflow-hidden">
-              <p className="text-xs md:text-sm leading-relaxed break-words whitespace-normal">
-                {isMobile ? getPreview(review.review, 200) : getPreview(review.review, 500)}
-                {htmlToText(review.review, { wordwrap: false }).length > (isMobile ? 200 : 500) && (
-                  <Link href={`/reviews/${review.id}`} className="text-blue-600 hover:underline ml-1">Read more</Link>
-                )}
-              </p>
-            </div>
-            <div className="review-date">
-              Reviewed on {new Date(review.date).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
-            </div>
-            {typeof review.commentCount === 'number' && (
-              <div className="flex items-center gap-1 mt-2 text-xs text-gray-500">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-4-.8L3 20l.8-4A8.96 8.96 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
-                {review.commentCount} comment{review.commentCount === 1 ? '' : 's'}
-              </div>
-            )}
-            {canEdit && (
-              <div className="mt-2 flex flex-row flex-nowrap items-center gap-3">
-                <Link
-                  href={`/reviews/${review.id}/edit`}
-                  onClick={e => { e.stopPropagation(); e.preventDefault(); router.push(`/reviews/${review.id}/edit`); }}
-                  className="inline-flex shrink-0 items-center w-auto text-xs lowercase font-semibold text-blue-600 hover:underline leading-tight"
-                >
-                  edit review
-                </Link>
-                <button
-                  type="button"
-                  onClick={e => { e.stopPropagation(); e.preventDefault(); handleDelete(e); }}
-                  className="inline-flex shrink-0 items-center w-auto text-xs lowercase font-semibold text-red-600 hover:underline bg-transparent border-0 p-0 leading-tight"
-                >
-                  delete
-                </button>
-              </div>
-            )}
-            {showDeleteModal && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-                <div className="bg-white dark:bg-[#18181b] rounded-lg shadow-lg p-6 w-full max-w-xs text-center">
-                  <div className="mb-4 text-lg font-bold text-gray-800 dark:text-gray-100 lowercase">delete review?</div>
-                  <div className="mb-6 text-gray-600 dark:text-gray-300 text-sm">Are you sure you want to delete this review? This action cannot be undone.</div>
-                  <div className="flex justify-center gap-4">
-                    <button
-                      onClick={confirmDelete}
-                      className="px-4 py-1 rounded text-xs font-bold lowercase border-2 border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-900 transition-colors"
-                      disabled={deleting}
-                    >
-                      {deleting ? 'deleting...' : 'delete'}
-                    </button>
-                    <button
-                      onClick={cancelDelete}
-                      className="px-4 py-1 rounded text-xs font-bold lowercase border-2 border-gray-400 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                      disabled={deleting}
-                    >
-                      cancel
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
         <span className="rating shrink-0 ml-2 text-2xl md:text-3xl font-extrabold mt-1 hidden md:block">{review.rating}/10</span>
       </div>
+
+      {/* Full card width below the poster row — same pattern as ReviewCard on the homepage */}
+      <div className="mb-4 mt-4 w-full text-left text-gray-700 dark:text-gray-300 overflow-hidden">
+        <p className="text-xs md:text-sm leading-relaxed break-words whitespace-normal">
+          {isMobile ? getPreview(review.review, 200) : getPreview(review.review, 500)}
+          {htmlToText(review.review, { wordwrap: false }).length > (isMobile ? 200 : 500) && (
+            <Link href={`/reviews/${review.id}`} className="text-blue-600 hover:underline ml-1" onClick={e => e.stopPropagation()}>Read more</Link>
+          )}
+        </p>
+      </div>
+      <div className="review-date w-full text-left">
+        Reviewed on {new Date(review.date).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })}
+      </div>
+      {typeof review.commentCount === 'number' && (
+        <div className="flex items-center justify-start gap-1 mt-2 text-xs text-gray-500 w-full text-left">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-block shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-4-.8L3 20l.8-4A8.96 8.96 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+          {review.commentCount} comment{review.commentCount === 1 ? '' : 's'}
+        </div>
+      )}
+      {canEdit && (
+        <div className="mt-2 flex flex-row flex-nowrap items-center justify-start gap-3 w-full text-left">
+          <Link
+            href={`/reviews/${review.id}/edit`}
+            onClick={e => { e.stopPropagation(); e.preventDefault(); router.push(`/reviews/${review.id}/edit`); }}
+            className="inline-flex shrink-0 items-center w-auto text-xs lowercase font-semibold text-blue-600 hover:underline leading-tight"
+          >
+            edit review
+          </Link>
+          <button
+            type="button"
+            onClick={e => { e.stopPropagation(); e.preventDefault(); handleDelete(e); }}
+            className="inline-flex shrink-0 items-center w-auto text-xs lowercase font-semibold text-red-600 hover:underline bg-transparent border-0 p-0 leading-tight"
+          >
+            delete
+          </button>
+        </div>
+      )}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40" onClick={e => e.stopPropagation()}>
+          <div className="bg-white dark:bg-[#18181b] rounded-lg shadow-lg p-6 w-full max-w-xs text-center">
+            <div className="mb-4 text-lg font-bold text-gray-800 dark:text-gray-100 lowercase">delete review?</div>
+            <div className="mb-6 text-gray-600 dark:text-gray-300 text-sm">Are you sure you want to delete this review? This action cannot be undone.</div>
+            <div className="flex justify-center gap-4">
+              <button
+                type="button"
+                onClick={confirmDelete}
+                className="px-4 py-1 rounded text-xs font-bold lowercase border-2 border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-900 transition-colors"
+                disabled={deleting}
+              >
+                {deleting ? 'deleting...' : 'delete'}
+              </button>
+              <button
+                type="button"
+                onClick={cancelDelete}
+                className="px-4 py-1 rounded text-xs font-bold lowercase border-2 border-gray-400 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                disabled={deleting}
+              >
+                cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 

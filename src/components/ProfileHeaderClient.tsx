@@ -107,6 +107,7 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
                   user.selectedTitleCategory === 'music' ? 'text-purple-600' :
                   user.selectedTitleCategory === 'anime' ? 'text-red-600' :
                   user.selectedTitleCategory === 'books' ? 'text-green-600' :
+                  user.selectedTitleCategory === 'games' ? 'text-cyan-600' :
                   user.selectedTitleCategory === 'generic' ? 'text-yellow-700' :
                   'text-gray-700'
                 }`}
@@ -221,7 +222,7 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
                   <div className="flex flex-col min-h-0 flex-1 gap-0">
                     <div className="mb-2 font-bold text-sm text-gray-600 dark:text-gray-400 lowercase shrink-0">categories</div>
                     <div className="flex gap-2 mb-4 flex-wrap shrink-0">
-                      {['film','music','anime','books','generic'].map(tab => (
+                      {['film','music','anime','books','games','generic'].map(tab => (
                         <button
                           key={tab}
                           className={`px-3 py-1.5 rounded text-xs sm:text-sm font-bold lowercase border-2 transition-colors duration-150 ${
@@ -231,6 +232,7 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
                             tab === 'music' ? 'text-purple-600' :
                             tab === 'anime' ? 'text-red-600' :
                             tab === 'books' ? 'text-green-600' :
+                            tab === 'games' ? 'text-cyan-600' :
                             tab === 'generic' ? 'text-yellow-700' :
                             ''
                           }`}
@@ -251,6 +253,7 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
                             titleTab === 'music' ? 'text-purple-600' :
                             titleTab === 'anime' ? 'text-red-600' :
                             titleTab === 'books' ? 'text-green-600' :
+                            titleTab === 'games' ? 'text-cyan-600' :
                             titleTab === 'generic' ? 'text-yellow-700' :
                             ''
                           } ${

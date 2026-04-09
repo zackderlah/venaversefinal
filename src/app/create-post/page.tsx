@@ -85,7 +85,7 @@ function CreatePostForm() {
       const d = await res.json();
       if (cancelled) return;
 
-      const allowed = new Set(['film', 'music', 'anime', 'books', 'other']);
+      const allowed = new Set(['film', 'music', 'anime', 'books', 'games', 'other']);
       const category = allowed.has(d.category) ? d.category : 'film';
 
       lastLoadedDraftQueryRef.current = draftQuery;
@@ -138,6 +138,7 @@ function CreatePostForm() {
       async function fetchSuggestions() {
         setSuggestLoading(true);
         let results: any[] = [];
+        try {
         if (activeSearchField === 'title') {
           if (formData.category === 'film') {
             // OMDb API: Try to filter by director if creator is filled
@@ -322,6 +323,25 @@ function CreatePostForm() {
               }
               results = allResults.slice(0, 5);
             }
+          } else if (formData.category === 'games') {
+            try {
+              const gameRes = await fetch(`/api/videogames?query=${encodeURIComponent(searchValue)}`);
+              if (!gameRes.ok) {
+                console.error('videogame API:', gameRes.status);
+              } else {
+                const gameData = await gameRes.json();
+                if (gameData.results) {
+                  results = gameData.results.map((game: any) => ({
+                    title: game.name,
+                    creator: game.developer || '',
+                    poster: game.image?.super_url,
+                    year: game.original_release_date ? game.original_release_date.slice(0, 4) : '',
+                  }));
+                }
+              }
+            } catch (err) {
+              console.error('videogame search:', err);
+            }
           } else if (formData.category === 'other') {
             // Use the new product search API that includes food, drinks, and products
             try {
@@ -350,8 +370,7 @@ function CreatePostForm() {
               } else {
                 // If no results from product search, try games as fallback
                 try {
-                  const gameUrl = `/api/giantbomb-proxy?query=${encodeURIComponent(searchValue)}`;
-                  const gameRes = await fetch(gameUrl);
+                  const gameRes = await fetch(`/api/videogames?query=${encodeURIComponent(searchValue)}`);
                   const gameData = await gameRes.json();
                   if (gameData.results) {
                     results = gameData.results.map((game: any) => ({
@@ -370,8 +389,7 @@ function CreatePostForm() {
               console.error('Error fetching from product search API:', error);
               // Fallback to just games if the new API fails
               try {
-                const gameUrl = `/api/giantbomb-proxy?query=${encodeURIComponent(searchValue)}`;
-                const gameRes = await fetch(gameUrl);
+                const gameRes = await fetch(`/api/videogames?query=${encodeURIComponent(searchValue)}`);
                 const gameData = await gameRes.json();
                 if (gameData.results) {
                   results = gameData.results.map((game: any) => ({
@@ -453,6 +471,27 @@ function CreatePostForm() {
                 works: studio.media.nodes.map((m: any) => m.title.romaji),
               }));
             }
+          } else if (formData.category === 'games') {
+            try {
+              const gameRes = await fetch(`/api/videogames?query=${encodeURIComponent(searchValue)}`);
+              const gameData = await gameRes.json();
+              const brands: Record<string, string[]> = {};
+              if (gameData.results) {
+                gameData.results.forEach((hit: any) => {
+                  const developer = hit.developer;
+                  if (developer) {
+                    if (!brands[developer]) brands[developer] = [];
+                    brands[developer].push(hit.name);
+                  }
+                });
+              }
+              results = Object.entries(brands).map(([name, works]) => ({
+                creator: name,
+                works: works.slice(0, 3),
+              }));
+            } catch (error) {
+              console.error('Error searching for game developers:', error);
+            }
           } else if (formData.category === 'other') {
             // Search for brands, manufacturers, and developers
             try {
@@ -490,19 +529,16 @@ function CreatePostForm() {
                 console.error('Error fetching beer breweries:', error);
               }
               
-              // Search for game developers using GiantBomb
+              // Game developers (server-side key via /api/videogames)
               try {
-                const apiKey = "4ad067883d9d052b144b74cec0dcedb2c1c48431";
-                const gameUrl = `https://www.giantbomb.com/api/search/?api_key=${apiKey}&format=json&query=${encodeURIComponent(searchValue)}&resources=game`;
-                const gameRes = await fetch(gameUrl, { headers: { 'User-Agent': 'johnnywebsite' } });
+                const gameRes = await fetch(`/api/videogames?query=${encodeURIComponent(searchValue)}`);
                 const gameData = await gameRes.json();
-                
                 if (gameData.results) {
-                  gameData.results.forEach((game: any) => {
-                    const developer = game.developer;
+                  gameData.results.forEach((hit: any) => {
+                    const developer = hit.developer;
                     if (developer) {
                       if (!brands[developer]) brands[developer] = [];
-                      brands[developer].push(game.name);
+                      brands[developer].push(hit.name);
                     }
                   });
                 }
@@ -518,6 +554,9 @@ function CreatePostForm() {
               console.error('Error searching for creators in other category:', error);
             }
           }
+        }
+        } catch (e) {
+          console.error('autocomplete error:', e);
         }
         if (!ignore && latestQuery.current === searchValue) setSuggestions(results);
         setSuggestLoading(false);
@@ -709,6 +748,7 @@ function CreatePostForm() {
             <option value="music">music</option>
             <option value="anime">anime</option>
             <option value="books">books</option>
+            <option value="games">games</option>
             <option value="other">other</option>
           </select>
         </div>

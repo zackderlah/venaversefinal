@@ -7,6 +7,7 @@ import { Masonry } from 'masonic';
 import SkeletonCard from '@/components/SkeletonCard'
 import PullToRefresh from '@/components/PullToRefresh'
 import LoadingSpinner from '@/components/LoadingSpinner'
+import PatchNotesSection from '@/components/PatchNotesSection'
 
 export default function Home() {
   const [recentReviews, setRecentReviews] = useState<any[]>([]);
@@ -107,8 +108,12 @@ export default function Home() {
   }, [hasMore, loadingMore, loading, currentPage, fetchReviews, isMobile]);
 
   const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= pagination.totalPages && page !== currentPage) {
-      setCurrentPage(page);
+    if (
+      page >= 1 &&
+      page <= pagination.totalPages &&
+      page !== pagination.currentPage
+    ) {
+      void fetchReviews(page, false);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -164,10 +169,11 @@ export default function Home() {
     <div className="space-y-16">
       <section className="border-b-2 border-black dark:border-gray-100 pb-8">
         <h2 className="text-4xl font-black mb-4 tracking-tight lowercase">note</h2>
-        <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg leading-relaxed lowercase">
-          this website is a collection of reviews for films, music, anime, and books that you and others have experienced.
+        <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed lowercase">
+          this website is a collection of reviews for films, music, anime, books, and games that you and others have experienced.
           each review should include one's thoughts, ratings, and analysis of the work. 
         </p>
+        <PatchNotesSection />
       </section>
 
       <section>
@@ -215,7 +221,7 @@ export default function Home() {
             {!isMobile && pagination.totalPages > 1 && (
               <div className="flex items-center justify-center gap-2 mt-12 pt-8">
                 <button
-                  onClick={() => handlePageChange(currentPage - 1)}
+                  onClick={() => handlePageChange(pagination.currentPage - 1)}
                   disabled={!pagination.hasPreviousPage}
                   className={`px-3 py-1 text-sm lowercase tracking-tight transition-opacity ${
                     pagination.hasPreviousPage
@@ -235,7 +241,7 @@ export default function Home() {
                       );
                     }
                     const pageNum = page as number;
-                    const isActive = pageNum === currentPage;
+                    const isActive = pageNum === pagination.currentPage;
                     return (
                       <button
                         key={pageNum}
@@ -252,7 +258,7 @@ export default function Home() {
                   })}
                 </div>
                 <button
-                  onClick={() => handlePageChange(currentPage + 1)}
+                  onClick={() => handlePageChange(pagination.currentPage + 1)}
                   disabled={!pagination.hasNextPage}
                   className={`px-3 py-1 text-sm lowercase tracking-tight transition-opacity ${
                     pagination.hasNextPage

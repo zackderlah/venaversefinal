@@ -58,7 +58,7 @@ export default function ShareButton({ title, url, text, className = '' }: ShareB
     <button
       onClick={handleShare}
       disabled={sharing}
-      className={`flex items-center gap-1 text-xs lowercase font-semibold text-blue-600 hover:underline disabled:opacity-50 ${className}`}
+      className={`inline-flex items-center gap-1 border-0 bg-transparent p-0 text-xs lowercase font-semibold text-blue-600 hover:underline disabled:opacity-50 ${className}`}
       aria-label="Share"
     >
       <svg

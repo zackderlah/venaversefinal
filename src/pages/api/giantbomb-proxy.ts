@@ -6,7 +6,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(400).json({ error: 'Missing query parameter' });
     return;
   }
-  const apiKey = "4ad067883d9d052b144b74cec0dcedb2c1c48431";
+  const apiKey = process.env.GIANTBOMB_API_KEY?.trim();
+  if (!apiKey) {
+    res.status(503).json({ error: 'GIANTBOMB_API_KEY is not configured', results: [] });
+    return;
+  }
   const url = `https://www.giantbomb.com/api/search/?api_key=${apiKey}&format=json&query=${encodeURIComponent(query)}&resources=game`;
   try {
     const gbRes = await fetch(url, { headers: { 'User-Agent': 'johnnywebsite' } });
@@ -21,7 +25,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         let developer = '';
         if (game.api_detail_url) {
           try {
-            const detailRes = await fetch(`${game.api_detail_url}?api_key=${apiKey}&format=json`, { headers: { 'User-Agent': 'johnnywebsite' } });
+            const sep = game.api_detail_url.includes('?') ? '&' : '?';
+            const detailRes = await fetch(`${game.api_detail_url}${sep}api_key=${apiKey}&format=json`, { headers: { 'User-Agent': 'johnnywebsite' } });
             const detailData = await detailRes.json();
             if (detailData.results && detailData.results.developers && detailData.results.developers.length > 0) {
               developer = detailData.results.developers[0].name;

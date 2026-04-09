@@ -81,7 +81,7 @@ export default function ReviewPage() {
 
   return (
     <div className="flex min-h-screen w-full p-0 m-0 justify-center">
-      <div className="w-full max-w-4xl review-card content-card p-8 flex flex-col">
+      <div className="review-card content-card flex w-full max-w-4xl flex-col p-8 md:max-w-layout">
         <div className="flex flex-col md:flex-row gap-8 items-start">
           {review.imageUrl && (
             <div className="flex-shrink-0 w-32 h-48 mx-auto md:mx-0 md:mb-0 mb-6 relative">

@@ -45,7 +45,7 @@ export default function UserReviewsPage() {
     });
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
+    <div className="mx-auto max-w-4xl px-4 py-8 md:max-w-layout space-y-8">
       <div className="review-card">
         <h2 className="text-2xl font-black tracking-tight lowercase mb-2">all reviews by {username}</h2>
         <div className="flex flex-col md:flex-row gap-4 mb-4">

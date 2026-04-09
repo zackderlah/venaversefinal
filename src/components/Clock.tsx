@@ -24,7 +24,7 @@ export default function Clock() {
         <div className="text-xs text-gray-500 dark:text-gray-400">
           --:--:--
         </div>
-        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        <div className="mt-1 hidden text-xs text-gray-500 dark:text-gray-400 lg:block">
           "<span className="rating text-xs font-bold">H</span>" toggle background view
         </div>
       </div>
@@ -44,7 +44,7 @@ export default function Clock() {
       <div className="text-xs text-gray-500 dark:text-gray-400">
         {formatTime(time)}
       </div>
-      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+      <div className="mt-1 hidden text-xs text-gray-500 dark:text-gray-400 lg:block">
         "<span className="rating text-xs font-bold">H</span>" toggle background view
       </div>
     </div>

@@ -33,7 +33,7 @@ export default async function DraftsPage() {
   }));
 
   return (
-    <div className="max-w-4xl mx-auto px-2 sm:px-4 py-6 md:py-8">
+    <div className="mx-auto max-w-4xl px-2 sm:px-4 py-6 md:max-w-layout md:py-8">
       <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
         <h1 className="text-2xl md:text-3xl font-black lowercase">drafts</h1>
         <Link

@@ -1,6 +1,6 @@
 // Titles and unlock logic derived from TITLES.md
 
-export type Category = 'film' | 'music' | 'anime' | 'books';
+export type Category = 'film' | 'music' | 'anime' | 'books' | 'games';
 
 export const CATEGORY_TITLES: Record<Category, string[]> = {
   film: [
@@ -51,6 +51,18 @@ export const CATEGORY_TITLES: Record<Category, string[]> = {
     'Master of Literature',
     'Literary GOD',
   ],
+  games: [
+    'Game Rookie',
+    'Player One',
+    'Pixel Enthusiast',
+    'Quest Completer',
+    'Boss Authority',
+    'RNG Scholar',
+    'Speedrun Strategist',
+    'Esports Overlord',
+    'Master of Games',
+    'Game GOD',
+  ],
 };
 
 export const GENERIC_TITLES = [
@@ -99,7 +111,7 @@ function getGenericTitleIndex(total: number): number {
 // Returns the unlocked titles for a user given their review counts by category
 export function getUnlockedTitlesByCategory(reviewCounts: Partial<Record<Category, number>>) {
   const unlocked: Record<Category, string[]> = {
-    film: [], music: [], anime: [], books: []
+    film: [], music: [], anime: [], books: [], games: []
   };
   for (const cat of Object.keys(CATEGORY_TITLES) as Category[]) {
     const count = reviewCounts[cat] || 0;
