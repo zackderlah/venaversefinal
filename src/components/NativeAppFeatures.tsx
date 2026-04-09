@@ -106,22 +106,23 @@ export default function NativeAppFeatures() {
       hapticsElements.add(element);
 
       // Handle touch events (primary for mobile)
-      const handleTouchStart = (e: TouchEvent) => {
+      const handleTouchStart = (e: Event) => {
         e.stopPropagation(); // Prevent event bubbling issues
         triggerHaptic();
       };
 
       // Handle click events (fallback)
-      const handleClick = (e: MouseEvent) => {
+      const handleClick = (e: Event) => {
+        const ev = e as MouseEvent;
         // Only trigger if it's not from a touch event (to avoid double haptics)
-        if (!(e as any).isTrusted || (e as any).sourceCapabilities?.firesTouchEvents) {
+        if (!ev.isTrusted || (ev as MouseEvent & { sourceCapabilities?: { firesTouchEvents?: boolean } }).sourceCapabilities?.firesTouchEvents) {
           return;
         }
         triggerHaptic();
       };
 
-      element.addEventListener('touchstart', handleTouchStart, { passive: true });
-      element.addEventListener('click', handleClick, { passive: true });
+      element.addEventListener('touchstart', handleTouchStart as EventListener, { passive: true });
+      element.addEventListener('click', handleClick as EventListener, { passive: true });
     };
 
     const addHapticsToClickableElements = () => {
