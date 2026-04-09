@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -21,7 +21,7 @@ export default function ForgotPasswordPage() {
       const res = await fetch('/api/auth/password-reset/request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ identifier }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -48,14 +48,14 @@ export default function ForgotPasswordPage() {
         </h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <input
-            id="email"
-            name="email"
-            type="email"
+            id="identifier"
+            name="identifier"
+            type="text"
             required
             className="block w-full rounded-md border-2 border-black dark:border-white px-3 py-2 bg-white dark:bg-[#18181b] text-black dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500 font-mono text-base"
-            placeholder="account email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            placeholder="account email or username"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
           />
           {error && <div className="text-red-500 text-sm text-center lowercase font-mono">{error}</div>}
           {message && (

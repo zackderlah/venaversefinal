@@ -17,14 +17,20 @@ const GENERIC_RESPONSE = {
 
 export async function POST(req: NextRequest) {
   try {
-    const { email } = await req.json();
-    const normalizedEmail = String(email ?? '').trim().toLowerCase();
-    if (!normalizedEmail || !normalizedEmail.includes('@')) {
+    const { email, identifier } = await req.json();
+    const rawIdentifier = String(identifier ?? email ?? '').trim();
+    const normalizedIdentifier = rawIdentifier.toLowerCase();
+    if (!normalizedIdentifier) {
       return NextResponse.json(GENERIC_RESPONSE, { status: 200 });
     }
 
     const user = await prisma.user.findFirst({
-      where: { email: { equals: normalizedEmail, mode: 'insensitive' } },
+      where: {
+        OR: [
+          { email: { equals: normalizedIdentifier, mode: 'insensitive' } },
+          { username: { equals: rawIdentifier, mode: 'insensitive' } },
+        ],
+      },
       select: { id: true, email: true },
     });
 
