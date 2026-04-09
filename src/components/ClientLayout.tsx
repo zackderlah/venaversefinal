@@ -31,7 +31,7 @@ export default function ClientLayout({
 
   return (
     <div className="mx-auto max-w-4xl px-3 md:max-w-layout md:px-4 py-4 md:py-8 pb-20 md:pb-8 space-y-4 md:space-y-8">
-      <div className="review-card header-card md:!bg-transparent md:!border-0 md:!shadow-none md:!p-0">
+      <div className="review-card header-card md:!shadow-none md:!p-0">
         <HeaderWithDarkMode />
       </div>
       <div className={`transition-opacity duration-300 ${isContentVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>

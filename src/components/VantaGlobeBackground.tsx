@@ -142,7 +142,8 @@ export default function VantaGlobeBackground({
     } else {
       return {
         color: getCurrentColor(),
-        backgroundColor: 0xf1f5f9 // Less bright light background
+        // Slate-200: still light, softer than slate-100 so the scene isn’t as bright
+        backgroundColor: 0xe2e8f0,
       };
     }
   };
@@ -274,7 +275,7 @@ export default function VantaGlobeBackground({
   }
 
   const themeColors = getThemeColors();
-  const fallbackBg = isDarkMode ? '#1e293b' : '#f1f5f9';
+  const fallbackBg = isDarkMode ? '#1e293b' : '#e2e8f0';
 
   return (
     <div 

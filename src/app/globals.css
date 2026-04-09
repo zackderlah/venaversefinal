@@ -83,10 +83,11 @@
   }
 
   @media (min-width: 768px) {
+    /* Match .content-card frosted panel so header and body read as one surface (light mode) */
     .review-card.header-card {
-      background-color: transparent !important;
-      backdrop-filter: none !important;
-      border: none !important;
+      background-color: rgba(255, 255, 255, 0.3) !important;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
       padding: 0 !important;
       box-shadow: none !important;
     }

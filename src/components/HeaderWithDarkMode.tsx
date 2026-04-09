@@ -59,7 +59,9 @@ export default function HeaderWithDarkMode() {
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
-    await signOut();
+    // redirect: false + refresh so SessionProvider and RSC layout see cleared cookies (avoids stale "logged in" header)
+    await signOut({ redirect: false });
+    router.refresh();
     router.push('/login');
   };
 
@@ -129,9 +131,9 @@ export default function HeaderWithDarkMode() {
         </span>
       </button>
       {/* Navigation Links */}
-      <nav className={`${isMenuOpen ? 'flex' : 'hidden'} md:flex w-full min-w-0 max-w-full flex-col gap-4 text-sm items-start lowercase`}>
-        <div className="flex w-full min-w-0 max-w-full flex-col gap-4">
-          <div className="flex min-w-0 w-full flex-wrap items-center gap-x-2 gap-y-1 md:gap-x-3 lg:gap-x-4">
+      <nav className={`${isMenuOpen ? 'flex' : 'hidden'} md:flex w-full min-w-0 max-w-full flex-col gap-4 text-sm items-stretch lowercase md:items-start`}>
+        <div className="flex w-full min-w-0 max-w-full flex-col gap-4 md:flex-row md:flex-wrap md:items-start md:gap-x-3 md:gap-y-2 lg:gap-x-4">
+          <div className="flex min-w-0 w-full flex-1 flex-wrap items-center gap-x-2 gap-y-1 md:w-auto md:items-start md:gap-x-3 lg:gap-x-4">
             <Link href="/" className={`nav-link text-gray-900 w-full md:w-auto${pathname === '/' ? ' active' : ''}`}>home</Link>
             <Link href="/films" className={`nav-link text-blue-600 w-full md:w-auto${pathname?.startsWith('/films') ? ' active' : ''}`}>films</Link>
             <Link href="/music" className={`nav-link text-purple-600 w-full md:w-auto${pathname?.startsWith('/music') ? ' active' : ''}`}>music</Link>
@@ -141,7 +143,7 @@ export default function HeaderWithDarkMode() {
             <Link href="/other" className={`nav-link text-yellow-600 w-full md:w-auto${pathname?.startsWith('/other') ? ' active' : ''}`}>other</Link>
             <Link href="/community" className={`nav-link text-pink-600 w-full md:w-auto${pathname?.startsWith('/community') ? ' active' : ''}`}>community</Link>
           </div>
-          <div className="flex w-full shrink-0 flex-wrap gap-2 justify-start md:justify-end">
+          <div className="flex w-full shrink-0 flex-wrap gap-2 justify-start md:w-auto md:justify-end md:ml-auto">
             {user ? (
               <>
                 <Link href="/create-post" className="inline-flex items-center justify-center whitespace-nowrap border-2 border-black bg-white px-3 py-1 text-xs font-bold lowercase text-black transition-colors hover:bg-gray-100 dark:border-white dark:bg-[#0A0A0A] dark:text-white hover:dark:bg-gray-900 text-center">create post</Link>
