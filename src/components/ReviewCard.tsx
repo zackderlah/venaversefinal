@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { htmlToText } from 'html-to-text';
+import StarRatingDisplay from '@/components/StarRatingDisplay';
 
 function capitalizeTitle(title: string) {
   return title.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
@@ -133,7 +134,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
               ) : null}
             </div>
             <div className="flex flex-col items-end gap-2">
-              <span className="rating shrink-0 ml-2">{review.rating}/10</span>
+              <StarRatingDisplay value={review.rating} className="shrink-0 ml-2" />
             </div>
           </div>
         </div>

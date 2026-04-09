@@ -15,10 +15,11 @@ export const PATCH_VERSIONS: PatchVersion[] = [
     id: '2026-04-09',
     dateISO: '2026-04-09',
     items: [
-      'games added as a review category.',
-      'review drafts: save work in progress and publish when ready.',
-      'improved formatting for some cards and ui elements.',
-      'general performance and optimization.',
+      'rating system migrated from /10 to 5 stars with half-star support.',
+      'existing review and draft ratings converted to the new scale.',
+      'new interactive star input for create/edit forms with stricter validation.',
+      'star rendering rebuilt for exact half-star fill and cleaner unfilled stars.',
+      'review cards now have stronger hover feedback with lift, shadow, and image zoom.',
     ],
   },
   {

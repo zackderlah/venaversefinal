@@ -115,6 +115,11 @@
     box-shadow: none !important;
     overflow: hidden;
     max-width: 100%;
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease,
+      border-color 180ms ease,
+      background-color 180ms ease;
   }
 
   .review-card.review-card-item::before {
@@ -227,6 +232,29 @@
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
     box-shadow: none !important;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .review-card.review-card-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12) !important;
+      border-color: rgba(96, 165, 250, 0.45) !important;
+      background-color: rgba(255, 255, 255, 0.72) !important;
+    }
+
+    .dark .review-card.review-card-item:hover {
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4) !important;
+      border-color: rgba(96, 165, 250, 0.55) !important;
+      background-color: rgba(34, 34, 34, 0.72) !important;
+    }
+
+    .review-card.review-card-item img {
+      transition: transform 220ms ease;
+    }
+
+    .review-card.review-card-item:hover img {
+      transform: scale(1.03);
+    }
   }
 
   .dark .review-card.review-card-item::before {

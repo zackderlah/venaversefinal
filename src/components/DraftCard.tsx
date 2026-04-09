@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import DraftDeleteButton from '@/components/DraftDeleteButton';
+import StarRatingDisplay from '@/components/StarRatingDisplay';
+import { isValidFiveStarRating } from '@/lib/starRating';
 
 export type DraftCardData = {
   id: number;
@@ -44,7 +46,20 @@ export default function DraftCard({ draft }: { draft: DraftCardData }) {
             {draft.category}
             {draft.creator ? ` · ${draft.creator}` : ''}
             {draft.year ? ` · ${draft.year}` : ''}
-            {draft.rating ? ` · ${draft.rating}/10` : ''}
+            {draft.rating.trim() !== '' ? (
+              <>
+                {' · '}
+                {isValidFiveStarRating(parseFloat(draft.rating)) ? (
+                  <StarRatingDisplay
+                    value={parseFloat(draft.rating)}
+                    className="inline-flex align-middle"
+                    starClassName="text-[10px] md:text-xs"
+                  />
+                ) : (
+                  draft.rating
+                )}
+              </>
+            ) : null}
           </p>
           {draft.reviewPreview ? (
             <p className="text-[11px] md:text-xs text-gray-600 dark:text-gray-300 lowercase mt-2 line-clamp-3 flex-1">

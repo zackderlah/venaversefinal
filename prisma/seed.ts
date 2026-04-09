@@ -52,7 +52,7 @@ async function main() {
           category: categoryMap[r.category] || r.category,
           creator: r.creator,
           year: r.year,
-          rating: Math.round(r.rating),
+          rating: r.rating,
           review: r.review,
           date: new Date(r.date),
           imageUrl: r.imageUrl || null,

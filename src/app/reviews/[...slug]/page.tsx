@@ -10,6 +10,7 @@ import Image from 'next/image';
 import MediaTag from '@/components/MediaTag';
 import ReviewActionsClient from '@/components/ReviewActionsClient';
 import ShareButton from '@/components/ShareButton';
+import StarRatingDisplay from '@/components/StarRatingDisplay';
 
 function capitalizeTitle(title: string) {
   return title.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
@@ -104,7 +105,11 @@ export default function ReviewPage() {
                   {capitalizeTitle(review.title)}
                 </a>
               </h1>
-              <span className="rating text-4xl font-black ml-4">{review.rating}/10</span>
+              <StarRatingDisplay
+                value={review.rating}
+                className="ml-4"
+                starClassName="text-4xl font-black"
+              />
             </div>
             <div className="mb-2 text-gray-500 text-sm">
               {review.creator}, {review.year}

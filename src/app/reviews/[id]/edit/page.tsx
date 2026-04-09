@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import RichTextEditor from '@/components/RichTextEditor';
+import StarRatingInput from '@/components/StarRatingInput';
+import { isValidFiveStarRating, normalizeRatingFromStorage, normalizeRatingStringForForm } from '@/lib/starRating';
 
 interface ReviewFormData {
   title: string;
@@ -71,7 +73,7 @@ export default function EditReviewPage() {
             category: data.category,
             creator: data.creator,
             year: String(data.year),
-            rating: String(data.rating),
+            rating: normalizeRatingStringForForm(data.rating) || String(data.rating),
             review: data.review,
           });
           setIsLoading(false);
@@ -404,8 +406,10 @@ export default function EditReviewPage() {
         setIsSubmitting(false);
         return;
     }
-    if (isNaN(parseFloat(formData.rating)) || parseFloat(formData.rating) < 1 || parseFloat(formData.rating) > 10) {
-        setError('please enter a rating between 1 and 10.');
+    const ratingNum = parseFloat(formData.rating);
+    const ratingCoerced = normalizeRatingFromStorage(ratingNum);
+    if (!isValidFiveStarRating(ratingCoerced)) {
+        setError('please choose a rating from 0.5 to 5 stars (half-star steps).');
         setIsSubmitting(false);
         return;
     }
@@ -418,7 +422,7 @@ export default function EditReviewPage() {
           body: JSON.stringify({
             ...formData,
             year: parseInt(formData.year),
-            rating: parseFloat(formData.rating), // Allow float for rating e.g. 8.5
+            rating: ratingCoerced,
           }),
         });
 
@@ -528,8 +532,13 @@ export default function EditReviewPage() {
         </div>
 
         <div>
-          <label htmlFor="rating" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">rating (1-10)</label>
-          <input type="number" step="0.1" name="rating" id="rating" value={formData.rating} onChange={handleChange} required min="1" max="10" className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500" />
+          <label htmlFor="rating" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">rating (out of 5)</label>
+          <StarRatingInput
+            id="rating"
+            value={formData.rating}
+            onChange={(next) => setFormData((f) => ({ ...f, rating: next }))}
+            disabled={isSubmitting || isLoading}
+          />
         </div>
 
         <div>

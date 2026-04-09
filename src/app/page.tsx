@@ -170,8 +170,13 @@ export default function Home() {
       <section className="border-b-2 border-black dark:border-gray-100 pb-8">
         <h2 className="text-4xl font-black mb-4 tracking-tight lowercase">note</h2>
         <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed lowercase">
-          this website is a collection of reviews for films, music, anime, books, and games that you and others have experienced.
-          each review should include one's thoughts, ratings, and analysis of the work. 
+          this website is a collection of reviews for{' '}
+          <span className="text-blue-600 dark:text-blue-400">films</span>,{' '}
+          <span className="text-purple-600 dark:text-purple-400">music</span>,{' '}
+          <span className="text-red-600 dark:text-red-400">anime</span>,{' '}
+          <span className="text-green-600 dark:text-green-400">books</span>, and{' '}
+          <span className="text-cyan-600 dark:text-cyan-400">games</span> that you and others have experienced.
+          each review should include one's thoughts, ratings, and analysis of the work.{' '}
         </p>
         <PatchNotesSection />
       </section>

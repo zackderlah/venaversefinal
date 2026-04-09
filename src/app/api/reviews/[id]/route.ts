@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { isRatingProvided, parseFiveStarRating } from '@/lib/starRating';
 
 export const dynamic = 'force-dynamic';
 
@@ -32,19 +33,20 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     const { title, category, creator, year: yearStr, rating: ratingStr, review } = await req.json();
 
     // Validate input
-    if (!title || !category || !creator || !yearStr || !ratingStr) {
+    if (!title || !category || !creator || !yearStr || !isRatingProvided(ratingStr)) {
       return NextResponse.json({ message: 'all fields except review are required' }, { status: 400 });
     }
 
     const year = parseInt(yearStr as string);
-    const rating = parseFloat(ratingStr as string);
+    const parsedRating = parseFiveStarRating(ratingStr);
 
     if (isNaN(year) || String(yearStr).length !== 4) {
       return NextResponse.json({ message: 'invalid year format' }, { status: 400 });
     }
-    if (isNaN(rating) || rating < 1 || rating > 10) {
-      return NextResponse.json({ message: 'rating must be between 1 and 10' }, { status: 400 });
+    if (!parsedRating.ok) {
+      return NextResponse.json({ message: parsedRating.message }, { status: 400 });
     }
+    const rating = parsedRating.value;
     const allowedCategories = ['film', 'music', 'anime', 'books', 'games', 'other'];
     if (!allowedCategories.includes(category)) {
       return NextResponse.json({ message: 'invalid category' }, { status: 400 });

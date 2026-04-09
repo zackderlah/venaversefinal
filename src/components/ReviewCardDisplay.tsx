@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { htmlToText } from 'html-to-text';
+import StarRatingDisplay from '@/components/StarRatingDisplay';
 
 interface ReviewCardDisplayProps {
   review: Review;
@@ -107,7 +108,11 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
               <h3 className="text-lg md:text-xl font-black truncate flex-1 min-w-0">
                 <Link href={`/reviews/${review.id}`} onClick={e => e.stopPropagation()}>{capitalizeTitle(review.title)}</Link>
               </h3>
-              <span className="rating shrink-0 text-xl md:text-3xl font-extrabold md:hidden ml-2">{review.rating}/10</span>
+              <StarRatingDisplay
+                value={review.rating}
+                className="shrink-0 md:hidden ml-2"
+                starClassName="text-xl md:text-3xl font-extrabold"
+              />
             </div>
             <span className="text-xs md:text-sm text-gray-500 mb-1 truncate">
               {review.creator}, {review.year} <MediaTag category={review.category} />
@@ -132,7 +137,11 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
             )}
           </div>
         </div>
-        <span className="rating shrink-0 ml-2 text-2xl md:text-3xl font-extrabold mt-1 hidden md:block">{review.rating}/10</span>
+        <StarRatingDisplay
+          value={review.rating}
+          className="shrink-0 ml-2 mt-1 hidden md:block"
+          starClassName="text-2xl md:text-3xl font-extrabold"
+        />
       </div>
 
       {/* Full card width below the poster row — same pattern as ReviewCard on the homepage */}
