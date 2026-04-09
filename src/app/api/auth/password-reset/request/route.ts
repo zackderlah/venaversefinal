@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
     }
 
     const includeDebugLink =
-      process.env.NODE_ENV !== 'production' ||
+      process.env.NODE_ENV !== 'production' &&
       process.env.PASSWORD_RESET_DEBUG_LINK === 'true';
 
     return NextResponse.json(
