@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useRef, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import RichTextEditor from '@/components/RichTextEditor';
 
-export default function CreatePostPage() {
+function CreatePostForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     title: '',
     category: 'film',
@@ -19,6 +21,14 @@ export default function CreatePostPage() {
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [suggestLoading, setSuggestLoading] = useState(false);
   const [poster, setPoster] = useState<string | undefined>(undefined);
+  const [activeDraftId, setActiveDraftId] = useState<number | null>(null);
+  const [draftsList, setDraftsList] = useState<
+    { id: number; title: string; category: string; updatedAt: string }[]
+  >([]);
+  const [draftNotice, setDraftNotice] = useState<string | null>(null);
+  const [savingDraft, setSavingDraft] = useState(false);
+  /** Set only after a draft from the URL is successfully loaded (avoids Strict Mode / skip-fetch bug). */
+  const lastLoadedDraftQueryRef = useRef<string | null>(null);
   const dropdownRef = useRef<HTMLUListElement | null>(null);
   const [activeSearchField, setActiveSearchField] = useState<'title' | 'creator'>('title');
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
@@ -35,6 +45,67 @@ export default function CreatePostPage() {
       }
     });
   }, [router]);
+
+  async function refreshDraftsList() {
+    const res = await fetch('/api/reviews/drafts');
+    if (!res.ok) return;
+    const data = await res.json();
+    setDraftsList(data.drafts || []);
+  }
+
+  useEffect(() => {
+    refreshDraftsList();
+  }, []);
+
+  const draftQuery = searchParams?.get('draft') ?? null;
+
+  useEffect(() => {
+    if (!draftQuery) {
+      if (lastLoadedDraftQueryRef.current !== null) {
+        setFormData({ title: '', category: 'film', creator: '', year: '', rating: '', review: '' });
+        setPoster(undefined);
+        setError(null);
+      }
+      lastLoadedDraftQueryRef.current = null;
+      setActiveDraftId(null);
+      return;
+    }
+
+    const num = parseInt(draftQuery, 10);
+    if (Number.isNaN(num)) {
+      return;
+    }
+
+    let cancelled = false;
+    (async () => {
+      const res = await fetch(`/api/reviews/drafts/${num}`);
+      if (!res.ok) {
+        return;
+      }
+      const d = await res.json();
+      if (cancelled) return;
+
+      const allowed = new Set(['film', 'music', 'anime', 'books', 'other']);
+      const category = allowed.has(d.category) ? d.category : 'film';
+
+      lastLoadedDraftQueryRef.current = draftQuery;
+      setActiveDraftId(d.id);
+      setFormData({
+        title: d.title ?? '',
+        category,
+        creator: d.creator ?? '',
+        year: d.year != null ? String(d.year) : '',
+        rating: d.rating != null ? String(d.rating) : '',
+        review: d.review ?? '',
+      });
+      setPoster(d.imageUrl || undefined);
+      setDraftNotice(null);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [draftQuery]);
 
   // Close dropdown on outside click only (not on space/backspace)
   useEffect(() => {
@@ -512,6 +583,57 @@ export default function CreatePostPage() {
     }
   };
 
+  async function saveDraft() {
+    setSavingDraft(true);
+    setDraftNotice(null);
+    try {
+      const payload = {
+        title: formData.title,
+        category: formData.category,
+        creator: formData.creator,
+        year: formData.year,
+        rating: formData.rating,
+        review: formData.review,
+        imageUrl: poster ?? null,
+      };
+      if (activeDraftId) {
+        const res = await fetch(`/api/reviews/drafts/${activeDraftId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error('save failed');
+        setDraftNotice('draft saved');
+      } else {
+        const res = await fetch('/api/reviews/drafts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error('save failed');
+        const d = await res.json();
+        setActiveDraftId(d.id);
+        router.replace(`/create-post?draft=${d.id}`);
+        setDraftNotice('draft saved');
+      }
+      await refreshDraftsList();
+    } catch {
+      setDraftNotice('could not save draft');
+    } finally {
+      setSavingDraft(false);
+    }
+  }
+
+  function startNewPost() {
+    setFormData({ title: '', category: 'film', creator: '', year: '', rating: '', review: '' });
+    setPoster(undefined);
+    setActiveDraftId(null);
+    setDraftNotice(null);
+    setError(null);
+    lastLoadedDraftQueryRef.current = null;
+    router.replace('/create-post');
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -545,11 +667,12 @@ export default function CreatePostPage() {
           year: parseInt(formData.year),
           rating: parseFloat(formData.rating),
           imageUrl: poster,
+          draftId: activeDraftId ?? undefined,
         }),
       });
 
       if (res.ok) {
-        const newReview = await res.json();
+        await refreshDraftsList();
         const categoryPath = formData.category === 'music' ? 'music' : formData.category;
         router.push(`/${categoryPath === 'film' ? 'films' : categoryPath}`);
       } else {
@@ -565,7 +688,19 @@ export default function CreatePostPage() {
 
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
-      <h1 className="text-3xl font-black mb-6 lowercase">create new post</h1>
+      <div className="flex flex-wrap items-start justify-between gap-3 mb-6">
+        <h1 className="text-3xl font-black lowercase flex-1 min-w-0">create new post</h1>
+        <Link
+          href="/drafts"
+          className="shrink-0 py-2 px-3 text-sm font-bold lowercase border-2 border-black dark:border-white bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors inline-flex items-center"
+        >
+          view drafts ({draftsList.length})
+        </Link>
+      </div>
+      {draftNotice && (
+        <p className="text-sm lowercase text-gray-600 dark:text-gray-300 mb-4 -mt-2">{draftNotice}</p>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">category</label>
@@ -579,7 +714,7 @@ export default function CreatePostPage() {
         </div>
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">title</label>
-          <input ref={titleInputRef} type="text" name="title" id="title" value={formData.title} onChange={handleChange} onKeyDown={activeSearchField === 'title' ? handleKeyDown : undefined} required className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500" autoComplete="off" />
+          <input ref={titleInputRef} type="text" name="title" id="title" value={formData.title} onChange={handleChange} onKeyDown={activeSearchField === 'title' ? handleKeyDown : undefined} className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500" autoComplete="off" />
           {activeSearchField === 'title' && suggestLoading && <div className="text-xs text-gray-400">searching...</div>}
           {activeSearchField === 'title' && suggestions.length > 0 && (
             <ul ref={dropdownRef} className="bg-white dark:bg-[#18181b] border border-gray-300 dark:border-gray-700 rounded shadow absolute z-10 mt-2 max-h-48 overflow-y-auto w-full">
@@ -611,7 +746,7 @@ export default function CreatePostPage() {
 
         <div>
           <label htmlFor="creator" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">creator (e.g. director, artist)</label>
-          <input ref={creatorInputRef} type="text" name="creator" id="creator" value={formData.creator} onChange={handleChange} onKeyDown={activeSearchField === 'creator' ? handleKeyDown : undefined} required className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500" autoComplete="off" />
+          <input ref={creatorInputRef} type="text" name="creator" id="creator" value={formData.creator} onChange={handleChange} onKeyDown={activeSearchField === 'creator' ? handleKeyDown : undefined} className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500" autoComplete="off" />
           {activeSearchField === 'creator' && suggestLoading && <div className="text-xs text-gray-400">searching...</div>}
           {activeSearchField === 'creator' && suggestions.length > 0 && (
             <ul ref={dropdownRef} className="bg-white dark:bg-[#18181b] border border-gray-300 dark:border-gray-700 rounded shadow absolute z-10 mt-2 max-h-48 overflow-y-auto w-full">
@@ -640,27 +775,55 @@ export default function CreatePostPage() {
 
         <div>
           <label htmlFor="year" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">year</label>
-          <input type="number" name="year" id="year" value={formData.year} onChange={handleChange} required placeholder="e.g. 2023" className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500" />
+          <input type="number" name="year" id="year" value={formData.year} onChange={handleChange} placeholder="e.g. 2023" className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500" />
         </div>
 
         <div>
           <label htmlFor="rating" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">rating (1-10)</label>
-          <input type="number" name="rating" id="rating" value={formData.rating} onChange={handleChange} required min="1" max="10" step="0.1" className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500" />
+          <input type="number" name="rating" id="rating" value={formData.rating} onChange={handleChange} min="1" max="10" step="0.1" className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500" />
         </div>
 
         <div>
           <label htmlFor="review" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">review</label>
-          <RichTextEditor value={formData.review} onChange={val => setFormData(f => ({ ...f, review: val }))} />
+          <RichTextEditor
+            key={draftQuery ? `draft-${draftQuery}` : 'new-post'}
+            value={formData.review}
+            onChange={(val) => setFormData((f) => ({ ...f, review: val }))}
+          />
         </div>
 
         {error && <p className="text-red-500 text-sm lowercase">{error}</p>}
 
-        <div>
-          <button type="submit" disabled={isSubmitting} className="w-full flex justify-center py-2 px-4 border border-transparent font-bold text-white bg-black dark:bg-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 lowercase disabled:opacity-50">
+        <div className="flex flex-col sm:flex-row gap-2">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="flex-1 flex justify-center py-2 px-4 border border-transparent font-bold text-white bg-black dark:bg-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 lowercase disabled:opacity-50"
+          >
             {isSubmitting ? 'submitting...' : 'submit review'}
+          </button>
+          <button
+            type="button"
+            onClick={saveDraft}
+            disabled={savingDraft}
+            className="sm:w-auto w-full flex justify-center py-2 px-4 border-2 border-black dark:border-white font-bold lowercase bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50"
+          >
+            {savingDraft ? 'saving…' : 'save draft'}
           </button>
         </div>
       </form>
     </div>
+  );
+}
+
+export default function CreatePostPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="max-w-2xl mx-auto py-8 px-4 lowercase text-gray-500 dark:text-gray-400">loading…</div>
+      }
+    >
+      <CreatePostForm />
+    </Suspense>
   );
 } 

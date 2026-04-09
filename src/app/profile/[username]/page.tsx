@@ -7,6 +7,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import ProfileCommentSection from '@/components/ProfileCommentSection';
 import CurrentlyExperiencingSection from '@/components/CurrentlyExperiencingSection';
+import ProfileDraftsSection from '@/components/ProfileDraftsSection';
 
 export default async function UserProfilePage({ params }: { params: { username: string } }) {
   const session = await getServerSession(authOptions);
@@ -40,6 +41,14 @@ export default async function UserProfilePage({ params }: { params: { username: 
 
   const isOwner = Number(session?.user?.id) === user.id;
 
+  const drafts = isOwner
+    ? await prisma.reviewDraft.findMany({
+        where: { userId: user.id },
+        orderBy: { updatedAt: 'desc' },
+        select: { id: true, title: true, category: true, updatedAt: true },
+      })
+    : [];
+
   // Combine reviews and comments into a single feed, sorted by date
   const reviewFeed = user.reviews.map(r => ({
     type: 'review',
@@ -59,6 +68,8 @@ export default async function UserProfilePage({ params }: { params: { username: 
     <div className="max-w-4xl mx-auto px-3 md:px-4 py-4 md:py-8 space-y-4 md:space-y-8">
       {/* Profile Header */}
       <ProfileHeaderClient user={user} session={session} isOwner={isOwner} />
+
+      {isOwner ? <ProfileDraftsSection drafts={drafts} /> : null}
 
       {/* Currently Experiencing */}
       <div className="review-card">

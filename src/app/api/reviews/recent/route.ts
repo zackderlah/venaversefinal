@@ -12,23 +12,23 @@ export async function GET(req: NextRequest) {
 
   const [reviews, totalCount] = await Promise.all([
     prisma.review.findMany({
-      orderBy: { date: 'desc' },
+    orderBy: { date: 'desc' },
       skip,
       take: REVIEWS_PER_PAGE,
-      select: {
-        id: true,
-        title: true,
-        category: true,
-        creator: true,
-        year: true,
-        rating: true,
-        review: true,
-        date: true,
-        imageUrl: true,
-        userId: true,
-        user: { select: { id: true, username: true, profileImage: true } },
-        _count: { select: { comments: true } },
-      },
+    select: {
+      id: true,
+      title: true,
+      category: true,
+      creator: true,
+      year: true,
+      rating: true,
+      review: true,
+      date: true,
+      imageUrl: true,
+      userId: true,
+      user: { select: { id: true, username: true, profileImage: true } },
+      _count: { select: { comments: true } },
+    },
     }),
     prisma.review.count(),
   ]);

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import ProfileImageUpload from "./ProfileImageUpload";
 import LevelBadge from "./LevelBadge";
 import { calculateUserXPAndLevel } from "@/utils/level";
@@ -29,6 +30,20 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
         .catch(() => setUnlockedTitles(null));
     }
   }, [showTitleModal, isOwner]);
+
+  useEffect(() => {
+    if (!showTitleModal) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setShowTitleModal(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [showTitleModal]);
 
   const handleSelectTitle = async (title: string, category: string) => {
     setTitleLoading(true);
@@ -175,69 +190,91 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
             <span className="flex-1">{user?.bio || "no bio yet."}</span>
           )}
         </div>
-        {/* Title selection modal */}
-        {showTitleModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-            <div className="bg-white dark:bg-[#18181b] rounded-lg shadow-lg p-6 w-full max-w-lg relative">
-              <button className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 dark:hover:text-white text-xl font-bold" onClick={() => setShowTitleModal(false)}>&times;</button>
-              <h2 className="text-xl font-bold mb-4 lowercase">select your title</h2>
-              {unlockedTitles ? (
-                <>
-                  <div className="mb-2 font-bold text-sm text-gray-600 dark:text-gray-400 lowercase">categories</div>
-                  <div className="flex gap-2 mb-4 flex-wrap">
-                    {['film','music','anime','books','generic'].map(tab => (
-                      <button
-                        key={tab}
-                        className={`px-3 py-1 rounded text-xs font-bold lowercase border-2 transition-colors duration-150 ${
-                          titleTab === tab ? 'border-black dark:border-white' : 'border-gray-300 dark:border-gray-700'
-                        } ${
-                          tab === 'film' ? 'text-blue-600' :
-                          tab === 'music' ? 'text-purple-600' :
-                          tab === 'anime' ? 'text-red-600' :
-                          tab === 'books' ? 'text-green-600' :
-                          tab === 'generic' ? 'text-yellow-700' :
-                          ''
-                        }`}
-                        onClick={() => setTitleTab(tab)}
-                        type="button"
-                      >
-                        {tab}
-                      </button>
-                    ))}
+        {/* Title modal portals to document.body so it is not clipped by .review-card (backdrop-filter / overflow) */}
+        {showTitleModal &&
+          typeof document !== "undefined" &&
+          createPortal(
+            <div
+              className="fixed inset-0 z-[120] flex items-center justify-center bg-black bg-opacity-40 p-3 sm:p-6"
+              onClick={() => setShowTitleModal(false)}
+              role="presentation"
+            >
+              <div
+                className="bg-white dark:bg-[#18181b] rounded-lg shadow-lg p-5 sm:p-8 w-full max-w-2xl md:max-w-3xl max-h-[min(92vh,720px)] flex flex-col overflow-hidden relative border-2 border-black dark:border-gray-700"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="title-modal-heading"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  type="button"
+                  className="absolute top-3 right-3 z-10 text-gray-400 hover:text-gray-700 dark:hover:text-white text-2xl font-bold leading-none"
+                  onClick={() => setShowTitleModal(false)}
+                  aria-label="close"
+                >
+                  &times;
+                </button>
+                <h2 id="title-modal-heading" className="text-xl sm:text-2xl font-bold mb-4 pr-8 lowercase shrink-0">
+                  select your title
+                </h2>
+                {unlockedTitles ? (
+                  <div className="flex flex-col min-h-0 flex-1 gap-0">
+                    <div className="mb-2 font-bold text-sm text-gray-600 dark:text-gray-400 lowercase shrink-0">categories</div>
+                    <div className="flex gap-2 mb-4 flex-wrap shrink-0">
+                      {['film','music','anime','books','generic'].map(tab => (
+                        <button
+                          key={tab}
+                          className={`px-3 py-1.5 rounded text-xs sm:text-sm font-bold lowercase border-2 transition-colors duration-150 ${
+                            titleTab === tab ? 'border-black dark:border-white' : 'border-gray-300 dark:border-gray-700'
+                          } ${
+                            tab === 'film' ? 'text-blue-600' :
+                            tab === 'music' ? 'text-purple-600' :
+                            tab === 'anime' ? 'text-red-600' :
+                            tab === 'books' ? 'text-green-600' :
+                            tab === 'generic' ? 'text-yellow-700' :
+                            ''
+                          }`}
+                          onClick={() => setTitleTab(tab)}
+                          type="button"
+                        >
+                          {tab}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="mb-2 font-bold text-sm text-gray-600 dark:text-gray-400 lowercase shrink-0">titles unlocked</div>
+                    <div className="flex flex-col gap-1 min-h-0 flex-1 overflow-y-auto overscroll-y-contain pr-2 -mr-1 mb-2 border border-gray-200 dark:border-gray-700 rounded-md p-2 sm:p-3">
+                      {(titleTab === 'generic' ? unlockedTitles.unlockedGeneric : unlockedTitles.unlockedByCategory[titleTab]).map((t: string, idx: number) => (
+                        <button
+                          key={`${titleTab}-${t}-${idx}`}
+                          className={`text-left w-full py-2 px-2 rounded text-xs sm:text-sm font-bold lowercase transition-colors duration-150 shrink-0 ${
+                            titleTab === 'film' ? 'text-blue-600' :
+                            titleTab === 'music' ? 'text-purple-600' :
+                            titleTab === 'anime' ? 'text-red-600' :
+                            titleTab === 'books' ? 'text-green-600' :
+                            titleTab === 'generic' ? 'text-yellow-700' :
+                            ''
+                          } ${
+                            user.selectedTitle === t && user.selectedTitleCategory === titleTab ? 'font-extrabold underline' : ''
+                          } hover:bg-gray-100 dark:hover:bg-gray-800/80`}
+                          disabled={titleLoading}
+                          onClick={() => handleSelectTitle(t, titleTab)}
+                          type="button"
+                          style={{ background: 'none', border: 'none' }}
+                        >
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                    {titleError && <div className="text-xs text-red-500 font-bold mb-2 shrink-0">{titleError}</div>}
+                    {titleLoading && <div className="text-xs text-gray-500 shrink-0">updating...</div>}
                   </div>
-                  <div className="mb-2 font-bold text-sm text-gray-600 dark:text-gray-400 lowercase">titles unlocked</div>
-                  <div className="flex flex-col gap-1 mb-2">
-                    {(titleTab === 'generic' ? unlockedTitles.unlockedGeneric : unlockedTitles.unlockedByCategory[titleTab]).map((t: string, idx: number) => (
-                      <button
-                        key={t}
-                        className={`text-left w-full py-1 px-2 rounded text-xs font-bold lowercase transition-colors duration-150 ${
-                          titleTab === 'film' ? 'text-blue-600' :
-                          titleTab === 'music' ? 'text-purple-600' :
-                          titleTab === 'anime' ? 'text-red-600' :
-                          titleTab === 'books' ? 'text-green-600' :
-                          titleTab === 'generic' ? 'text-yellow-700' :
-                          ''
-                        } ${
-                          user.selectedTitle === t && user.selectedTitleCategory === titleTab ? 'font-extrabold underline' : ''
-                        }`}
-                        disabled={titleLoading}
-                        onClick={() => handleSelectTitle(t, titleTab)}
-                        type="button"
-                        style={{ background: 'none', border: 'none' }}
-                      >
-                        {t}
-                      </button>
-                    ))}
-                  </div>
-                  {titleError && <div className="text-xs text-red-500 font-bold mb-2">{titleError}</div>}
-                  {titleLoading && <div className="text-xs text-gray-500">updating...</div>}
-                </>
-              ) : (
-                <div className="text-gray-500 text-sm">loading titles...</div>
-              )}
-            </div>
-          </div>
-        )}
+                ) : (
+                  <div className="text-gray-500 text-sm py-8">loading titles...</div>
+                )}
+              </div>
+            </div>,
+            document.body
+          )}
       </div>
     </div>
   );

@@ -20,12 +20,14 @@
     background-color: transparent !important;
   }
 
-  /* Remove cursor on mobile devices */
+  /* Remove cursor on mobile unless html.show-mobile-cursor (NEXT_PUBLIC_SHOW_MOBILE_CURSOR for testing) */
   @media (max-width: 768px) {
-    * {
+    html:not(.show-mobile-cursor) * {
       cursor: none !important;
     }
-    input, textarea, [contenteditable="true"] {
+    html:not(.show-mobile-cursor) input,
+    html:not(.show-mobile-cursor) textarea,
+    html:not(.show-mobile-cursor) [contenteditable="true"] {
       cursor: text !important;
     }
   }
@@ -363,10 +365,12 @@
 
   /* Mobile app-like improvements */
   @media (max-width: 768px) {
-    /* Remove cursor and tap highlights */
     * {
       -webkit-tap-highlight-color: transparent;
       -webkit-touch-callout: none;
+    }
+
+    html:not(.show-mobile-cursor) * {
       cursor: none !important;
     }
 
@@ -376,9 +380,14 @@
       min-width: 44px;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
-      cursor: none !important;
       -webkit-user-select: none;
       user-select: none;
+    }
+
+    html:not(.show-mobile-cursor) button,
+    html:not(.show-mobile-cursor) a,
+    html:not(.show-mobile-cursor) .review-card-item {
+      cursor: none !important;
     }
 
     /* Smooth scrolling */
@@ -408,8 +417,10 @@
       transition: transform 0.1s;
     }
 
-    /* Remove cursor from links and interactive elements */
-    a, button, .review-card-item, [role="button"] {
+    html:not(.show-mobile-cursor) a,
+    html:not(.show-mobile-cursor) button,
+    html:not(.show-mobile-cursor) .review-card-item,
+    html:not(.show-mobile-cursor) [role="button"] {
       cursor: none !important;
     }
   }

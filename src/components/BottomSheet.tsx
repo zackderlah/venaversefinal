@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Capacitor } from '@capacitor/core';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
@@ -23,6 +24,7 @@ export default function BottomSheet({
   const [startY, setStartY] = useState(0);
   const [currentY, setCurrentY] = useState(0);
   const sheetRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
   const isNative = typeof window !== 'undefined' && Capacitor.isNativePlatform();
 
   useEffect(() => {
@@ -68,19 +70,23 @@ export default function BottomSheet({
   };
 
   if (!isOpen) return null;
+  if (typeof document === 'undefined') return null;
 
   const translateY = isDragging ? Math.max(0, currentY - startY) : 0;
 
-  return (
+  // Portal to document.body so fixed positioning is not trapped by ancestor
+  // backdrop-filter / overflow (e.g. .review-card.content-card).
+  return createPortal(
     <>
       <div
-        className="fixed inset-0 bg-black bg-opacity-40 z-40 transition-opacity"
+        className="fixed inset-0 bg-black bg-opacity-40 z-[100] transition-opacity"
         onClick={onClose}
         style={{ opacity: isOpen ? 1 : 0 }}
+        aria-hidden
       />
       <div
         ref={sheetRef}
-        className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-[#0A0A0A] rounded-t-2xl border-t-2 border-black dark:border-white shadow-2xl safe-area-bottom"
+        className="fixed bottom-0 left-0 right-0 z-[110] bg-white dark:bg-[#0A0A0A] rounded-t-2xl border-t-2 border-black dark:border-white shadow-2xl safe-area-bottom"
         style={{
           transform: `translateY(${translateY}px)`,
           maxHeight,
@@ -89,6 +95,9 @@ export default function BottomSheet({
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={title ? titleId : undefined}
       >
         {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-2">
@@ -96,14 +105,17 @@ export default function BottomSheet({
         </div>
         {title && (
           <div className="px-4 pb-3 border-b border-gray-200 dark:border-gray-800">
-            <h3 className="text-xl font-black lowercase tracking-tight">{title}</h3>
+            <h3 id={titleId} className="text-xl font-black lowercase tracking-tight">
+              {title}
+            </h3>
           </div>
         )}
         <div className="overflow-y-auto" style={{ maxHeight: `calc(${maxHeight} - 60px)` }}>
           {children}
         </div>
       </div>
-    </>
+    </>,
+    document.body
   );
 }
 

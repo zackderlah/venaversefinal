@@ -44,13 +44,10 @@ export const metadata: Metadata = {
     maximumScale: 5,
     userScalable: true,
   },
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f9fafb' },
-    { media: '(prefers-color-scheme: dark)', color: '#0A0A0A' }
-  ],
+  themeColor: '#0A0A0A',
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
+    statusBarStyle: 'black-translucent',
     title: 'vena/verse',
   },
   formatDetection: {
@@ -65,8 +62,17 @@ export default async function RootLayout({
 }) {
   const session = await getServerSession(authOptions)
 
+  const showMobileCursor =
+    process.env.NODE_ENV === 'development' ||
+    process.env.NEXT_PUBLIC_SHOW_MOBILE_CURSOR === 'true' ||
+    process.env.NEXT_PUBLIC_SHOW_MOBILE_CURSOR === '1'
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${showMobileCursor ? 'show-mobile-cursor ' : ''}dark`}
+      suppressHydrationWarning
+    >
       <head>
         <script
           dangerouslySetInnerHTML={{

@@ -151,17 +151,18 @@ export default function ReviewCardDisplay({ review }: ReviewCardDisplayProps) {
               </div>
             )}
             {canEdit && (
-              <div className={`mt-2 flex flex-col ${isMobile ? 'gap-0' : ''}`}>
-                <Link 
+              <div className="mt-2 flex flex-row flex-nowrap items-center gap-3">
+                <Link
                   href={`/reviews/${review.id}/edit`}
                   onClick={e => { e.stopPropagation(); e.preventDefault(); router.push(`/reviews/${review.id}/edit`); }}
-                  className={`text-xs lowercase font-semibold text-blue-600 hover:underline ${isMobile ? 'leading-none block' : 'leading-tight'}`}
+                  className="inline-flex shrink-0 items-center w-auto text-xs lowercase font-semibold text-blue-600 hover:underline leading-tight"
                 >
                   edit review
                 </Link>
-                <button 
+                <button
+                  type="button"
                   onClick={e => { e.stopPropagation(); e.preventDefault(); handleDelete(e); }}
-                  className={`text-xs lowercase font-semibold text-red-600 hover:underline self-start ${isMobile ? 'leading-none -mt-4 block' : 'leading-tight mt-0.5'}`}
+                  className="inline-flex shrink-0 items-center w-auto text-xs lowercase font-semibold text-red-600 hover:underline bg-transparent border-0 p-0 leading-tight"
                 >
                   delete
                 </button>

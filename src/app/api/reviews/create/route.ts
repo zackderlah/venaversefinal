@@ -13,7 +13,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'authentication required' }, { status: 401 });
     }
 
-    const { title, category, creator, year: yearStr, rating: ratingStr, review, imageUrl: clientImageUrl } = await req.json();
+    const {
+      title,
+      category,
+      creator,
+      year: yearStr,
+      rating: ratingStr,
+      review,
+      imageUrl: clientImageUrl,
+      draftId: draftIdRaw,
+    } = await req.json();
     console.log('Received review creation request:', { title, category, creator, yearStr, ratingStr, review, clientImageUrl });
     console.log('Category debugging:', { 
       category, 
@@ -139,6 +148,15 @@ export async function POST(req: NextRequest) {
       }
     });
     console.log('Review created in database:', newReview);
+
+    if (draftIdRaw != null && draftIdRaw !== '') {
+      const draftId = Number(draftIdRaw);
+      if (!Number.isNaN(draftId)) {
+        await prisma.reviewDraft.deleteMany({
+          where: { id: draftId, userId: Number(session.user.id) },
+        });
+      }
+    }
 
     return NextResponse.json(newReview, { status: 201 });
 

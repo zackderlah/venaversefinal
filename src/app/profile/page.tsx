@@ -7,6 +7,7 @@ import Link from "next/link";
 import ProfileHeaderClient from "@/components/ProfileHeaderClient";
 import ProfileCommentSection from '@/components/ProfileCommentSection';
 import CurrentlyExperiencingSection from '@/components/CurrentlyExperiencingSection';
+import ProfileDraftsSection from '@/components/ProfileDraftsSection';
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
@@ -34,6 +35,12 @@ export default async function ProfilePage() {
   console.log('ProfilePage session:', session);
 
   if (!user) return notFound();
+
+  const drafts = await prisma.reviewDraft.findMany({
+    where: { userId: user.id },
+    orderBy: { updatedAt: 'desc' },
+    select: { id: true, title: true, category: true, updatedAt: true },
+  });
 
   // Fetch recent review comments made by the user
   const recentReviewComments = await prisma.comment.findMany({
@@ -71,6 +78,8 @@ export default async function ProfilePage() {
     <div className="max-w-4xl mx-auto px-3 md:px-4 py-4 md:py-8 space-y-4 md:space-y-8">
       {/* Profile Header */}
       <ProfileHeaderClient user={user} session={session} isOwner={true} />
+
+      <ProfileDraftsSection drafts={drafts} />
 
       {/* Currently Experiencing */}
       <div className="review-card">

@@ -31,7 +31,7 @@ export default function VantaGlobeBackground({
 }: VantaGlobeBackgroundProps) {
   const vantaRef = useRef<HTMLDivElement>(null);
   const vantaEffect = useRef<any>(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   // Detect theme changes
   useEffect(() => {
