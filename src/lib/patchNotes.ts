@@ -20,6 +20,7 @@ export const PATCH_VERSIONS: PatchVersion[] = [
       'new interactive star input for create/edit forms with stricter validation.',
       'star rendering rebuilt for exact half-star fill and cleaner unfilled stars.',
       'review cards now have stronger hover feedback with lift, shadow, and image zoom.',
+      'added password recovery flow with reset-link tokens and reset pages.',
     ],
   },
   {

@@ -23,10 +23,13 @@ if (process.env.NODE_ENV === 'production') {
 
 if (
   process.env.NODE_ENV !== 'production' &&
-  !(prisma as unknown as { reviewDraft?: unknown }).reviewDraft
+  (
+    !(prisma as unknown as { reviewDraft?: unknown }).reviewDraft ||
+    !(prisma as unknown as { passwordResetToken?: unknown }).passwordResetToken
+  )
 ) {
   console.error(
-    '[prisma] Client is missing ReviewDraft. Run `npx prisma generate`, then restart `next dev`.'
+    '[prisma] Client is missing ReviewDraft or PasswordResetToken. Run `npx prisma generate`, then restart `next dev`.'
   );
 }
 

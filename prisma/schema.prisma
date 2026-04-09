@@ -29,6 +29,19 @@ model User {
   selectedTitle           String?                 @db.VarChar(191)
   selectedTitleCategory   String?                 @db.VarChar(191)
   reviewDrafts            ReviewDraft[]
+  passwordResetTokens     PasswordResetToken[]
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  tokenHash String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId, expiresAt])
 }
 
 model Review {

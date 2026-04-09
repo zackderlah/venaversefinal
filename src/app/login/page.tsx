@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
+import Link from 'next/link';
 
 export default function LoginPage() {
   const [identifier, setIdentifier] = useState('');
@@ -60,6 +61,14 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            <div className="text-right">
+              <Link
+                href="/forgot-password"
+                className="text-xs font-mono lowercase text-black dark:text-white border-b border-black/60 dark:border-white/60 hover:text-pink-600 dark:hover:text-pink-400 transition-colors"
+              >
+                forgot password?
+              </Link>
+            </div>
           </div>
           {error && <div className="text-red-500 text-sm text-center lowercase font-mono">{error}</div>}
           <button
@@ -71,7 +80,7 @@ export default function LoginPage() {
           </button>
         </form>
         <div className="mt-6 text-center">
-          <a href="/signup" className="inline-block text-xs font-mono lowercase text-black dark:text-white border-b-2 border-black dark:border-white hover:text-pink-600 dark:hover:text-pink-400 transition-colors">don't have an account? sign up</a>
+          <Link href="/signup" className="inline-block text-xs font-mono lowercase text-black dark:text-white border-b-2 border-black dark:border-white hover:text-pink-600 dark:hover:text-pink-400 transition-colors">don't have an account? sign up</Link>
         </div>
       </div>
     </div>
