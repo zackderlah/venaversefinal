@@ -3,7 +3,12 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { buildPasswordResetUrl, createPasswordResetToken } from '@/lib/passwordReset';
+import {
+  buildPasswordResetUrl,
+  createPasswordResetToken,
+  PASSWORD_RESET_TTL_MINUTES,
+} from '@/lib/passwordReset';
+import { isSmtpConfigured, sendPasswordResetEmail } from '@/lib/mailer';
 
 const GENERIC_RESPONSE = {
   message:
@@ -38,7 +43,18 @@ export async function POST(req: NextRequest) {
     });
 
     const resetUrl = buildPasswordResetUrl(rawToken, req.nextUrl.origin);
-    console.log(`[password-reset] ${user.email}: ${resetUrl}`);
+    if (isSmtpConfigured()) {
+      await sendPasswordResetEmail({
+        to: user.email,
+        resetUrl,
+        expiresInMinutes: PASSWORD_RESET_TTL_MINUTES,
+      });
+    } else {
+      console.warn(
+        '[password-reset] SMTP not configured. Set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM.'
+      );
+      console.log(`[password-reset] ${user.email}: ${resetUrl}`);
+    }
 
     const includeDebugLink =
       process.env.NODE_ENV !== 'production' ||
