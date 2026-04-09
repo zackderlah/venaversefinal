@@ -149,7 +149,7 @@ export default function HeaderWithDarkMode() {
                 <button type="button" onClick={handleLogout} className="inline-flex items-center justify-center whitespace-nowrap border-2 border-black bg-black px-3 py-1 text-xs font-bold lowercase text-center text-white transition-colors hover:bg-gray-900 dark:border-white dark:bg-white dark:text-black hover:dark:bg-gray-200">logout</button>
               </>
             ) : (
-              <Link href="/login" className="inline-flex items-center justify-center whitespace-nowrap border-2 border-black px-3 py-1 text-xs font-bold lowercase text-white transition-colors hover:bg-gray-900 dark:border-white dark:bg-white dark:text-black hover:dark:bg-gray-200 text-center">login</Link>
+              <Link href="/login" className="inline-flex items-center justify-center whitespace-nowrap border-2 border-black bg-white px-3 py-1 text-xs font-bold lowercase text-black transition-colors hover:bg-gray-100 dark:border-white dark:bg-white dark:text-black hover:dark:bg-gray-200 text-center">login</Link>
             )}
           </div>
         </div>
