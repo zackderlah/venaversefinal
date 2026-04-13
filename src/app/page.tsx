@@ -1,13 +1,18 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import ReviewCard from '@/components/ReviewCard'
 import ReviewLink from '@/components/ReviewLink'
-import { Masonry } from 'masonic';
 import SkeletonCard from '@/components/SkeletonCard'
-import PullToRefresh from '@/components/PullToRefresh'
 import LoadingSpinner from '@/components/LoadingSpinner'
-import PatchNotesSection from '@/components/PatchNotesSection'
+
+const MasonryGrid = dynamic(
+  () => import('masonic').then((mod) => mod.Masonry),
+  { ssr: false }
+);
+const PullToRefresh = dynamic(() => import('@/components/PullToRefresh'), { ssr: false });
+const PatchNotesSection = dynamic(() => import('@/components/PatchNotesSection'), { ssr: false });
 
 export default function Home() {
   const [recentReviews, setRecentReviews] = useState<any[]>([]);
@@ -16,6 +21,7 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [showPatchNotes, setShowPatchNotes] = useState(false);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -32,6 +38,27 @@ export default function Home() {
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    const idleCallback = (window as Window & {
+      requestIdleCallback?: (cb: () => void) => number;
+      cancelIdleCallback?: (id: number) => void;
+    }).requestIdleCallback;
+    const cancelIdleCallback = (window as Window & {
+      requestIdleCallback?: (cb: () => void) => number;
+      cancelIdleCallback?: (id: number) => void;
+    }).cancelIdleCallback;
+
+    if (idleCallback) {
+      const id = idleCallback(() => setShowPatchNotes(true));
+      return () => {
+        if (cancelIdleCallback) cancelIdleCallback(id);
+      };
+    }
+
+    const timeoutId = window.setTimeout(() => setShowPatchNotes(true), 1200);
+    return () => window.clearTimeout(timeoutId);
   }, []);
 
   const fetchReviews = useCallback(async (page: number, append: boolean = false) => {
@@ -178,7 +205,7 @@ export default function Home() {
           <span className="text-cyan-600 dark:text-cyan-400">games</span> that you and others have experienced.
           each review should include one's thoughts, ratings, and analysis of the work.{' '}
         </p>
-        <PatchNotesSection />
+        {showPatchNotes ? <PatchNotesSection /> : null}
       </section>
 
       <section>
@@ -197,7 +224,7 @@ export default function Home() {
           )
         ) : (
           <>
-            <Masonry
+            <MasonryGrid
               items={recentReviews}
               columnGutter={24}
               columnWidth={350}

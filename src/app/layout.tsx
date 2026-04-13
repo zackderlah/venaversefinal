@@ -7,10 +7,9 @@ import GlobalLoadingBar from '../components/GlobalLoadingBar'
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import SessionClientProvider from '../components/SessionClientProvider'
-import TrailingCursor from '../components/TrailingCursor'
-import VantaGlobeBackground from '../components/VantaGlobeBackground'
 import NativeAppFeatures from '../components/NativeAppFeatures'
 import BottomNavigation from '../components/BottomNavigation'
+import DeferredVisualEffects from '../components/DeferredVisualEffects'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -91,10 +90,7 @@ export default async function RootLayout({
         />
       </head>
       <body className={`${inter.className} ${notoSansJP.variable} text-gray-900 min-h-screen`}>
-        <VantaGlobeBackground 
-          isActive={true}
-        />
-        <TrailingCursor />
+        <DeferredVisualEffects />
         <NativeAppFeatures />
         <GlobalLoadingBar />
         <LoadingBarProvider>

@@ -117,10 +117,13 @@ export default function ReviewCard({ review }: ReviewCardProps) {
                   <span className="text-xs text-black dark:text-white font-bold lowercase flex items-center gap-1">
                     <Link href={`/profile/${review.user.username}`} className="flex items-center gap-0.5" onClick={e => e.stopPropagation()}>
                       {review.user.profileImage ? (
-                        <img
+                        <Image
                           src={review.user.profileImage}
                           alt={review.user.username}
+                          width={24}
+                          height={24}
                           className="w-6 h-6 rounded-full object-cover border border-black dark:border-white"
+                          unoptimized
                         />
                       ) : (
                         <span className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-xs text-gray-500 font-bold">
