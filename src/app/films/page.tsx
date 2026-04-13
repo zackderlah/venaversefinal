@@ -66,22 +66,22 @@ export default function FilmsPage() {
             className={`text-3xl font-black lowercase cursor-pointer ${viewMode === 'my' ? 'opacity-100' : 'opacity-50 hover:opacity-75'}`}
             onClick={() => setViewMode('my')}
           >
-            my film reviews
+            my film/tv reviews
           </h2>
           <h2 
             className={`text-3xl font-black lowercase cursor-pointer ${viewMode === 'all' ? 'opacity-100' : 'opacity-50 hover:opacity-75'}`}
             onClick={() => setViewMode('all')}
           >
-            all film reviews
+            all film/tv reviews
           </h2>
         </div>
         <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg lowercase">
           {viewMode === 'my' 
-            ? (currentUser ? `a collection of film reviews written by you.` : `please log in to see your film reviews.`)
-            : `a collection of thoughts and ratings for films watched.`}
+            ? (currentUser ? `a collection of film and tv reviews written by you.` : `please log in to see your film/tv reviews.`)
+            : `a collection of thoughts and ratings for films and tv watched.`}
         </p>
         <div className="space-y-8">
-          <SearchBar value={search} onChange={setSearch} placeholder="search films by title..." />
+          <SearchBar value={search} onChange={setSearch} placeholder="search film/tv by title..." />
           <div className="border-t-2 border-b-2 border-black dark:border-white py-4">
             <SortSelect value={sortBy} onChange={setSortBy} />
           </div>
@@ -104,7 +104,7 @@ export default function FilmsPage() {
               <p className="text-center text-gray-500 lowercase">
                 {viewMode === 'my' && !currentUser 
                   ? 'please log in to see your reviews.'
-                  : (viewMode === 'my' && currentUser ? 'you haven\'t written any film reviews yet.' : 'no film reviews found.')}
+                  : (viewMode === 'my' && currentUser ? 'you haven\'t written any film/tv reviews yet.' : 'no film/tv reviews found.')}
               </p>
             )}
           </div>

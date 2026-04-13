@@ -3,14 +3,15 @@
 import { ReviewCategory } from '@/types/review';
 
 interface MediaTagProps {
-  category: ReviewCategory;
+  category: ReviewCategory | 'film';
 }
 
 export default function MediaTag({ category }: MediaTagProps) {
-  const getCategoryLabel = (category: ReviewCategory) => {
+  const getCategoryLabel = (category: ReviewCategory | 'film') => {
     switch (category) {
+      case 'film-tv':
       case 'film':
-        return 'Film';
+        return 'film/tv';
       case 'music':
         return 'Album';
       case 'anime':
@@ -24,8 +25,9 @@ export default function MediaTag({ category }: MediaTagProps) {
     }
   };
 
-  const getCategoryColor = (category: ReviewCategory) => {
+  const getCategoryColor = (category: ReviewCategory | 'film') => {
     switch (category) {
+      case 'film-tv':
       case 'film':
         return 'text-blue-800';
       case 'music':

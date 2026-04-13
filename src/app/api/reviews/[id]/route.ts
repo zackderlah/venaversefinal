@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { isRatingProvided, parseFiveStarRating } from '@/lib/starRating';
+import { normalizeReviewCategoryInput } from '@/lib/reviewCategories';
 
 export const dynamic = 'force-dynamic';
 
@@ -47,8 +48,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       return NextResponse.json({ message: parsedRating.message }, { status: 400 });
     }
     const rating = parsedRating.value;
-    const allowedCategories = ['film', 'music', 'anime', 'books', 'games', 'other'];
-    if (!allowedCategories.includes(category)) {
+    const normalizedCategory = normalizeReviewCategoryInput(category);
+    if (!normalizedCategory) {
       return NextResponse.json({ message: 'invalid category' }, { status: 400 });
     }
 
@@ -56,7 +57,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       where: { id: reviewId },
       data: {
         title,
-        category,
+        category: normalizedCategory,
         creator,
         year,
         rating,

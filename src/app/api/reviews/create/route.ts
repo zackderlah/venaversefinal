@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { firstVideogameCoverImageUrl } from '@/lib/videogameSearch';
 import { isRatingProvided, parseFiveStarRating } from '@/lib/starRating';
+import { FILM_TV_CATEGORY, normalizeReviewCategoryInput } from '@/lib/reviewCategories';
 
 export const dynamic = 'force-dynamic';
 
@@ -50,27 +51,29 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: parsedRating.message }, { status: 400 });
     }
     const rating = parsedRating.value;
-    let normalizedCategory = (category === 'album' ? 'music' : category).trim();
-    const allowedCategories = ['film', 'music', 'anime', 'books', 'games', 'other'];
+    const normalizedCategory = normalizeReviewCategoryInput(category);
     console.log('Category validation debugging:', {
       originalCategory: category,
       normalizedCategory,
-      allowedCategories,
-      isIncluded: allowedCategories.includes(normalizedCategory),
-      exactMatches: allowedCategories.map(cat => ({ category: cat, matches: cat === normalizedCategory }))
+      isIncluded: normalizedCategory != null,
     });
-    if (!allowedCategories.includes(normalizedCategory)) {
+    if (!normalizedCategory) {
       return NextResponse.json({ message: 'invalid category' }, { status: 400 });
     }
 
     let imageUrl: string | undefined = clientImageUrl;
     if (!imageUrl) {
-      if (normalizedCategory === 'film') {
+      if (normalizedCategory === FILM_TV_CATEGORY) {
         try {
-          const omdbRes = await fetch(`https://www.omdbapi.com/?apikey=3c1416fe&t=${encodeURIComponent(title)}&y=${encodeURIComponent(year)}`);
-          const omdbData = await omdbRes.json();
-          if (omdbData && omdbData.Poster && omdbData.Poster !== 'N/A') {
-            imageUrl = omdbData.Poster;
+          for (const typ of ['movie', 'series'] as const) {
+            const omdbRes = await fetch(
+              `https://www.omdbapi.com/?apikey=3c1416fe&t=${encodeURIComponent(title)}&y=${encodeURIComponent(year)}&type=${typ}`
+            );
+            const omdbData = await omdbRes.json();
+            if (omdbData && omdbData.Poster && omdbData.Poster !== 'N/A') {
+              imageUrl = omdbData.Poster;
+              break;
+            }
           }
         } catch (err) {
           console.error('OMDb fetch error:', err);

@@ -18,7 +18,9 @@ async function getUserReviewCounts(userId: number) {
   });
   const counts: Partial<Record<Category, number>> = {};
   for (const r of reviews) {
-    const cat = r.category as Category;
+    const raw = r.category;
+    const cat = (raw === 'film' ? 'film-tv' : raw) as Category;
+    if (!CATEGORY_TITLES[cat]) continue;
     counts[cat] = (counts[cat] || 0) + 1;
   }
   return { counts, total: reviews.length };

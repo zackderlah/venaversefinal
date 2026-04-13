@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { FILM_TV_CATEGORY } from '@/lib/reviewCategories';
 
 function toTitleCase(str: string) {
   return str
@@ -40,10 +41,12 @@ export async function POST(req: NextRequest) {
     if (!title || !type || !creator) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
+    const normalizedType =
+      type === 'film' || type === 'tv' ? FILM_TV_CATEGORY : String(type).trim();
     const item = await prisma.currentlyExperiencing.create({
       data: {
         title: toTitleCase(title),
-        type,
+        type: normalizedType,
         creator: toTitleCase(creator),
         progress: progress || '',
         imageUrl: imageUrl || null,

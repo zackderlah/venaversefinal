@@ -5,6 +5,8 @@ import { useRouter, useParams } from 'next/navigation';
 import RichTextEditor from '@/components/RichTextEditor';
 import StarRatingInput from '@/components/StarRatingInput';
 import { isValidFiveStarRating, normalizeRatingFromStorage, normalizeRatingStringForForm } from '@/lib/starRating';
+import { FILM_TV_CATEGORY, reviewsListPathForCategory } from '@/lib/reviewCategories';
+import { omdbSearchFilmAndTv, omdbDetailById, omdbCreatorLine } from '@/lib/omdbFilmTv';
 
 interface ReviewFormData {
   title: string;
@@ -22,7 +24,7 @@ export default function EditReviewPage() {
 
   const [formData, setFormData] = useState<ReviewFormData>({
     title: '',
-    category: 'film',
+    category: FILM_TV_CATEGORY,
     creator: '',
     year: '',
     rating: '',
@@ -70,7 +72,7 @@ export default function EditReviewPage() {
         .then(data => {
           setFormData({
             title: data.title,
-            category: data.category,
+            category: data.category === 'film' ? FILM_TV_CATEGORY : data.category,
             creator: data.creator,
             year: String(data.year),
             rating: normalizeRatingStringForForm(data.rating) || String(data.rating),
@@ -101,21 +103,18 @@ export default function EditReviewPage() {
         setSuggestLoading(true);
         let results: any[] = [];
         if (activeSearchField === 'title') {
-          if (formData.category === 'film') {
-            // OMDb API: Try to filter by director if creator is filled
-            let url = `https://www.omdbapi.com/?apikey=3c1416fe&s=${encodeURIComponent(searchValue)}&type=movie`;
-            const res = await fetch(url);
-            const data = await res.json();
-            if (data.Search) {
-              const detailPromises = data.Search.slice(0, 30).map(async (m: any) => {
-                const detailRes = await fetch(`https://www.omdbapi.com/?apikey=3c1416fe&i=${m.imdbID}`);
-                const detail = await detailRes.json();
+          if (formData.category === FILM_TV_CATEGORY) {
+            const hits = await omdbSearchFilmAndTv(searchValue);
+            if (hits.length > 0) {
+              const detailPromises = hits.map(async (m) => {
+                const detail = await omdbDetailById(m.imdbID);
                 let poster = detail.Poster !== 'N/A' ? detail.Poster : undefined;
-                // Fallback to TMDb if OMDb poster is missing
-                if (!poster) {
+                if (!poster && detail.Type !== 'series') {
                   try {
                     const tmdbKey = '<<TMDB_API_KEY>>'; // Replace with your TMDb API key
-                    const tmdbRes = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${tmdbKey}&query=${encodeURIComponent(m.Title)}`);
+                    const tmdbRes = await fetch(
+                      `https://api.themoviedb.org/3/search/movie?api_key=${tmdbKey}&query=${encodeURIComponent(m.Title)}`
+                    );
                     const tmdbData = await tmdbRes.json();
                     if (tmdbData.results && tmdbData.results.length > 0 && tmdbData.results[0].poster_path) {
                       poster = `https://image.tmdb.org/t/p/w500${tmdbData.results[0].poster_path}`;
@@ -124,13 +123,12 @@ export default function EditReviewPage() {
                 }
                 return {
                   title: m.Title,
-                  creator: detail.Director || '',
+                  creator: omdbCreatorLine(detail),
                   poster,
                   year: m.Year,
                 };
               });
               let allResults = await Promise.all(detailPromises);
-              // If creator is filled, filter by director (substring match)
               if (formData.creator.trim().length > 0) {
                 const creatorLower = formData.creator.trim().toLowerCase();
                 allResults = allResults.filter((r: any) => r.creator.toLowerCase().includes(creatorLower));
@@ -428,8 +426,7 @@ export default function EditReviewPage() {
 
       if (res.ok) {
         // const updatedReview = await res.json();
-        const categoryPath = formData.category === 'music' ? 'music' : formData.category;
-        router.push(`/${categoryPath === 'film' ? 'films' : categoryPath}`);
+        router.push(reviewsListPathForCategory(formData.category));
       } else {
         const errorData = await res.json();
         setError(errorData.message || 'failed to update review. please try again.');
@@ -488,7 +485,7 @@ export default function EditReviewPage() {
         <div>
           <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">category</label>
           <select name="category" id="category" value={formData.category} onChange={handleChange} className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500">
-            <option value="film">film</option>
+            <option value={FILM_TV_CATEGORY}>film/tv</option>
             <option value="music">music</option>
             <option value="anime">anime</option>
             <option value="books">books</option>

@@ -135,7 +135,7 @@ export default function HeaderWithDarkMode() {
         <div className="flex w-full min-w-0 max-w-full flex-col gap-4 md:flex-row md:flex-wrap md:items-start md:gap-x-3 md:gap-y-2 lg:gap-x-4">
           <div className="flex min-w-0 w-full flex-1 flex-wrap items-center gap-x-2 gap-y-1 md:w-auto md:items-start md:gap-x-3 lg:gap-x-4">
             <Link href="/" className={`nav-link text-gray-900 w-full md:w-auto${pathname === '/' ? ' active' : ''}`}>home</Link>
-            <Link href="/films" className={`nav-link text-blue-600 w-full md:w-auto${pathname?.startsWith('/films') ? ' active' : ''}`}>films</Link>
+            <Link href="/films" className={`nav-link text-blue-600 w-full md:w-auto${pathname?.startsWith('/films') ? ' active' : ''}`}>film/tv</Link>
             <Link href="/music" className={`nav-link text-purple-600 w-full md:w-auto${pathname?.startsWith('/music') ? ' active' : ''}`}>music</Link>
             <Link href="/anime" className={`nav-link text-red-600 w-full md:w-auto${pathname?.startsWith('/anime') ? ' active' : ''}`}>anime</Link>
             <Link href="/books" className={`nav-link text-green-600 w-full md:w-auto${pathname?.startsWith('/books') ? ' active' : ''}`}>books</Link>

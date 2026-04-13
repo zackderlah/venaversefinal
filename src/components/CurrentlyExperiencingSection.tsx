@@ -3,11 +3,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useSession } from 'next-auth/react';
+import { FILM_TV_CATEGORY } from '@/lib/reviewCategories';
+import { omdbSearchFilmAndTv, omdbDetailById, omdbCreatorLine, omdbCreatorSuggestFilmTv } from '@/lib/omdbFilmTv';
 
 const TYPE_OPTIONS = [
-  { value: 'film', label: 'film' },
+  { value: FILM_TV_CATEGORY, label: 'film/tv' },
   { value: 'anime', label: 'anime' },
-  { value: 'tv', label: 'tv' },
   { value: 'music', label: 'music' },
   { value: 'book', label: 'book' },
   { value: 'other', label: 'other' },
@@ -44,7 +45,7 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
     title: '',
-    type: 'film',
+    type: FILM_TV_CATEGORY,
     progress: '',
     creator: '',
     year: '',
@@ -115,18 +116,15 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
       setSuggestLoading(true);
       let results: any[] = [];
       if (activeSearchField === 'title') {
-        if (form.type === 'film') {
-          let url = `https://www.omdbapi.com/?apikey=3c1416fe&s=${encodeURIComponent(searchValue)}&type=movie`;
-          const res = await fetch(url);
-          const data = await res.json();
-          if (data.Search) {
-            const detailPromises = data.Search.slice(0, 30).map(async (m: any) => {
-              const detailRes = await fetch(`https://www.omdbapi.com/?apikey=3c1416fe&i=${m.imdbID}`);
-              const detail = await detailRes.json();
+        if (form.type === FILM_TV_CATEGORY) {
+          const hits = await omdbSearchFilmAndTv(searchValue);
+          if (hits.length > 0) {
+            const detailPromises = hits.map(async (m) => {
+              const detail = await omdbDetailById(m.imdbID);
               return {
                 title: m.Title,
-                creator: detail.Director || '',
-                poster: m.Poster !== 'N/A' ? m.Poster : undefined,
+                creator: omdbCreatorLine(detail),
+                poster: detail.Poster !== 'N/A' ? detail.Poster : undefined,
                 year: m.Year,
               };
             });
@@ -154,28 +152,6 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
               poster: m.coverImage.large,
               year: m.startDate.year?.toString() || '',
             }));
-            if (form.creator.trim().length > 0) {
-              const creatorLower = form.creator.trim().toLowerCase();
-              allResults = allResults.filter((r: any) => r.creator.toLowerCase().includes(creatorLower));
-            }
-            results = allResults.slice(0, 3);
-          }
-        } else if (form.type === 'tv') {
-          let url = `https://www.omdbapi.com/?apikey=3c1416fe&s=${encodeURIComponent(searchValue)}&type=series`;
-          const res = await fetch(url);
-          const data = await res.json();
-          if (data.Search) {
-            const detailPromises = data.Search.slice(0, 30).map(async (m: any) => {
-              const detailRes = await fetch(`https://www.omdbapi.com/?apikey=3c1416fe&i=${m.imdbID}`);
-              const detail = await detailRes.json();
-              return {
-                title: m.Title,
-                creator: detail.Writer || detail.Director || '',
-                poster: m.Poster !== 'N/A' ? m.Poster : undefined,
-                year: m.Year,
-              };
-            });
-            let allResults = await Promise.all(detailPromises);
             if (form.creator.trim().length > 0) {
               const creatorLower = form.creator.trim().toLowerCase();
               allResults = allResults.filter((r: any) => r.creator.toLowerCase().includes(creatorLower));
@@ -226,54 +202,9 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
           }
         }
       } else if (activeSearchField === 'creator') {
-        if (form.type === 'film') {
-          const res = await fetch(`https://www.omdbapi.com/?apikey=3c1416fe&s=${encodeURIComponent(searchValue)}&type=movie`);
-          const data = await res.json();
-          let directors: { name: string; movies: string[] }[] = [];
-          if (data.Search) {
-            const detailPromises = data.Search.slice(0, 10).map(async (m: any) => {
-              const detailRes = await fetch(`https://www.omdbapi.com/?apikey=3c1416fe&i=${m.imdbID}`);
-              const detail = await detailRes.json();
-              return { director: detail.Director, title: m.Title };
-            });
-            const details = await Promise.all(detailPromises);
-            const directorMap: Record<string, string[]> = {};
-            details.forEach(({ director, title }) => {
-              if (director) {
-                director.split(',').forEach((d: string) => {
-                  const name = d.trim();
-                  if (!directorMap[name]) directorMap[name] = [];
-                  directorMap[name].push(title);
-                });
-              }
-            });
-            directors = Object.entries(directorMap).map(([name, movies]) => ({ name, movies }));
-          }
-          results = directors.slice(0, 5).map(d => ({ creator: d.name, works: d.movies }));
-        } else if (form.type === 'tv') {
-          const res = await fetch(`https://www.omdbapi.com/?apikey=3c1416fe&s=${encodeURIComponent(searchValue)}&type=series`);
-          const data = await res.json();
-          let creators: { name: string; shows: string[] }[] = [];
-          if (data.Search) {
-            const detailPromises = data.Search.slice(0, 10).map(async (m: any) => {
-              const detailRes = await fetch(`https://www.omdbapi.com/?apikey=3c1416fe&i=${m.imdbID}`);
-              const detail = await detailRes.json();
-              return { creator: detail.Writer || detail.Director, title: m.Title };
-            });
-            const details = await Promise.all(detailPromises);
-            const creatorMap: Record<string, string[]> = {};
-            details.forEach(({ creator, title }) => {
-              if (creator) {
-                creator.split(',').forEach((c: string) => {
-                  const name = c.trim();
-                  if (!creatorMap[name]) creatorMap[name] = [];
-                  creatorMap[name].push(title);
-                });
-              }
-            });
-            creators = Object.entries(creatorMap).map(([name, shows]) => ({ name, shows }));
-          }
-          results = creators.slice(0, 5).map(c => ({ creator: c.name, works: c.shows }));
+        if (form.type === FILM_TV_CATEGORY) {
+          const directors = await omdbCreatorSuggestFilmTv(searchValue);
+          results = directors.slice(0, 5).map((d) => ({ creator: d.name, works: d.works }));
         } else if (form.type === 'music') {
           const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(searchValue)}&entity=musicArtist&limit=5`);
           const data = await res.json();
@@ -362,6 +293,11 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
       .replace(/([\wÀ-ÿ][^\s-]*)/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1));
   }
 
+  function formatExperienceTypeLabel(type: string) {
+    if (type === FILM_TV_CATEGORY || type === 'film' || type === 'tv') return 'film/tv';
+    return toTitleCase(type);
+  }
+
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
     setError('');
@@ -378,7 +314,7 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
     });
     setPosting(false);
     if (res.ok) {
-      setForm({ title: '', type: 'film', progress: '', creator: '', year: '', seasons: '' });
+      setForm({ title: '', type: FILM_TV_CATEGORY, progress: '', creator: '', year: '', seasons: '' });
       setPoster(undefined);
       setShowForm(false);
       setLoading(true);
@@ -616,7 +552,7 @@ export default function CurrentlyExperiencingSection({ profileId }: { profileId:
                     {toTitleCase(item.title)}
                   </a>
                   <div className="flex flex-wrap gap-2 text-xs text-gray-400">
-                    <span>{toTitleCase(item.type)}</span>
+                    <span>{formatExperienceTypeLabel(item.type)}</span>
                     {item.year && <span>• {item.year}</span>}
                     {item.seasons && <span>• {item.seasons} Seasons</span>}
                     {item.progress && <span>• {item.progress}</span>}

@@ -1,4 +1,4 @@
-export type ReviewCategory = 'film' | 'music' | 'anime' | 'books' | 'games' | 'other';
+export type ReviewCategory = 'film-tv' | 'music' | 'anime' | 'books' | 'games' | 'other';
 
 export interface Review {
   id: number;

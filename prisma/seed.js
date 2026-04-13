@@ -7,7 +7,7 @@ const staticReviews = [
   {
     id: '1',
     title: 'Eternal Sunshine of the Spotless Mind',
-    category: 'film',
+    category: 'film-tv',
     creator: 'Michel Gondry',
     year: 2004,
     rating: 4.5,
@@ -47,7 +47,7 @@ const staticReviews = [
   {
     id: '5',
     title: 'The Banshees of Inisherin',
-    category: 'film',
+    category: 'film-tv',
     creator: 'Martin McDonagh',
     year: 2022,
     rating: 4.5,

@@ -65,7 +65,7 @@ model ReviewDraft {
   userId    Int
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   title     String   @default("")
-  category  String   @default("film")
+  category  String   @default("film-tv")
   creator   String   @default("")
   year      String   @default("")
   rating    String   @default("")

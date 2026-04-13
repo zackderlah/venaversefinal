@@ -5,6 +5,22 @@ import ProfileImageUpload from "./ProfileImageUpload";
 import LevelBadge from "./LevelBadge";
 import { calculateUserXPAndLevel } from "@/utils/level";
 import { CATEGORY_TITLES, GENERIC_TITLES, Category } from "@/data/titles";
+import { FILM_TV_CATEGORY } from "@/lib/reviewCategories";
+
+const TITLE_TAB_ORDER: { id: Category | "generic"; label: string }[] = [
+  { id: "film-tv", label: "film/tv" },
+  { id: "music", label: "music" },
+  { id: "anime", label: "anime" },
+  { id: "books", label: "books" },
+  { id: "games", label: "games" },
+  { id: "generic", label: "generic" },
+];
+
+function normalizeTitleTabCategory(tab: string | null | undefined): string {
+  if (!tab) return FILM_TV_CATEGORY;
+  if (tab === "film") return FILM_TV_CATEGORY;
+  return tab;
+}
 
 export default function ProfileHeaderClient({ user, session, isOwner = false }: { user: any, session: any, isOwner?: boolean }) {
   const [editingBio, setEditingBio] = useState(false);
@@ -15,7 +31,7 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
   // Title selection modal state
   const [showTitleModal, setShowTitleModal] = useState(false);
   const [unlockedTitles, setUnlockedTitles] = useState<any>(null);
-  const [titleTab, setTitleTab] = useState<string>(user.selectedTitleCategory || 'film');
+  const [titleTab, setTitleTab] = useState<string>(normalizeTitleTabCategory(user.selectedTitleCategory));
   const [titleLoading, setTitleLoading] = useState(false);
   const [titleError, setTitleError] = useState("");
 
@@ -103,7 +119,7 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
             {user.selectedTitle ? (
               <span
                 className={`text-xs md:text-sm font-bold lowercase cursor-pointer hover:underline ${
-                  user.selectedTitleCategory === 'film' ? 'text-blue-600' :
+                  (user.selectedTitleCategory === FILM_TV_CATEGORY || user.selectedTitleCategory === 'film') ? 'text-blue-600' :
                   user.selectedTitleCategory === 'music' ? 'text-purple-600' :
                   user.selectedTitleCategory === 'anime' ? 'text-red-600' :
                   user.selectedTitleCategory === 'books' ? 'text-green-600' :
@@ -222,24 +238,24 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
                   <div className="flex flex-col min-h-0 flex-1 gap-0">
                     <div className="mb-2 font-bold text-sm text-gray-600 dark:text-gray-400 lowercase shrink-0">categories</div>
                     <div className="flex gap-2 mb-4 flex-wrap shrink-0">
-                      {['film','music','anime','books','games','generic'].map(tab => (
+                      {TITLE_TAB_ORDER.map(({ id, label }) => (
                         <button
-                          key={tab}
+                          key={id}
                           className={`px-3 py-1.5 rounded text-xs sm:text-sm font-bold lowercase border-2 transition-colors duration-150 ${
-                            titleTab === tab ? 'border-black dark:border-white' : 'border-gray-300 dark:border-gray-700'
+                            titleTab === id ? 'border-black dark:border-white' : 'border-gray-300 dark:border-gray-700'
                           } ${
-                            tab === 'film' ? 'text-blue-600' :
-                            tab === 'music' ? 'text-purple-600' :
-                            tab === 'anime' ? 'text-red-600' :
-                            tab === 'books' ? 'text-green-600' :
-                            tab === 'games' ? 'text-cyan-600' :
-                            tab === 'generic' ? 'text-yellow-700' :
+                            id === FILM_TV_CATEGORY ? 'text-blue-600' :
+                            id === 'music' ? 'text-purple-600' :
+                            id === 'anime' ? 'text-red-600' :
+                            id === 'books' ? 'text-green-600' :
+                            id === 'games' ? 'text-cyan-600' :
+                            id === 'generic' ? 'text-yellow-700' :
                             ''
                           }`}
-                          onClick={() => setTitleTab(tab)}
+                          onClick={() => setTitleTab(id)}
                           type="button"
                         >
-                          {tab}
+                          {label}
                         </button>
                       ))}
                     </div>
@@ -249,7 +265,7 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
                         <button
                           key={`${titleTab}-${t}-${idx}`}
                           className={`text-left w-full py-2 px-2 rounded text-xs sm:text-sm font-bold lowercase transition-colors duration-150 shrink-0 ${
-                            titleTab === 'film' ? 'text-blue-600' :
+                            titleTab === FILM_TV_CATEGORY ? 'text-blue-600' :
                             titleTab === 'music' ? 'text-purple-600' :
                             titleTab === 'anime' ? 'text-red-600' :
                             titleTab === 'books' ? 'text-green-600' :

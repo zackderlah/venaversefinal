@@ -2,14 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { FILM_TV_CATEGORY, normalizeReviewCategoryInput } from '@/lib/reviewCategories';
 
 export const dynamic = 'force-dynamic';
 
 function normalizeCategory(category: unknown): string {
-  const c = String(category ?? 'film').trim();
-  const normalized = c === 'album' ? 'music' : c;
-  const allowed = ['film', 'music', 'anime', 'books', 'games', 'other'];
-  return allowed.includes(normalized) ? normalized : 'film';
+  const n = normalizeReviewCategoryInput(
+    typeof category === 'string' ? category : String(category ?? FILM_TV_CATEGORY)
+  );
+  return n ?? FILM_TV_CATEGORY;
 }
 
 async function getOwnedDraft(id: number, userId: number) {

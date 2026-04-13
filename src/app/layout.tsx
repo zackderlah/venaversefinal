@@ -27,7 +27,7 @@ const notoSansJP = Noto_Sans_JP({
 
 export const metadata: Metadata = {
   title: 'vena/verse',
-  description: 'Personal reviews of films, music, anime, books, and games',
+  description: 'Personal reviews of film/tv, music, anime, books, and games',
   manifest: '/manifest.json',
   icons: {
     icon: [

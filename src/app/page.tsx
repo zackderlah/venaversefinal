@@ -171,7 +171,7 @@ export default function Home() {
         <h2 className="text-4xl font-black mb-4 tracking-tight lowercase">note</h2>
         <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed lowercase">
           this website is a collection of reviews for{' '}
-          <span className="text-blue-600 dark:text-blue-400">films</span>,{' '}
+          <span className="text-blue-600 dark:text-blue-400">film/tv</span>,{' '}
           <span className="text-purple-600 dark:text-purple-400">music</span>,{' '}
           <span className="text-red-600 dark:text-red-400">anime</span>,{' '}
           <span className="text-green-600 dark:text-green-400">books</span>, and{' '}
