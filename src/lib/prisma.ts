@@ -6,28 +6,27 @@ const globalForPrisma = globalThis as unknown as {
 
 function createPrismaClient() {
   return new PrismaClient({
-    log: ['query', 'error', 'warn'],
+    // Logging every query is noisy and slows production; keep it for local debugging.
+    log: process.env.NODE_ENV === 'production' ? ['error', 'warn'] : ['query', 'error', 'warn'],
   });
 }
 
-// In development, do not reuse globalThis.prisma: after `prisma generate`, the old
-// cached client can miss new models (e.g. reviewDraft) until the process restarts.
-export const prisma =
-  process.env.NODE_ENV === 'production'
-    ? (globalForPrisma.prisma ?? createPrismaClient())
-    : createPrismaClient();
-
-if (process.env.NODE_ENV === 'production') {
-  globalForPrisma.prisma = prisma;
+function hasCurrentModels(client: PrismaClient | undefined): client is PrismaClient {
+  const c = client as unknown as { reviewDraft?: unknown; passwordResetToken?: unknown } | undefined;
+  return Boolean(c?.reviewDraft && c?.passwordResetToken);
 }
 
-if (
-  process.env.NODE_ENV !== 'production' &&
-  (
-    !(prisma as unknown as { reviewDraft?: unknown }).reviewDraft ||
-    !(prisma as unknown as { passwordResetToken?: unknown }).passwordResetToken
-  )
-) {
+// Reuse one client (and its connection pool) across hot reloads and route bundles.
+// Opening a fresh connection to the database costs over a second, so creating a client
+// per module made every route's first request slow. After `prisma generate`, a cached
+// client can miss new models, so it is replaced when that happens.
+export const prisma = hasCurrentModels(globalForPrisma.prisma)
+  ? globalForPrisma.prisma
+  : createPrismaClient();
+
+globalForPrisma.prisma = prisma;
+
+if (process.env.NODE_ENV !== 'production' && !hasCurrentModels(prisma)) {
   console.error(
     '[prisma] Client is missing ReviewDraft or PasswordResetToken. Run `npx prisma generate`, then restart `next dev`.'
   );

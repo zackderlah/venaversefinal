@@ -447,11 +447,11 @@ export default function EditReviewPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto py-8 px-4">
-      <h1 className="text-3xl font-black mb-6 lowercase">edit review</h1>
+    <div className="mx-auto max-w-2xl">
+      <h1 className="mb-10 text-[2rem] font-bold leading-tight tracking-[-0.035em] lowercase md:text-[2.75rem]">edit review</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">title</label>
+          <label htmlFor="title" className="vv-eyebrow mb-2 block">title</label>
           <input ref={titleInputRef} type="text" name="title" id="title" value={formData.title} onChange={handleChange} onKeyDown={activeSearchField === 'title' ? handleKeyDown : undefined} required className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500" autoComplete="off" />
           {activeSearchField === 'title' && suggestLoading && <div className="text-xs text-gray-400">searching...</div>}
           {activeSearchField === 'title' && suggestions.length > 0 && (
@@ -483,7 +483,7 @@ export default function EditReviewPage() {
         </div>
 
         <div>
-          <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">category</label>
+          <label htmlFor="category" className="vv-eyebrow mb-2 block">category</label>
           <select name="category" id="category" value={formData.category} onChange={handleChange} className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500">
             <option value={FILM_TV_CATEGORY}>film/tv</option>
             <option value="music">music</option>
@@ -495,7 +495,7 @@ export default function EditReviewPage() {
         </div>
 
         <div>
-          <label htmlFor="creator" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">creator (e.g. director, artist)</label>
+          <label htmlFor="creator" className="vv-eyebrow mb-2 block">creator (e.g. director, artist)</label>
           <input ref={creatorInputRef} type="text" name="creator" id="creator" value={formData.creator} onChange={handleChange} onKeyDown={activeSearchField === 'creator' ? handleKeyDown : undefined} required className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500" autoComplete="off" />
           {activeSearchField === 'creator' && suggestLoading && <div className="text-xs text-gray-400">searching...</div>}
           {activeSearchField === 'creator' && suggestions.length > 0 && (
@@ -524,12 +524,12 @@ export default function EditReviewPage() {
         </div>
 
         <div>
-          <label htmlFor="year" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">year</label>
+          <label htmlFor="year" className="vv-eyebrow mb-2 block">year</label>
           <input type="number" name="year" id="year" value={formData.year} onChange={handleChange} required placeholder="e.g. 2023" className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500" />
         </div>
 
         <div>
-          <label htmlFor="rating" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">rating (out of 5)</label>
+          <label htmlFor="rating" className="vv-eyebrow mb-2 block">rating (out of 5)</label>
           <StarRatingInput
             id="rating"
             value={formData.rating}
@@ -539,14 +539,14 @@ export default function EditReviewPage() {
         </div>
 
         <div>
-          <label htmlFor="review" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">review</label>
+          <label htmlFor="review" className="vv-eyebrow mb-2 block">review</label>
           <RichTextEditor value={formData.review} onChange={val => setFormData(f => ({ ...f, review: val }))} />
         </div>
 
         {error && formData.title && <p className="text-red-500 text-sm lowercase">{error}</p>} {/* Show error inline if form data loaded but submission failed */}
 
         <div>
-          <button type="submit" disabled={isSubmitting || isLoading} className="w-full flex justify-center py-2 px-4 border border-transparent font-bold text-white bg-black dark:bg-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 lowercase disabled:opacity-50">
+          <button type="submit" disabled={isSubmitting || isLoading} className="w-full vv-btn vv-btn-solid !py-2.5 !text-[14px] disabled:opacity-50">
             {isSubmitting ? 'updating...' : 'update review'}
           </button>
         </div>

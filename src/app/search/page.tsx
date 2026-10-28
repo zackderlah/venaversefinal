@@ -6,6 +6,7 @@ import ReviewCard from '@/components/ReviewCard';
 import ReviewLink from '@/components/ReviewLink';
 import SkeletonCard from '@/components/SkeletonCard';
 import { Masonry } from 'masonic';
+import PageHeader from '@/components/PageHeader';
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
@@ -36,17 +37,11 @@ export default function SearchPage() {
   );
 
   return (
-    <div className="space-y-8">
-      <div className="border-b-2 border-black dark:border-gray-100 pb-4">
-        <h1 className="text-4xl font-black tracking-tight lowercase mb-2">
-          search results
-        </h1>
-        {query && (
-          <p className="text-gray-600 dark:text-gray-300 lowercase">
-            for "{query}"
-          </p>
-        )}
-      </div>
+    <div>
+      <PageHeader
+        title="search results"
+        subtitle={query ? `for “${query}”` : undefined}
+      />
       {loading ? (
         <div className="space-y-4">
           {Array.from({ length: 6 }).map((_, i) => (
@@ -62,11 +57,11 @@ export default function SearchPage() {
           render={renderReview}
         />
       ) : query ? (
-        <div className="text-center text-gray-500 dark:text-gray-400 py-12 lowercase">
+        <div className="vv-panel px-6 py-12 text-center text-vv-faint lowercase">
           no reviews found for "{query}"
         </div>
       ) : (
-        <div className="text-center text-gray-500 dark:text-gray-400 py-12 lowercase">
+        <div className="vv-panel px-6 py-12 text-center text-vv-faint lowercase">
           enter a search query to find reviews
         </div>
       )}

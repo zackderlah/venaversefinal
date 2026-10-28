@@ -29,17 +29,17 @@ export default function MediaTag({ category }: MediaTagProps) {
     switch (category) {
       case 'film-tv':
       case 'film':
-        return 'text-blue-800';
+        return 'text-blue-500';
       case 'music':
-        return 'text-purple-800';
+        return 'text-purple-500';
       case 'anime':
-        return 'text-pink-800';
+        return 'text-pink-500';
       case 'books':
-        return 'text-green-800';
+        return 'text-green-500';
       case 'games':
-        return 'text-cyan-800';
+        return 'text-cyan-500';
       case 'other':
-        return 'text-yellow-800';
+        return 'text-yellow-500';
     }
   };
 

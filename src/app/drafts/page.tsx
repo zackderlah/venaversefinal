@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import DraftCard from '@/components/DraftCard';
+import PageHeader from '@/components/PageHeader';
 import { draftReviewPreview } from '@/lib/draftPreview';
 
 export const dynamic = 'force-dynamic';
@@ -33,28 +34,22 @@ export default async function DraftsPage() {
   }));
 
   return (
-    <div className="mx-auto max-w-4xl px-2 sm:px-4 py-6 md:max-w-layout md:py-8">
-      <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
-        <h1 className="text-2xl md:text-3xl font-black lowercase">drafts</h1>
-        <Link
-          href="/create-post"
-          className="shrink-0 py-2 px-3 text-sm font-bold lowercase border-2 border-black dark:border-white bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-        >
-          new post
-        </Link>
-      </div>
-      <p className="text-xs text-gray-500 dark:text-gray-400 lowercase mb-6">
-        only you can see these — {cards.length} saved
-      </p>
+    <div>
+      <PageHeader
+        title="drafts"
+        subtitle="only you can see these."
+        description={`${cards.length} saved`}
+        actions={<Link href="/create-post" className="vv-btn vv-btn-solid">new post</Link>}
+      />
 
       {cards.length === 0 ? (
-        <div className="review-card text-center py-12 px-4">
-          <p className="text-gray-500 dark:text-gray-400 lowercase mb-4">
+        <div className="vv-panel px-4 py-12 text-center">
+          <p className="mb-6 text-vv-faint lowercase">
             no drafts yet — save from the create post screen anytime
           </p>
           <Link
             href="/create-post"
-            className="inline-block py-2 px-4 font-bold lowercase border-2 border-black dark:border-white hover:bg-gray-100 dark:hover:bg-gray-800"
+            className="vv-btn"
           >
             create post
           </Link>

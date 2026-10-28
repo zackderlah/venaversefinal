@@ -6,6 +6,8 @@ export const dynamic = 'force-dynamic';
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
   const query = url.searchParams.get('q');
+  // Optional cap for lightweight callers such as the navbar's live results.
+  const limit = Math.min(Math.max(Number(url.searchParams.get('limit')) || 50, 1), 50);
 
   if (!query || query.trim().length === 0) {
     return NextResponse.json({ reviews: [] });
@@ -35,7 +37,7 @@ export async function GET(req: NextRequest) {
         user: { select: { id: true, username: true, profileImage: true } },
         _count: { select: { comments: true } },
       },
-      take: 50,
+      take: limit,
     });
 
     const reviewsWithCommentCount = reviews.map(r => ({

@@ -86,17 +86,17 @@ export default function CommentSection({ reviewId }: { reviewId: number }) {
   }
 
   return (
-    <div className="mt-12">
-      <h2 className="text-xl font-bold mb-4">Comments</h2>
+    <div>
+      <h2 className="mb-6 text-2xl font-semibold tracking-tight lowercase">comments</h2>
       {authLoading || loading ? (
         <LoadingSpinner />
       ) : (
         <div className="space-y-4 mb-6">
           {comments.length === 0 ? (
-            <div className="text-gray-400">No comments yet.</div>
+            <div className="text-sm lowercase text-vv-faint">no comments yet.</div>
           ) : (
             comments.map((comment) => (
-              <div key={comment.id} className="border-b border-gray-200 pb-2 flex items-start justify-between">
+              <div key={comment.id} className="flex items-start justify-between border-b border-vv-line pb-4">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <Link href={`/profile/${comment.user.username}`} className="inline-flex items-center gap-2 group">
@@ -106,7 +106,7 @@ export default function CommentSection({ reviewId }: { reviewId: number }) {
                           alt={comment.user.username}
                           width={24}
                           height={24}
-                          className="rounded-full object-cover border border-black dark:border-white"
+                          className="rounded-full object-cover"
                           priority
                         />
                       ) : (
@@ -114,13 +114,13 @@ export default function CommentSection({ reviewId }: { reviewId: number }) {
                           {comment.user.username[0].toUpperCase()}
                         </span>
                       )}
-                      <span className="font-semibold text-sm text-black dark:text-white group-hover:text-blue-600 lowercase">
+                      <span className="text-sm font-medium lowercase text-vv-fg group-hover:opacity-70">
                         {comment.user.username}
                       </span>
                     </Link>
-                    <span className="text-xs text-gray-500">{new Date(comment.createdAt).toLocaleString()}</span>
+                    <span className="text-xs text-vv-faint">{new Date(comment.createdAt).toLocaleString()}</span>
                   </div>
-                  <div className="text-gray-700 dark:text-gray-200 mt-1 text-sm">{comment.text}</div>
+                  <div className="mt-1 text-sm leading-relaxed text-vv-muted">{comment.text}</div>
                 </div>
                 {user && comment.user.id === Number(user.id) && (
                   <button
@@ -136,27 +136,27 @@ export default function CommentSection({ reviewId }: { reviewId: number }) {
         </div>
       )}
       {!authLoading && user ? (
-        <form onSubmit={handlePost} className="flex flex-col gap-2">
+        <form onSubmit={handlePost} className="flex flex-col gap-3">
           <textarea
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
-            className="border rounded p-2 text-sm resize-none bg-white dark:bg-[#18181b] text-black dark:text-white border-gray-300 dark:border-gray-700 focus:border-pink-500 focus:ring-pink-500 outline-none transition-colors"
+            className="resize-none px-4 py-3 text-sm"
             rows={3}
             maxLength={1000}
-            placeholder="Add a comment..."
+            placeholder="add a comment..."
             disabled={posting}
           />
           {error && <div className="text-red-600 text-xs">{error}</div>}
           <button
             type="submit"
-            className="self-start text-xs font-bold text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 lowercase"
+            className="vv-btn vv-btn-solid self-start disabled:opacity-40"
             disabled={posting || !newComment.trim()}
           >
             {posting ? "posting..." : "post comment"}
           </button>
         </form>
       ) : !authLoading ? (
-        <div className="text-gray-500 text-sm">Log in to post a comment.</div>
+        <div className="text-sm lowercase text-vv-faint"><Link href="/login" className="text-vv-fg underline underline-offset-2">log in</Link> to post a comment.</div>
       ) : null}
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">

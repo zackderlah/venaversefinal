@@ -709,12 +709,12 @@ function CreatePostForm() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto py-8 px-4">
-      <div className="flex flex-wrap items-start justify-between gap-3 mb-6">
-        <h1 className="text-3xl font-black lowercase flex-1 min-w-0">create new post</h1>
+    <div className="mx-auto max-w-2xl">
+      <div className="mb-10 flex flex-wrap items-end justify-between gap-3">
+        <h1 className="min-w-0 flex-1 text-[2rem] font-bold leading-tight tracking-[-0.035em] lowercase md:text-[2.75rem]">create new post</h1>
         <Link
           href="/drafts"
-          className="shrink-0 py-2 px-3 text-sm font-bold lowercase border-2 border-black dark:border-white bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors inline-flex items-center"
+          className="vv-btn shrink-0"
         >
           view drafts ({draftsList.length})
         </Link>
@@ -725,7 +725,7 @@ function CreatePostForm() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">category</label>
+          <label htmlFor="category" className="vv-eyebrow mb-2 block">category</label>
           <select name="category" id="category" value={formData.category} onChange={handleChange} className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500">
             <option value={FILM_TV_CATEGORY}>film/tv</option>
             <option value="music">music</option>
@@ -736,7 +736,7 @@ function CreatePostForm() {
           </select>
         </div>
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">title</label>
+          <label htmlFor="title" className="vv-eyebrow mb-2 block">title</label>
           <input ref={titleInputRef} type="text" name="title" id="title" value={formData.title} onChange={handleChange} onKeyDown={activeSearchField === 'title' ? handleKeyDown : undefined} className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500" autoComplete="off" />
           {activeSearchField === 'title' && suggestLoading && <div className="text-xs text-gray-400">searching...</div>}
           {activeSearchField === 'title' && suggestions.length > 0 && (
@@ -768,7 +768,7 @@ function CreatePostForm() {
         </div>
 
         <div>
-          <label htmlFor="creator" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">creator (e.g. director, artist)</label>
+          <label htmlFor="creator" className="vv-eyebrow mb-2 block">creator (e.g. director, artist)</label>
           <input ref={creatorInputRef} type="text" name="creator" id="creator" value={formData.creator} onChange={handleChange} onKeyDown={activeSearchField === 'creator' ? handleKeyDown : undefined} className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500" autoComplete="off" />
           {activeSearchField === 'creator' && suggestLoading && <div className="text-xs text-gray-400">searching...</div>}
           {activeSearchField === 'creator' && suggestions.length > 0 && (
@@ -797,12 +797,12 @@ function CreatePostForm() {
         </div>
 
         <div>
-          <label htmlFor="year" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">year</label>
+          <label htmlFor="year" className="vv-eyebrow mb-2 block">year</label>
           <input type="number" name="year" id="year" value={formData.year} onChange={handleChange} placeholder="e.g. 2023" className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500" />
         </div>
 
         <div>
-          <label htmlFor="rating" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">rating (out of 5)</label>
+          <label htmlFor="rating" className="vv-eyebrow mb-2 block">rating (out of 5)</label>
           <StarRatingInput
             id="rating"
             value={formData.rating}
@@ -812,7 +812,7 @@ function CreatePostForm() {
         </div>
 
         <div>
-          <label htmlFor="review" className="block text-sm font-medium text-gray-700 dark:text-gray-300 lowercase">review</label>
+          <label htmlFor="review" className="vv-eyebrow mb-2 block">review</label>
           <RichTextEditor
             key={draftQuery ? `draft-${draftQuery}` : 'new-post'}
             value={formData.review}
@@ -826,7 +826,7 @@ function CreatePostForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 flex justify-center py-2 px-4 border border-transparent font-bold text-white bg-black dark:bg-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 lowercase disabled:opacity-50"
+            className="flex-1 vv-btn vv-btn-solid !py-2.5 !text-[14px] disabled:opacity-50"
           >
             {isSubmitting ? 'submitting...' : 'submit review'}
           </button>

@@ -45,9 +45,9 @@ export default function UserReviewsPage() {
     });
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 md:max-w-layout space-y-8">
+    <div className="space-y-8">
       <div className="review-card">
-        <h2 className="text-2xl font-black tracking-tight lowercase mb-2">all reviews by {username}</h2>
+        <h2 className="mb-4 text-xl font-semibold tracking-tight lowercase">all reviews by {username}</h2>
         <div className="flex flex-col md:flex-row gap-4 mb-4">
           <SearchBar value={search} onChange={setSearch} placeholder="search reviews..." />
           <SortSelect value={sortBy} onChange={setSortBy} />

@@ -30,9 +30,9 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex justify-center px-4 py-6 md:py-8">
-      <div className="w-full max-w-md review-card content-card rounded-lg p-8">
-        <h2 className="text-center text-2xl font-black mb-6 lowercase text-black dark:text-white tracking-tight">create account</h2>
+    <div className="flex justify-center py-4 md:py-10">
+      <div className="vv-panel w-full max-w-md p-8 md:p-10">
+        <h2 className="mb-8 text-center text-[1.75rem] font-bold lowercase tracking-[-0.03em] text-vv-fg">create account</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
             <input
@@ -40,7 +40,7 @@ export default function SignupPage() {
               name="email"
               type="email"
               required
-              className="block w-full rounded-md border-2 border-black dark:border-white px-3 py-2 bg-white dark:bg-[#18181b] text-black dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500 font-mono text-base"
+              className="block w-full px-4 py-2.5 text-[15px]"
               placeholder="email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -50,7 +50,7 @@ export default function SignupPage() {
               name="username"
               type="text"
               required
-              className="block w-full rounded-md border-2 border-black dark:border-white px-3 py-2 bg-white dark:bg-[#18181b] text-black dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500 font-mono text-base"
+              className="block w-full px-4 py-2.5 text-[15px]"
               placeholder="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -60,17 +60,17 @@ export default function SignupPage() {
               name="password"
               type="password"
               required
-              className="block w-full rounded-md border-2 border-black dark:border-white px-3 py-2 bg-white dark:bg-[#18181b] text-black dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500 font-mono text-base"
+              className="block w-full px-4 py-2.5 text-[15px]"
               placeholder="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          {error && <div className="text-red-500 text-sm text-center lowercase font-mono">{error}</div>}
+          {error && <div className="text-red-500 text-sm text-center lowercase">{error}</div>}
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 px-4 border-2 border-black dark:border-white rounded-md bg-black dark:bg-white text-white dark:text-black font-bold lowercase tracking-wide shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-900 dark:hover:bg-gray-100 transition-colors duration-150 font-mono text-base"
+            className="vv-btn vv-btn-solid w-full !py-2.5 !text-[14px] disabled:opacity-50"
           >
             {loading ? 'creating account...' : 'sign up'}
           </button>

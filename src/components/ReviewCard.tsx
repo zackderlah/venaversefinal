@@ -35,17 +35,6 @@ export default function ReviewCard({ review }: ReviewCardProps) {
   //                     review.category === 'anime' ? 'anime' : 'books';
 
   const canEdit = !authLoading && currentAuthenticatedUser && (String(review.userId) === String(currentAuthenticatedUser.id) || currentAuthenticatedUser.isAdmin);
-  if (!authLoading && !currentAuthenticatedUser) {
-    console.warn('No authenticated user found in session. Edit/delete buttons will not show.');
-  }
-
-  console.log('[ReviewCard debug]', {
-    reviewUserId: review.userId,
-    currentAuthenticatedUserId: currentAuthenticatedUser?.id,
-    authLoading,
-    session
-  });
-
   const handleDelete = async () => {
     setShowDeleteModal(true);
   };

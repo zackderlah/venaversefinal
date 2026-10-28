@@ -4,19 +4,17 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { PrismaClient } from '@prisma/client';
 import CommentSection from '@/components/CommentSection';
 import Image from 'next/image';
 import MediaTag from '@/components/MediaTag';
 import ReviewActionsClient from '@/components/ReviewActionsClient';
 import ShareButton from '@/components/ShareButton';
 import StarRatingDisplay from '@/components/StarRatingDisplay';
+import FrameRule from '@/components/FrameRule';
 
 function capitalizeTitle(title: string) {
   return title.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
 }
-
-const prisma = new PrismaClient();
 
 export default function ReviewPage() {
   const params = useParams();
@@ -44,8 +42,8 @@ export default function ReviewPage() {
     if (id) fetchReview();
   }, [id]);
 
-  if (loading) return <div className="text-center mt-20 text-gray-500 lowercase">loading...</div>;
-  if (!review) return <div className="text-center mt-20 text-red-600 lowercase">review not found</div>;
+  if (loading) return <div className="py-20 text-center text-vv-faint lowercase">loading...</div>;
+  if (!review) return <div className="py-20 text-center text-vv-muted lowercase">review not found</div>;
 
   const canEdit = !authLoading && currentUser && review.userId === Number(currentUser.id);
 
@@ -80,89 +78,91 @@ export default function ReviewPage() {
 
   const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(review.title + ' ' + review.creator)}`;
 
+  const reviewedOn = new Date(review.date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
   return (
-    <div className="flex min-h-screen w-full p-0 m-0 justify-center">
-      <div className="review-card content-card flex w-full max-w-4xl flex-col p-8 md:max-w-layout">
-        <div className="flex flex-col md:flex-row gap-8 items-start">
-          {review.imageUrl && (
-            <div className="flex-shrink-0 w-32 h-48 mx-auto md:mx-0 md:mb-0 mb-6 relative">
-              <a href={googleSearchUrl} target="_blank" rel="noopener noreferrer">
-                <Image
-                  src={review.imageUrl}
-                  alt={`Cover for ${review.title}`}
-                  fill
-                  className="object-cover rounded-lg"
-                  sizes="128px"
-                  unoptimized
-                />
-              </a>
-            </div>
-          )}
-          <div className="flex-1">
-            <div className="flex items-start justify-between mb-2">
-              <h1 className="text-3xl font-black">
-                <a href={googleSearchUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                  {capitalizeTitle(review.title)}
-                </a>
-              </h1>
-              <StarRatingDisplay
-                value={review.rating}
-                className="ml-4"
-                starClassName="text-4xl font-black"
-              />
-            </div>
-            <div className="mb-2 text-gray-500 text-sm">
-              {review.creator}, {review.year}
-            </div>
-            <div className="flex items-center gap-2 mb-4">
-              <MediaTag category={review.category} />
-              {review.user?.username && (
-                <span className="text-xs text-black dark:text-white font-bold lowercase flex items-center gap-1">
-                  <span
-                    className="cursor-pointer flex items-center gap-1"
-                    onClick={e => {
-                      e.stopPropagation();
-                      router.push(`/profile/${review.user.username}`);
-                    }}
-                  >
-                    {review.user.profileImage ? (
-                      <img
-                        src={review.user.profileImage}
-                        alt={review.user.username}
-                        className="w-6 h-6 rounded-full object-cover border border-black dark:border-white"
-                      />
-                    ) : (
-                      <span className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-xs text-gray-500 font-bold">
-                        {review.user.username[0].toUpperCase()}
-                      </span>
-                    )}
-                    <span className="ml-1 hover:text-blue-600">{review.user.username}</span>
+    <article>
+      <header className="flex flex-col gap-8 pb-10 md:flex-row md:items-start md:pb-12">
+        {review.imageUrl && (
+          <a
+            href={googleSearchUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative mx-auto h-48 w-32 flex-shrink-0 overflow-hidden rounded-xl border border-vv-line md:mx-0 md:h-60 md:w-40"
+          >
+            <Image
+              src={review.imageUrl}
+              alt={`Cover for ${review.title}`}
+              fill
+              className="object-cover"
+              sizes="160px"
+              unoptimized
+            />
+          </a>
+        )}
+        <div className="min-w-0 flex-1">
+          <p className="vv-eyebrow mb-4 flex flex-wrap items-center gap-x-3 gap-y-1">
+            <MediaTag category={review.category} />
+            <span aria-hidden="true">·</span>
+            <span>{reviewedOn}</span>
+          </p>
+          <h1 className="text-[2rem] font-bold leading-[1.08] tracking-[-0.035em] md:text-[2.75rem]">
+            <a href={googleSearchUrl} target="_blank" rel="noopener noreferrer" className="text-vv-fg hover:opacity-80">
+              {capitalizeTitle(review.title)}
+            </a>
+            <br />
+            <span className="text-vv-faint">{review.creator}, {review.year}</span>
+          </h1>
+          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
+            <StarRatingDisplay value={review.rating} starClassName="text-3xl font-black" />
+            {review.user?.username && (
+              <Link
+                href={`/profile/${review.user.username}`}
+                className="inline-flex items-center gap-2 rounded-full border border-vv-line bg-vv-surface py-1 pl-1 pr-3 text-[13px] lowercase text-vv-muted transition-colors hover:border-vv-strong hover:text-vv-fg"
+              >
+                {review.user.profileImage ? (
+                  <img
+                    src={review.user.profileImage}
+                    alt=""
+                    className="h-6 w-6 rounded-full object-cover"
+                  />
+                ) : (
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-vv-raised text-xs font-bold text-vv-muted">
+                    {review.user.username[0].toUpperCase()}
                   </span>
-                </span>
-              )}
-            </div>
-            <div className="mb-6 text-gray-600 dark:text-gray-300 prose prose-sm dark:prose-invert max-w-none prose-p:my-4">
-              <div dangerouslySetInnerHTML={{ __html: review.review }} />
-            </div>
-            <div className="review-date text-sm text-gray-500 dark:text-gray-400 mb-4">
-              Reviewed on {new Date(review.date).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </div>
-            <div className="flex items-center gap-3 mb-4">
-              <ShareButton 
-                title={review.title}
-                url={`/reviews/${review.id}`}
-                text={`Check out this ${review.category} review: ${review.title} by ${review.creator}`}
-              />
-              <ReviewActionsClient review={review} />
-            </div>
+                )}
+                {review.user.username}
+              </Link>
+            )}
           </div>
         </div>
+      </header>
+
+      <FrameRule className="-mx-5 mb-10 md:-mx-8 md:mb-12" />
+
+      <div className="mx-auto max-w-2xl">
+        <div className="prose prose-neutral max-w-none text-[16px] leading-relaxed text-vv-muted dark:prose-invert prose-p:my-4 prose-headings:text-vv-fg prose-a:text-vv-fg">
+          <div dangerouslySetInnerHTML={{ __html: review.review }} />
+        </div>
+        <div className="mt-10 flex flex-wrap items-center gap-3">
+          <ShareButton
+            title={review.title}
+            url={`/reviews/${review.id}`}
+            text={`Check out this ${review.category} review: ${review.title} by ${review.creator}`}
+          />
+          <ReviewActionsClient review={review} />
+        </div>
+      </div>
+
+      <FrameRule className="-mx-5 my-10 md:-mx-8 md:my-12" />
+
+      <div className="mx-auto max-w-2xl">
         <CommentSection reviewId={review.id} />
       </div>
-    </div>
+    </article>
   );
-} 
+}

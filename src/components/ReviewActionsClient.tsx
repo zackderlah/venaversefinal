@@ -47,18 +47,18 @@ export default function ReviewActionsClient({ review }: { review: any }) {
 
   return (
     <>
-      <div className="flex flex-row flex-nowrap items-center gap-3">
+      <div className="flex flex-row flex-nowrap items-center gap-2">
         <button
           type="button"
           onClick={e => { e.stopPropagation(); e.preventDefault(); router.push(`/reviews/${review.id}/edit`); }}
-          className="inline-flex shrink-0 items-center w-auto text-xs lowercase font-semibold text-blue-600 hover:underline bg-transparent border-0 p-0"
+          className="vv-btn"
         >
           edit review
         </button>
         <button
           type="button"
           onClick={e => { e.stopPropagation(); e.preventDefault(); handleDelete(); }}
-          className="inline-flex shrink-0 items-center w-auto text-xs lowercase font-semibold text-red-600 hover:underline bg-transparent border-0 p-0"
+          className="vv-btn !text-red-500"
         >
           delete
         </button>

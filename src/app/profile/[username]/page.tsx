@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import ProfileHeaderClient from "@/components/ProfileHeaderClient";
+import FrameRule from "@/components/FrameRule";
 import ReviewCardDisplay from "@/components/ReviewCardDisplay";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -12,42 +13,47 @@ import ProfileDraftsSection from '@/components/ProfileDraftsSection';
 export default async function UserProfilePage({ params }: { params: { username: string } }) {
   const session = await getServerSession(authOptions);
   const { username } = params;
-  const user = await prisma.user.findUnique({
-    where: { username },
-    include: {
-      reviews: {
-        orderBy: { date: 'desc' },
-        include: {
-          user: { select: { id: true, username: true, profileImage: true } },
-          _count: { select: { comments: true } },
+  const viewerId = Number(session?.user?.id);
+
+  // Independent queries run in parallel; each is a full round trip to the database.
+  const [user, recentReviewComments, ownDrafts] = await Promise.all([
+    prisma.user.findUnique({
+      where: { username },
+      include: {
+        reviews: {
+          orderBy: { date: 'desc' },
+          include: {
+            user: { select: { id: true, username: true, profileImage: true } },
+            _count: { select: { comments: true } },
+          },
+        },
+        currentlyExperiencing: {
+          orderBy: { updatedAt: 'desc' },
         },
       },
-      currentlyExperiencing: {
-        orderBy: { updatedAt: 'desc' },
+    }),
+    // Recent review comments made by the user
+    prisma.comment.findMany({
+      where: { user: { username } },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        review: { select: { id: true, title: true, category: true, user: { select: { username: true, profileImage: true } } } }
       },
-    },
-  });
+      take: 10,
+    }),
+    // Drafts only exist for the viewer's own profile.
+    viewerId
+      ? prisma.reviewDraft.findMany({
+          where: { userId: viewerId, user: { username } },
+          orderBy: { updatedAt: 'desc' },
+          select: { id: true, title: true, category: true, updatedAt: true },
+        })
+      : Promise.resolve([]),
+  ]);
   if (!user) return notFound();
 
-  // Fetch recent review comments made by the user
-  const recentReviewComments = await prisma.comment.findMany({
-    where: { userId: user.id },
-    orderBy: { createdAt: 'desc' },
-    include: {
-      review: { select: { id: true, title: true, category: true, user: { select: { username: true, profileImage: true } } } }
-    },
-    take: 10,
-  });
-
-  const isOwner = Number(session?.user?.id) === user.id;
-
-  const drafts = isOwner
-    ? await prisma.reviewDraft.findMany({
-        where: { userId: user.id },
-        orderBy: { updatedAt: 'desc' },
-        select: { id: true, title: true, category: true, updatedAt: true },
-      })
-    : [];
+  const isOwner = viewerId === user.id;
+  const drafts = isOwner ? ownDrafts : [];
 
   // Combine reviews and comments into a single feed, sorted by date
   const reviewFeed = user.reviews.map(r => ({
@@ -65,15 +71,16 @@ export default async function UserProfilePage({ params }: { params: { username: 
   const activityFeed = [...reviewFeed, ...commentFeed].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
-    <div className="mx-auto max-w-4xl px-3 md:max-w-layout md:px-4 py-4 md:py-8 space-y-4 md:space-y-8">
+    <div className="space-y-6 md:space-y-8">
       {/* Profile Header */}
       <ProfileHeaderClient user={user} session={session} isOwner={isOwner} />
+      <FrameRule className="-mx-5 md:-mx-8" />
 
       {isOwner ? <ProfileDraftsSection drafts={drafts} /> : null}
 
       {/* Currently Experiencing */}
       <div className="review-card">
-        <h2 className="text-xl md:text-2xl font-black tracking-tight lowercase mb-2">currently experiencing</h2>
+        <h2 className="mb-4 text-xl font-semibold tracking-tight lowercase">currently experiencing</h2>
         {user ? (
           <CurrentlyExperiencingSection profileId={user.id} />
         ) : (
@@ -83,18 +90,18 @@ export default async function UserProfilePage({ params }: { params: { username: 
 
       {/* Profile Comments */}
       <div className="review-card">
-        <h2 className="text-xl md:text-2xl font-black tracking-tight lowercase mb-2">profile comments</h2>
+        <h2 className="mb-4 text-xl font-semibold tracking-tight lowercase">profile comments</h2>
         <ProfileCommentSection profileId={user.id} />
       </div>
 
       {/* Recent Activity */}
       <div className="review-card overflow-hidden">
-        <h2 className="text-xl md:text-2xl font-black tracking-tight lowercase mb-2">recent activity</h2>
+        <h2 className="mb-4 text-xl font-semibold tracking-tight lowercase">recent activity</h2>
         <div className="grid gap-2 md:gap-6 w-full">
           {activityFeed.length ? (
             activityFeed.map(item => (
               'review' in item ? (
-                <Link key={`review-${item.id}`} href={`/reviews/${item.review.id}`} className="block w-full overflow-hidden">
+                <div key={`review-${item.id}`} className="block w-full overflow-hidden">
                 <ReviewCardDisplay
                   review={{
                       ...item.review,
@@ -104,9 +111,9 @@ export default async function UserProfilePage({ params }: { params: { username: 
                       imageUrl: item.review.imageUrl ?? undefined,
                   }}
                 />
-              </Link>
+              </div>
               ) : 'comment' in item ? (
-                <div key={`comment-${item.id}`} className="border-b border-gray-200 dark:border-gray-700 pb-2 md:pb-3">
+                <div key={`comment-${item.id}`} className="border-b border-vv-line pb-2 md:pb-3">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-1 md:gap-0 mb-1">
                     <div className="flex flex-wrap items-center gap-1 text-[10px] md:text-xs text-gray-500">
                       <span className="text-blue-600 font-bold lowercase">commented</span>
@@ -135,7 +142,7 @@ export default async function UserProfilePage({ params }: { params: { username: 
               ) : null
             ))
           ) : (
-            <p className="text-gray-400 lowercase">no recent activity</p>
+            <p className="text-sm text-vv-faint lowercase">no recent activity</p>
           )}
         </div>
         <div className="mt-4 text-right">

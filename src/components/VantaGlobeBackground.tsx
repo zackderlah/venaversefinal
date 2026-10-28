@@ -5,7 +5,37 @@ import { useEffect, useRef, useState } from 'react';
 declare global {
   interface Window {
     VANTA: any;
+    THREE: any;
   }
+}
+
+// Share in-flight loads so React Strict Mode waits for the same scripts.
+const scriptLoads = new Map<string, Promise<void>>();
+
+function loadScript(src: string, isReady: () => boolean): Promise<void> {
+  if (isReady()) return Promise.resolve();
+  const pending = scriptLoads.get(src);
+  if (pending) return pending;
+
+  const loading = new Promise<void>((resolve, reject) => {
+    const existing = document.querySelector<HTMLScriptElement>(`script[src="${src}"]`);
+    const script = existing ?? document.createElement('script');
+    script.addEventListener('load', () => {
+      if (isReady()) resolve();
+      else reject(new Error(`Script did not initialize: ${src}`));
+    }, { once: true });
+    script.addEventListener('error', () => {
+      script.remove();
+      reject(new Error(`Failed to load: ${src}`));
+    }, { once: true });
+    if (!existing) {
+      script.src = src;
+      document.head.appendChild(script);
+    }
+  });
+  scriptLoads.set(src, loading);
+  loading.catch(() => scriptLoads.delete(src));
+  return loading;
 }
 
 interface VantaGlobeBackgroundProps {
@@ -32,6 +62,7 @@ export default function VantaGlobeBackground({
   const vantaRef = useRef<HTMLDivElement>(null);
   const vantaEffect = useRef<any>(null);
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isReady, setIsReady] = useState(false);
 
   // Detect theme changes
   useEffect(() => {
@@ -150,34 +181,16 @@ export default function VantaGlobeBackground({
 
   // Initialize VANTA.GLOBE once
   useEffect(() => {
+    let cancelled = false;
     if (isActive && vantaRef.current && !vantaEffect.current) {
-      // Load Three.js and VANTA.GLOBE scripts
-      const loadScript = (src: string) => {
-        return new Promise((resolve, reject) => {
-          // Check if script already exists
-          const existingScript = document.querySelector(`script[src="${src}"]`);
-          if (existingScript) {
-            resolve(true);
-            return;
-          }
-
-          const script = document.createElement('script');
-          script.src = src;
-          script.onload = resolve;
-          script.onerror = reject;
-          document.head.appendChild(script);
-        });
-      };
-
       const initVanta = async () => {
         try {
           // Load Three.js first
-          await loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js');
+          await loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js', () => Boolean(window.THREE));
           // Then load VANTA.GLOBE
-          await loadScript('https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js');
+          await loadScript('https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.globe.min.js', () => Boolean(window.VANTA?.GLOBE));
           
-          // Wait a bit for the scripts to be fully loaded
-          await new Promise(resolve => setTimeout(resolve, 100));
+          if (cancelled || !vantaRef.current) return;
           
           // Get current theme colors
           const themeColors = getThemeColors();
@@ -186,6 +199,7 @@ export default function VantaGlobeBackground({
           if (window.VANTA && window.VANTA.GLOBE) {
             vantaEffect.current = window.VANTA.GLOBE({
               el: vantaRef.current,
+              THREE: window.THREE,
               mouseControls,
               touchControls,
               gyroControls,
@@ -196,6 +210,7 @@ export default function VantaGlobeBackground({
               color: themeColors.color,
               backgroundColor: themeColors.backgroundColor
             });
+            setIsReady(true);
           }
         } catch (error) {
           console.error('Failed to load VANTA.GLOBE:', error);
@@ -206,6 +221,7 @@ export default function VantaGlobeBackground({
     }
 
     return () => {
+      cancelled = true;
       if (vantaEffect.current) {
         vantaEffect.current.destroy();
         vantaEffect.current = null;
@@ -268,7 +284,7 @@ export default function VantaGlobeBackground({
     const interval = setInterval(updateColors, 100);
 
     return () => clearInterval(interval);
-  }, [vantaEffect.current, isDarkMode]);
+  }, [isReady, isDarkMode]);
 
   if (!isActive) {
     return null;

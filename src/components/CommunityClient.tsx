@@ -1,6 +1,7 @@
 "use client";
 import UserBanner from './UserBanner';
 import { useState } from 'react';
+import PageHeader from './PageHeader';
 
 type UserWithLevel = {
   id: number;
@@ -35,31 +36,33 @@ export default function CommunityClient({ users }: { users: UserWithLevel[] }) {
     .sort((a, b) => compareUsers(a, b, sortOrder));
 
   return (
-    <div className="max-w-3xl mx-auto px-3 md:px-4 py-4 md:py-8">
-      <h1 className="text-2xl md:text-4xl font-black mb-4 md:mb-6 tracking-tight lowercase">community</h1>
-      <div className="flex flex-col md:flex-row gap-2 md:gap-4 mb-4 md:mb-8">
+    <div>
+      <PageHeader
+        title="community"
+        subtitle="the people behind the reviews."
+        description={`${users.length} members, sorted by level.`}
+      />
+      <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <input
           type="text"
           placeholder="search by username..."
-          className="border border-black dark:border-white rounded px-3 py-2 text-sm lowercase flex-1 bg-white dark:bg-[#0A0A0A] text-black dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+          className="w-full !rounded-full px-4 py-2 text-sm lowercase md:max-w-sm"
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
-        <div className="flex items-center gap-2">
-          <label className="text-xs font-bold lowercase">sort by level</label>
-          <button
-            onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
-            className="border border-black dark:border-white rounded px-3 py-1 text-xs lowercase bg-white dark:bg-[#0A0A0A] text-black dark:text-white font-bold hover:bg-gray-100 hover:dark:bg-gray-800 transition-all"
-          >
-            {sortOrder === 'desc' ? 'highest first' : 'lowest first'}
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
+          className="vv-btn self-start md:self-auto"
+        >
+          level: {sortOrder === 'desc' ? 'highest first' : 'lowest first'}
+        </button>
       </div>
-      <div className="space-y-2 md:space-y-6">
+      <div className="grid gap-3 md:grid-cols-2 md:gap-4">
         {filtered.length ? (
           filtered.map(user => <UserBanner key={user.id} user={user} />)
         ) : (
-          <div className="text-gray-400 lowercase text-center">no users found</div>
+          <div className="vv-panel px-6 py-12 text-center text-vv-faint lowercase md:col-span-2">no users found</div>
         )}
       </div>
     </div>

@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import HeaderWithDarkMode from './HeaderWithDarkMode';
+import FrameRule from './FrameRule';
 
 
 export default function ClientLayout({
@@ -10,6 +12,9 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   const [isContentVisible, setIsContentVisible] = useState(true);
+  const pathname = usePathname();
+  // The homepage lays out its own full-bleed sections; other pages get standard frame padding.
+  const isHome = pathname === '/';
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -19,7 +24,7 @@ export default function ClientLayout({
         ((active.tagName === 'INPUT') ||
          (active.tagName === 'TEXTAREA') ||
          (active as HTMLElement).isContentEditable);
-      if (!isTyping) {
+      if (!isTyping && !e.metaKey && !e.ctrlKey && !e.altKey) {
         if (e.key.toLowerCase() === 'h') {
           setIsContentVisible(prev => !prev);
         }
@@ -30,20 +35,26 @@ export default function ClientLayout({
   }, []);
 
   return (
-    <div className="mx-auto max-w-4xl px-3 md:max-w-layout md:px-4 py-4 md:py-8 pb-20 md:pb-8 space-y-4 md:space-y-8">
-      <div className="review-card header-card md:!shadow-none md:!p-0">
-        <HeaderWithDarkMode />
-      </div>
-      <div className={`transition-opacity duration-300 ${isContentVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-        <div className="review-card content-card">
-          <main>{children}</main>
-        </div>
-        <div className="review-card content-card">
-          <footer className="mt-0 text-sm text-gray-600 border-t border-gray-300 dark:border-gray-600 pt-4">
-            <p>© venaverse</p>
-          </footer>
-        </div>
+    <div className="vv-shell relative z-10 min-h-screen">
+      <HeaderWithDarkMode />
+      <div
+        className={`vv-frame mx-auto flex min-h-[calc(100vh-4rem)] max-w-layout flex-col pb-20 md:pb-0 transition-opacity duration-300 ${
+          isContentVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        <main className="flex-1">
+          {isHome ? (
+            children
+          ) : (
+            <div className="px-5 pb-16 pt-12 md:px-8 md:pb-20 md:pt-16">{children}</div>
+          )}
+        </main>
+        <FrameRule />
+        <footer className="flex items-center justify-between px-5 py-6 text-[13px] text-vv-faint md:px-8">
+          <span className="lowercase">© venaverse</span>
+          <span className="vv-eyebrow">vena/verse</span>
+        </footer>
       </div>
     </div>
   );
-} 
+}

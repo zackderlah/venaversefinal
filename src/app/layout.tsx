@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter, Noto_Sans_JP } from 'next/font/google'
+import { Inter, JetBrains_Mono, Noto_Sans_JP } from 'next/font/google'
 import './globals.css'
 import ClientLayout from '../components/ClientLayout'
 import { LoadingBarProvider } from '../context/LoadingBarContext'
@@ -9,12 +9,18 @@ import { authOptions } from "@/lib/auth"
 import SessionClientProvider from '../components/SessionClientProvider'
 import NativeAppFeatures from '../components/NativeAppFeatures'
 import BottomNavigation from '../components/BottomNavigation'
-import DeferredVisualEffects from '../components/DeferredVisualEffects'
 
 const inter = Inter({ 
   subsets: ['latin'],
+  variable: '--font-inter',
   display: 'swap',
   preload: true,
+})
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  display: 'swap',
+  preload: false,
 })
 const notoSansJP = Noto_Sans_JP({ 
   weight: ['400', '700', '900'],
@@ -89,8 +95,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.className} ${notoSansJP.variable} text-gray-900 min-h-screen`}>
-        <DeferredVisualEffects />
+      <body className={`${inter.className} ${inter.variable} ${jetbrainsMono.variable} ${notoSansJP.variable} text-gray-900 min-h-screen`}>
         <NativeAppFeatures />
         <GlobalLoadingBar />
         <LoadingBarProvider>

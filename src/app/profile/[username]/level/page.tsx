@@ -18,8 +18,8 @@ export default async function ProfileLevelPage({ params }: { params: { username:
   const xpToNext = 100 - xpThisLevel;
 
   return (
-    <div className="max-w-xl mx-auto py-8 px-4">
-      <h1 className="text-3xl font-black mb-4 lowercase">{user.username}'s level</h1>
+    <div className="mx-auto max-w-xl">
+      <h1 className="mb-6 text-[2rem] font-bold tracking-[-0.035em] lowercase">{user.username}'s level</h1>
       <div className="flex items-center gap-4 mb-6">
         <LevelBadge level={level} />
         <span className="text-lg font-bold text-gray-700 dark:text-gray-200">{xp} XP</span>

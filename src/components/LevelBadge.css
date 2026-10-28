@@ -14,7 +14,7 @@
   box-shadow: none;
   letter-spacing: 0.5px;
   background-clip: padding-box;
-  transition: background 0.2s, transform 0.2s;
+  transition: background-color 90ms ease-out, transform 100ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .bg-gray-400 { background: #b0b0b0; color: #222; }

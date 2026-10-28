@@ -6,6 +6,8 @@ import ReviewCard from '@/components/ReviewCard'
 import ReviewLink from '@/components/ReviewLink'
 import SkeletonCard from '@/components/SkeletonCard'
 import LoadingSpinner from '@/components/LoadingSpinner'
+import FrameRule from '@/components/FrameRule'
+import Link from 'next/link'
 
 const MasonryGrid = dynamic(
   () => import('masonic').then((mod) => mod.Masonry),
@@ -193,24 +195,44 @@ export default function Home() {
   };
 
   const content = (
-    <div className="space-y-16">
-      <section className="border-b-2 border-black dark:border-gray-100 pb-8">
-        <h2 className="text-4xl font-black mb-4 tracking-tight lowercase">note</h2>
-        <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed lowercase">
-          this website is a collection of reviews for{' '}
-          <span className="text-blue-600 dark:text-blue-400">film/tv</span>,{' '}
-          <span className="text-purple-600 dark:text-purple-400">music</span>,{' '}
-          <span className="text-red-600 dark:text-red-400">anime</span>,{' '}
-          <span className="text-green-600 dark:text-green-400">books</span>, and{' '}
-          <span className="text-cyan-600 dark:text-cyan-400">games</span> that you and others have experienced.
-          each review should include one's thoughts, ratings, and analysis of the work.{' '}
+    <div>
+      <section className="px-5 pb-12 pt-14 md:px-8 md:pb-16 md:pt-20">
+        <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+          <h1 className="max-w-3xl text-[2.1rem] font-bold leading-[1.05] tracking-[-0.035em] lowercase md:text-[3.25rem]">
+            <span className="text-vv-fg">vena/verse</span>
+            <br />
+            <span className="text-vv-faint">honest takes on what we watch, hear, read and play.</span>
+          </h1>
+          <div className="flex shrink-0 flex-wrap gap-2">
+            <Link href="/create-post" className="vv-btn vv-btn-solid">write a review</Link>
+            <Link href="/community" className="vv-btn">community</Link>
+          </div>
+        </div>
+        <p className="mt-8 max-w-2xl text-[15px] leading-relaxed text-vv-muted lowercase">
+          a collection of reviews that you and others have experienced. each review should include
+          one&apos;s thoughts, ratings, and analysis of the work.
         </p>
-        {showPatchNotes ? <PatchNotesSection /> : null}
       </section>
 
-      <section>
-        <div className="flex items-baseline justify-between mb-12 border-b-2 border-black dark:border-gray-100 pb-4">
-          <h2 className="text-4xl font-black tracking-tight lowercase">recent reviews</h2>
+      {showPatchNotes ? (
+        <>
+          <FrameRule />
+          <section className="px-5 py-10 md:px-8">
+            <div className="vv-panel px-5 py-5 md:px-7 md:py-6">
+              <PatchNotesSection />
+            </div>
+          </section>
+        </>
+      ) : null}
+
+      <FrameRule />
+
+      <section className="px-5 py-12 md:px-8 md:py-14">
+        <div className="mb-8 flex items-baseline justify-between gap-4">
+          <h2 className="text-2xl font-semibold tracking-tight lowercase">recent reviews</h2>
+          {pagination.totalCount > 0 && (
+            <span className="vv-eyebrow">{pagination.totalCount} total</span>
+          )}
         </div>
         {loading ? (
           isMobile ? (
@@ -243,7 +265,7 @@ export default function Home() {
                 )}
                 <div ref={observerTarget} className="h-4" />
                 {!hasMore && recentReviews.length > 0 && (
-                  <div className="text-center text-gray-500 dark:text-gray-400 text-sm mt-8 pb-8 lowercase">
+                  <div className="text-center text-vv-faint text-sm mt-8 pb-8 lowercase">
                     no more reviews to load
                   </div>
                 )}
@@ -251,15 +273,11 @@ export default function Home() {
             )}
             {/* Desktop: Pagination */}
             {!isMobile && pagination.totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2 mt-12 pt-8">
+              <div className="flex items-center justify-center gap-2 mt-12">
                 <button
                   onClick={() => handlePageChange(pagination.currentPage - 1)}
                   disabled={!pagination.hasPreviousPage}
-                  className={`px-3 py-1 text-sm lowercase tracking-tight transition-opacity ${
-                    pagination.hasPreviousPage
-                      ? 'text-black dark:text-gray-100 hover:opacity-60 cursor-pointer'
-                      : 'text-gray-400 dark:text-gray-600 cursor-not-allowed'
-                  }`}
+                  className="vv-icon-btn disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   ←
                 </button>
@@ -267,7 +285,7 @@ export default function Home() {
                   {getPageNumbers().map((page, index) => {
                     if (page === '...') {
                       return (
-                        <span key={`ellipsis-${index}`} className="px-2 text-gray-400 dark:text-gray-600">
+                        <span key={`ellipsis-${index}`} className="px-2 text-vv-faint">
                           ...
                         </span>
                       );
@@ -278,11 +296,8 @@ export default function Home() {
                       <button
                         key={pageNum}
                         onClick={() => handlePageChange(pageNum)}
-                        className={`min-w-[32px] px-2 py-1 text-sm lowercase tracking-tight transition-colors ${
-                          isActive
-                            ? 'bg-black dark:bg-gray-100 text-white dark:text-black font-semibold'
-                            : 'text-black dark:text-gray-100 hover:opacity-60'
-                        }`}
+                        className="vv-pill min-w-[32px] justify-center"
+                        aria-current={isActive ? 'page' : undefined}
                       >
                         {pageNum}
                       </button>
@@ -292,11 +307,7 @@ export default function Home() {
                 <button
                   onClick={() => handlePageChange(pagination.currentPage + 1)}
                   disabled={!pagination.hasNextPage}
-                  className={`px-3 py-1 text-sm lowercase tracking-tight transition-opacity ${
-                    pagination.hasNextPage
-                      ? 'text-black dark:text-gray-100 hover:opacity-60 cursor-pointer'
-                      : 'text-gray-400 dark:text-gray-600 cursor-not-allowed'
-                  }`}
+                  className="vv-icon-btn disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   →
                 </button>

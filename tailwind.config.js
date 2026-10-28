@@ -8,6 +8,8 @@ module.exports = {
   ],
   theme: {
     extend: {
+      transitionDuration: { DEFAULT: '90ms' },
+      transitionTimingFunction: { DEFAULT: 'cubic-bezier(0.16, 1, 0.3, 1)' },
       screens: {
         'xs': '375px',
         'sm': '640px',
@@ -15,6 +17,22 @@ module.exports = {
         'lg': '1024px',
         'xl': '1280px',
         '2xl': '1536px',
+      },
+      fontFamily: {
+        vv: ['var(--font-inter)', 'Inter', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-mono)', 'ui-monospace', 'monospace'],
+      },
+      colors: {
+        vv: {
+          bg: 'var(--vv-bg)',
+          surface: 'var(--vv-surface)',
+          raised: 'var(--vv-raised)',
+          fg: 'var(--vv-fg)',
+          muted: 'var(--vv-muted)',
+          faint: 'var(--vv-faint)',
+          line: 'var(--vv-line)',
+          strong: 'var(--vv-line-strong)',
+        },
       },
       maxWidth: {
         // 20% wider than max-w-4xl (56rem) for md+ layout shell

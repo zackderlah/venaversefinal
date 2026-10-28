@@ -31,7 +31,7 @@
       cursor: text !important;
     }
   }
-  
+
   .dark body {
     @apply text-gray-50;
     background-color: transparent !important;
@@ -110,16 +110,15 @@
 
   .review-card.review-card-item {
     background-color: rgba(255, 255, 255, 0.6) !important;
-    backdrop-filter: blur(8px);
+    backdrop-filter: none;
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
     box-shadow: none !important;
     overflow: hidden;
     max-width: 100%;
     transition:
-      transform 180ms ease,
-      box-shadow 180ms ease,
-      border-color 180ms ease,
-      background-color 180ms ease;
+      transform 100ms cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 90ms ease-out,
+      background-color 90ms ease-out;
   }
 
   .review-card.review-card-item::before {
@@ -138,38 +137,38 @@
     outline-offset: 0 !important;
     border-radius: 0 !important;
   }
-  
+
   nav > div::before {
     display: none !important;
   }
-  
+
   nav > div::after {
     display: none !important;
   }
-  
+
   /* Ensure nav bar is flush with bottom */
   nav {
     bottom: 0 !important;
     margin-bottom: 0 !important;
     padding-bottom: 0 !important;
   }
-  
+
   /* Remove any white line or gap */
   nav > div > div {
     border-bottom: none !important;
     border-top: none !important;
   }
-  
+
   /* Remove any potential white line from safe area */
   nav .safe-area-bottom {
     border-bottom: none !important;
   }
-  
+
   /* Ensure nav bar background extends to bottom */
   nav > div {
     position: relative;
   }
-  
+
   nav > div::after {
     content: '';
     position: absolute;
@@ -229,7 +228,7 @@
 
   .dark .review-card.review-card-item {
     background-color: rgba(34, 34, 34, 0.6) !important;
-    backdrop-filter: blur(8px);
+    backdrop-filter: none;
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
     box-shadow: none !important;
   }
@@ -249,7 +248,7 @@
     }
 
     .review-card.review-card-item img {
-      transition: transform 220ms ease;
+      transition: transform 120ms cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .review-card.review-card-item:hover img {
@@ -396,7 +395,7 @@
     .nav-link {
       @apply py-4 border-b border-gray-200 dark:border-gray-800 last:border-b-0;
     }
-    
+
     .nav-link::after {
       @apply hidden;
     }
@@ -532,4 +531,319 @@
 
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-} 
+}
+/* Keep motion optional, including the hover lift and image zoom. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .review-card.review-card-item:hover,
+  .review-card.review-card-item:hover img {
+    transform: none;
+  }
+}
+
+/* ---------- vena/verse shell: framed, quiet layout ---------- */
+:root {
+  --vv-bg: #fafafa;
+  --vv-surface: #ffffff;
+  --vv-raised: #f1f1f1;
+  --vv-fg: #111111;
+  --vv-muted: #5f5f5f;
+  --vv-faint: #8f8f8f;
+  --vv-line: rgba(0, 0, 0, 0.08);
+  --vv-line-strong: rgba(0, 0, 0, 0.16);
+}
+
+.dark {
+  --vv-bg: #0a0a0a;
+  --vv-surface: #121212;
+  --vv-raised: #1b1b1b;
+  --vv-fg: #ededed;
+  --vv-muted: #a1a1a1;
+  --vv-faint: #6b6b6b;
+  --vv-line: rgba(255, 255, 255, 0.08);
+  --vv-line-strong: rgba(255, 255, 255, 0.15);
+}
+
+:root body,
+.dark body {
+  background-color: var(--vv-bg) !important;
+}
+
+.vv-shell {
+  font-family: var(--font-inter), Inter, system-ui, sans-serif;
+  color: var(--vv-fg);
+  text-shadow: none;
+  overflow-x: clip;
+}
+
+.vv-shell h1,
+.vv-shell h2,
+.vv-shell h3 {
+  font-family: var(--font-inter), Inter, system-ui, sans-serif;
+  text-shadow: none;
+}
+
+/* Content column: solid surface with hairline guide rails on both sides. */
+.vv-frame {
+  background-color: var(--vv-bg);
+  border-left: 1px solid var(--vv-line);
+  border-right: 1px solid var(--vv-line);
+}
+
+/* Full-bleed horizontal rule with "+" marks where it meets the rails. */
+.vv-rule {
+  position: relative;
+  height: 1px;
+}
+
+.vv-rule::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100vw;
+  right: -100vw;
+  height: 1px;
+  background: var(--vv-line);
+}
+
+.vv-cross {
+  position: absolute;
+  top: -5px;
+  width: 11px;
+  height: 11px;
+  color: var(--vv-line-strong);
+  pointer-events: none;
+}
+
+.vv-cross::before,
+.vv-cross::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
+}
+
+.vv-cross::before { left: 5px; top: 0; width: 1px; height: 11px; }
+.vv-cross::after { top: 5px; left: 0; height: 1px; width: 11px; }
+
+.vv-header {
+  background-color: color-mix(in srgb, var(--vv-bg) 82%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--vv-line);
+}
+
+.vv-pill {
+  @apply inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-1.5 text-[13px] font-medium lowercase transition-colors;
+  color: var(--vv-muted);
+}
+
+.vv-pill:hover {
+  color: var(--vv-fg);
+}
+
+.vv-pill[aria-current='page'] {
+  color: var(--vv-fg);
+  background-color: var(--vv-raised);
+  box-shadow: inset 0 0 0 1px var(--vv-line);
+}
+
+.vv-btn {
+  @apply inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-1.5 text-[13px] font-medium lowercase transition-colors;
+  color: var(--vv-fg);
+  background-color: var(--vv-surface);
+  border: 1px solid var(--vv-line-strong);
+}
+
+.vv-btn:hover {
+  background-color: var(--vv-raised);
+}
+
+.vv-btn-solid {
+  color: var(--vv-bg);
+  background-color: var(--vv-fg);
+  border-color: var(--vv-fg);
+}
+
+.vv-btn-solid:hover {
+  background-color: var(--vv-fg);
+  opacity: 0.85;
+}
+
+.vv-icon-btn {
+  @apply inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors;
+  color: var(--vv-muted);
+  border: 1px solid var(--vv-line);
+}
+
+.vv-icon-btn:hover {
+  color: var(--vv-fg);
+  background-color: var(--vv-raised);
+}
+
+.vv-kbd {
+  @apply rounded px-1.5 py-0.5 text-[10px];
+  font-family: var(--font-mono), ui-monospace, monospace;
+  color: var(--vv-muted);
+  background-color: var(--vv-bg);
+  border: 1px solid var(--vv-line);
+}
+
+.vv-eyebrow {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  @apply text-[11px] uppercase tracking-[0.14em];
+  color: var(--vv-faint);
+}
+
+.vv-panel {
+  @apply rounded-2xl;
+  background-color: var(--vv-surface);
+  border: 1px solid var(--vv-line);
+}
+
+/* Review cards read as quiet panels inside the frame. */
+.vv-shell .review-card.review-card-item,
+.dark .vv-shell .review-card.review-card-item {
+  border-radius: 1rem;
+  background-color: var(--vv-surface) !important;
+  border: 1px solid var(--vv-line) !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .vv-shell .review-card.review-card-item:hover,
+  .dark .vv-shell .review-card.review-card-item:hover {
+    background-color: var(--vv-surface) !important;
+    border-color: var(--vv-line-strong) !important;
+  }
+}
+
+.vv-shell .review-card-item h3,
+.vv-shell .vv-panel h3 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* ---------- Legacy surfaces inside the shell ----------
+   Older pages use thick black borders, hard shadows and frosted panels.
+   Inside .vv-shell they read as quiet hairline panels instead. */
+.vv-shell .review-card,
+.dark .vv-shell .review-card,
+.vv-shell .review-card.content-card,
+.dark .vv-shell .review-card.content-card {
+  border-radius: 1rem;
+  background-color: var(--vv-surface) !important;
+  border: 1px solid var(--vv-line) !important;
+  box-shadow: none !important;
+  backdrop-filter: none;
+}
+
+.vv-shell .review-card::before {
+  display: none !important;
+}
+
+.vv-shell .review-card p,
+.vv-shell .review-date {
+  color: var(--vv-muted);
+}
+
+.vv-shell h1,
+.vv-shell h2 {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.vv-shell h3 {
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+/* Form controls. */
+.vv-input,
+.vv-shell input:is([type='text'], [type='email'], [type='password'], [type='number'], [type='url'], [type='search'], :not([type])),
+.vv-shell textarea,
+.vv-shell select {
+  font-family: var(--font-inter), Inter, system-ui, sans-serif;
+  color: var(--vv-fg);
+  background-color: var(--vv-surface);
+  border: 1px solid var(--vv-line-strong);
+  border-radius: 0.75rem;
+  box-shadow: none;
+  transition: border-color 90ms ease-out;
+}
+
+.vv-input::placeholder,
+.vv-shell input::placeholder,
+.vv-shell textarea::placeholder {
+  color: var(--vv-faint);
+}
+
+.vv-input:focus,
+.vv-shell input:is([type='text'], [type='email'], [type='password'], [type='number'], [type='url'], [type='search'], :not([type])):focus,
+.vv-shell textarea:focus,
+.vv-shell select:focus {
+  outline: none;
+  border-color: var(--vv-fg);
+  --tw-ring-shadow: 0 0 #0000;
+  box-shadow: none;
+}
+
+/* The navbar's own search fields are borderless inside their pill. */
+.vv-shell header input[type='search'] {
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+}
+
+/* Old thick-bordered buttons become hairline pills. */
+.vv-shell :is(button, a).border-2:not(.border-red-600) {
+  border-width: 1px;
+  border-color: var(--vv-line-strong);
+  border-radius: 9999px;
+  box-shadow: none;
+  font-family: var(--font-inter), Inter, system-ui, sans-serif;
+}
+
+.vv-shell :is(button, a).border-2.border-red-600 {
+  border-width: 1px;
+  border-radius: 9999px;
+}
+
+/* Old thick-bordered containers and rules become hairlines. */
+.vv-shell div.border-2,
+.vv-shell span.border-2 {
+  border-width: 1px;
+  border-color: var(--vv-line);
+}
+
+.vv-shell .border-b-2,
+.vv-shell .border-t-2 {
+  border-color: var(--vv-line);
+}
+
+.vv-shell .border-b-2 { border-bottom-width: 1px; }
+.vv-shell .border-t-2 { border-top-width: 1px; }
+
+.vv-shell .shadow-\[2px_2px_0px_0px_rgba\(0\2c 0\2c 0\2c 1\)\],
+.vv-shell .shadow-\[4px_4px_0px_0px_rgba\(0\2c 0\2c 0\2c 1\)\] {
+  box-shadow: none;
+}
+
+.vv-shell .category-button,
+.dark .vv-shell .category-button {
+  border-radius: 1rem;
+  border: 1px solid var(--vv-line);
+  background-color: var(--vv-surface) !important;
+  box-shadow: none;
+}
+
+/* Old confirm/delete dialogs. */
+.dark .vv-shell .dark\:bg-\[\#18181b\],
+.vv-shell .bg-white.shadow-lg {
+  background-color: var(--vv-surface);
+  border: 1px solid var(--vv-line);
+  border-radius: 1rem;
+}

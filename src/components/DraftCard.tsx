@@ -31,7 +31,7 @@ export default function DraftCard({ draft }: { draft: DraftCardData }) {
         href={`/create-post?draft=${draft.id}`}
         className="flex flex-col flex-1 min-h-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500 dark:focus-visible:ring-offset-[#0A0A0A]"
       >
-        <div className="relative w-full aspect-[3/4] bg-gray-200 dark:bg-gray-800 shrink-0">
+        <div className="relative w-full aspect-[3/4] bg-vv-raised shrink-0">
           {draft.imageUrl ? (
             <img src={draft.imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
           ) : (
@@ -40,8 +40,8 @@ export default function DraftCard({ draft }: { draft: DraftCardData }) {
             </div>
           )}
         </div>
-        <div className="p-3 md:p-4 flex flex-col flex-1 min-h-0 border-t border-gray-200 dark:border-gray-700">
-          <h2 className="font-black lowercase text-sm md:text-base leading-tight line-clamp-2">{title}</h2>
+        <div className="p-3 md:p-4 flex flex-col flex-1 min-h-0 border-t border-vv-line">
+          <h2 className="line-clamp-2 text-sm font-semibold leading-tight lowercase text-vv-fg md:text-base">{title}</h2>
           <p className="text-[11px] md:text-xs text-gray-500 dark:text-gray-400 lowercase mt-1 truncate">
             {draft.category}
             {draft.creator ? ` · ${draft.creator}` : ''}
@@ -74,7 +74,7 @@ export default function DraftCard({ draft }: { draft: DraftCardData }) {
           </time>
         </div>
       </Link>
-      <div className="flex justify-end px-3 py-2 border-t border-gray-200 dark:border-gray-700 bg-white/40 dark:bg-black/20">
+      <div className="flex justify-end px-3 py-2 border-t border-vv-line">
         <DraftDeleteButton draftId={draft.id} />
       </div>
     </article>

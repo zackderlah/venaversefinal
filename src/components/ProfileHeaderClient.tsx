@@ -85,10 +85,10 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
   };
 
   return (
-    <div className="review-card content-card flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8 mb-4 relative">
+    <div className="relative flex flex-col items-center gap-6 pb-4 md:flex-row md:items-start md:gap-8 md:pb-6">
       {/* Profile Picture Section - Centered on mobile */}
       <div className="flex flex-col items-center gap-3 md:gap-2 mr-0 md:mr-8 w-full md:w-auto">
-        <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-2 border-black dark:border-white bg-gray-100 dark:bg-gray-800 flex-shrink-0">
+        <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border border-vv-line bg-vv-raised flex-shrink-0">
           {user.profileImage ? (
             <img
               src={user.profileImage}
@@ -113,7 +113,7 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
         {/* Username, Title, and Level - Better mobile layout */}
         <div className="flex flex-col md:flex-row items-center md:items-center justify-between w-full gap-2 md:gap-0">
           <div className="flex flex-col md:flex-row items-center md:items-center gap-2 md:gap-3">
-            <h1 className="text-3xl md:text-4xl font-black tracking-tight lowercase text-center md:text-left">
+            <h1 className="text-[2rem] font-bold leading-tight tracking-[-0.035em] lowercase text-center md:text-[2.75rem] md:text-left">
               {user.username}
             </h1>
             {user.selectedTitle ? (
@@ -148,16 +148,16 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
         </div>
         
         {/* Member Info - Better spacing on mobile */}
-        <div className="flex flex-col md:flex-row items-center md:items-center justify-center md:justify-start gap-1 md:gap-4 text-gray-500 dark:text-gray-300 text-xs md:text-sm lowercase">
+        <div className="vv-eyebrow flex flex-col items-center justify-center gap-1 md:flex-row md:justify-start md:gap-4">
           <span>member since {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : "-"}</span>
           <span className="hidden md:inline">•</span>
-          <a href={`/profile/${user.username}/reviews`} className="underline hover:text-blue-600 cursor-pointer">
+          <a href={`/profile/${user.username}/reviews`} className="underline underline-offset-2 hover:text-vv-fg">
             {user?.reviews.length || 0} reviews
           </a>
         </div>
         
         {/* Bio Section - Better mobile formatting */}
-        <div className="text-gray-600 dark:text-gray-300 text-sm md:text-base lowercase mt-1 text-center md:text-left w-full">
+        <div className="mt-2 w-full text-center text-[15px] leading-relaxed text-vv-muted lowercase md:text-left">
           {isOwner ? (
             editingBio ? (
               <form className="flex flex-col w-full gap-2" onSubmit={async (e) => {
@@ -179,7 +179,7 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
                 }
               }}>
                 <textarea
-                  className="w-full p-2 border border-black dark:border-white rounded bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100 text-sm lowercase resize-none"
+                  className="w-full resize-none px-4 py-3 text-sm lowercase"
                   value={bio}
                   onChange={e => setBio(e.target.value)}
                   rows={2}
@@ -188,8 +188,8 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
                   autoFocus
                 />
                 <div className="flex gap-2 justify-center md:justify-start">
-                  <button type="submit" className="px-3 py-1 text-xs font-bold border-2 border-black dark:border-white rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 lowercase hover:bg-blue-200 hover:dark:bg-blue-800 transition-all" disabled={bioLoading}>save</button>
-                  <button type="button" className="px-3 py-1 text-xs font-bold border-2 border-black dark:border-white rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 lowercase hover:bg-gray-200 hover:dark:bg-gray-700 transition-all" onClick={() => { setEditingBio(false); setBio(user?.bio || ""); }} disabled={bioLoading}>cancel</button>
+                  <button type="submit" className="vv-btn vv-btn-solid" disabled={bioLoading}>save</button>
+                  <button type="button" className="vv-btn" onClick={() => { setEditingBio(false); setBio(user?.bio || ""); }} disabled={bioLoading}>cancel</button>
                 </div>
                 {bioError && <span className="text-xs text-red-500 font-bold lowercase mt-1">{bioError}</span>}
               </form>
@@ -197,7 +197,7 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
               <div className="flex flex-col w-full gap-2 items-center md:items-start">
                 <span className="flex-1">{user?.bio || "no bio yet. click edit to add one!"}</span>
                 <span
-                  className="text-xs font-bold text-blue-600 lowercase hover:text-blue-800 cursor-pointer"
+                  className="vv-btn cursor-pointer"
                   onClick={() => setEditingBio(true)}
                   aria-label="edit bio"
                 >edit bio</span>
@@ -241,7 +241,7 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
                       {TITLE_TAB_ORDER.map(({ id, label }) => (
                         <button
                           key={id}
-                          className={`px-3 py-1.5 rounded text-xs sm:text-sm font-bold lowercase border-2 transition-colors duration-150 ${
+                          className={`px-3 py-1.5 rounded text-xs sm:text-sm font-bold lowercase border-2 transition-colors duration-100 ${
                             titleTab === id ? 'border-black dark:border-white' : 'border-gray-300 dark:border-gray-700'
                           } ${
                             id === FILM_TV_CATEGORY ? 'text-blue-600' :
@@ -264,7 +264,7 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
                       {(titleTab === 'generic' ? unlockedTitles.unlockedGeneric : unlockedTitles.unlockedByCategory[titleTab]).map((t: string, idx: number) => (
                         <button
                           key={`${titleTab}-${t}-${idx}`}
-                          className={`text-left w-full py-2 px-2 rounded text-xs sm:text-sm font-bold lowercase transition-colors duration-150 shrink-0 ${
+                          className={`text-left w-full py-2 px-2 rounded text-xs sm:text-sm font-bold lowercase transition-colors duration-100 shrink-0 ${
                             titleTab === FILM_TV_CATEGORY ? 'text-blue-600' :
                             titleTab === 'music' ? 'text-purple-600' :
                             titleTab === 'anime' ? 'text-red-600' :

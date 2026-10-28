@@ -61,7 +61,7 @@ export default function PatchNotesSection() {
   const latestDate = formatPatchDate(latest.dateISO);
 
   return (
-    <div className="mt-6 pt-6 border-t border-black/20 dark:border-gray-100/25">
+    <div>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div className="min-w-0 flex-1 space-y-3">
           <div className="mb-3 flex flex-wrap items-baseline gap-x-2 gap-y-1">
