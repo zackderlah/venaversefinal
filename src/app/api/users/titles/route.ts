@@ -2,29 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import {
-  CATEGORY_TITLES,
-  GENERIC_TITLES,
-  getUnlockedTitlesByCategory,
-  getUnlockedGenericTitles,
-  Category
-} from '@/data/titles';
-
-// Helper to count reviews by category for a user
-async function getUserReviewCounts(userId: number) {
-  const reviews = await prisma.review.findMany({
-    where: { userId },
-    select: { category: true },
-  });
-  const counts: Partial<Record<Category, number>> = {};
-  for (const r of reviews) {
-    const raw = r.category;
-    const cat = (raw === 'film' ? 'film-tv' : raw) as Category;
-    if (!CATEGORY_TITLES[cat]) continue;
-    counts[cat] = (counts[cat] || 0) + 1;
-  }
-  return { counts, total: reviews.length };
-}
+import { CATEGORY_TITLES, Category } from '@/data/titles';
+import { getUserUnlocks } from '@/lib/userUnlocks';
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -35,15 +14,14 @@ export async function GET(req: NextRequest) {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
-  const { counts, total } = await getUserReviewCounts(userId);
-  const unlockedByCategory = getUnlockedTitlesByCategory(counts);
-  const unlockedGeneric = getUnlockedGenericTitles(total);
+  const { unlockedByCategory, unlockedGeneric } = await getUserUnlocks(userId);
 
   return NextResponse.json({
     unlockedByCategory,
     unlockedGeneric,
     selectedTitle: user.selectedTitle,
     selectedTitleCategory: user.selectedTitleCategory,
+    selectedBanner: user.selectedBanner,
   });
 }
 
@@ -56,9 +34,7 @@ export async function POST(req: NextRequest) {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
-  const { counts, total } = await getUserReviewCounts(userId);
-  const unlockedByCategory = getUnlockedTitlesByCategory(counts);
-  const unlockedGeneric = getUnlockedGenericTitles(total);
+  const { unlockedByCategory, unlockedGeneric } = await getUserUnlocks(userId);
 
   const { title, category } = await req.json();
   let valid = false;

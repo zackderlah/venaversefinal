@@ -5,12 +5,13 @@ import { prisma } from "@/lib/prisma";
 import ReviewCardDisplay from "@/components/ReviewCardDisplay";
 import Link from "next/link";
 import ProfileHeaderClient from "@/components/ProfileHeaderClient";
+import ActivityPagination from "@/components/ActivityPagination";
 import FrameRule from "@/components/FrameRule";
 import ProfileCommentSection from '@/components/ProfileCommentSection';
 import CurrentlyExperiencingSection from '@/components/CurrentlyExperiencingSection';
 import ProfileDraftsSection from '@/components/ProfileDraftsSection';
 
-export default async function ProfilePage() {
+export default async function ProfilePage({ searchParams }: { searchParams?: { activity?: string } }) {
   const session = await getServerSession(authOptions);
   if (!session) {
     redirect("/login");
@@ -54,7 +55,7 @@ export default async function ProfilePage() {
           }
         }
       },
-      take: 10,
+      take: 100,
     }),
   ]);
 
@@ -73,7 +74,13 @@ export default async function ProfilePage() {
     date: c.createdAt,
     comment: c,
   }));
-  const activityFeed = [...reviewFeed, ...commentFeed].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  // Newest first across reviews and comments combined, 10 per page.
+  const sortedActivity = [...reviewFeed, ...commentFeed]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  const ACTIVITY_PAGE_SIZE = 10;
+  const totalActivityPages = Math.max(1, Math.ceil(sortedActivity.length / ACTIVITY_PAGE_SIZE));
+  const activityPage = Math.min(Math.max(parseInt(searchParams?.activity ?? '1', 10) || 1, 1), totalActivityPages);
+  const activityFeed = sortedActivity.slice((activityPage - 1) * ACTIVITY_PAGE_SIZE, activityPage * ACTIVITY_PAGE_SIZE);
 
   return (
     <div className="space-y-6 md:space-y-8">
@@ -96,7 +103,7 @@ export default async function ProfilePage() {
       </div>
 
       {/* Recent Activity */}
-      <div className="review-card overflow-hidden">
+      <div id="recent-activity" className="review-card overflow-hidden scroll-mt-24">
         <h2 className="mb-4 text-xl font-semibold tracking-tight lowercase">recent activity</h2>
         <div className="grid gap-2 md:gap-6 w-full">
           {activityFeed.length ? (
@@ -114,7 +121,7 @@ export default async function ProfilePage() {
                 />
               </div>
               ) : 'comment' in item ? (
-                <div key={`comment-${item.id}`} className="border-b border-vv-line pb-2 md:pb-3">
+                <div key={`comment-${item.id}`} className="review-card review-card-item">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-1 md:gap-0 mb-1">
                     <div className="flex flex-wrap items-center gap-1 text-[10px] md:text-xs text-gray-500">
                       <span className="text-blue-600 font-bold lowercase">commented</span>
@@ -146,9 +153,7 @@ export default async function ProfilePage() {
             <p className="text-sm text-vv-faint lowercase">no recent activity</p>
           )}
         </div>
-        <div className="mt-4 text-right">
-          {/* Removed 'view all reviews' link */}
-        </div>
+        <ActivityPagination current={activityPage} total={totalActivityPages} basePath={'/profile'} />
       </div>
     </div>
   );

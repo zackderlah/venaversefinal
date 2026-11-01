@@ -847,3 +847,20 @@
   border: 1px solid var(--vv-line);
   border-radius: 1rem;
 }
+
+/* Profile banners (src/data/banners.ts). */
+.vv-banner-scrim {
+  /* Fade into the page at the bottom and soften behind the text. */
+  background:
+    linear-gradient(to top, var(--vv-bg) 0%, transparent 55%),
+    linear-gradient(to right, color-mix(in srgb, var(--vv-bg) 55%, transparent), color-mix(in srgb, var(--vv-bg) 20%, transparent));
+}
+
+@keyframes vv-banner-shimmer {
+  from { background-position: 0 0, 0% 50%; }
+  to { background-position: 24px 24px, 100% 50%; }
+}
+
+.vv-banner-shimmer {
+  animation: vv-banner-shimmer 8s ease-in-out infinite alternate;
+}

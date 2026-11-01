@@ -14,7 +14,6 @@ const MasonryGrid = dynamic(
   { ssr: false }
 );
 const PullToRefresh = dynamic(() => import('@/components/PullToRefresh'), { ssr: false });
-const PatchNotesSection = dynamic(() => import('@/components/PatchNotesSection'), { ssr: false });
 
 export default function Home() {
   const [recentReviews, setRecentReviews] = useState<any[]>([]);
@@ -23,7 +22,6 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
-  const [showPatchNotes, setShowPatchNotes] = useState(false);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -40,27 +38,6 @@ export default function Home() {
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  useEffect(() => {
-    const idleCallback = (window as Window & {
-      requestIdleCallback?: (cb: () => void) => number;
-      cancelIdleCallback?: (id: number) => void;
-    }).requestIdleCallback;
-    const cancelIdleCallback = (window as Window & {
-      requestIdleCallback?: (cb: () => void) => number;
-      cancelIdleCallback?: (id: number) => void;
-    }).cancelIdleCallback;
-
-    if (idleCallback) {
-      const id = idleCallback(() => setShowPatchNotes(true));
-      return () => {
-        if (cancelIdleCallback) cancelIdleCallback(id);
-      };
-    }
-
-    const timeoutId = window.setTimeout(() => setShowPatchNotes(true), 1200);
-    return () => window.clearTimeout(timeoutId);
   }, []);
 
   const fetchReviews = useCallback(async (page: number, append: boolean = false) => {
@@ -203,8 +180,18 @@ export default function Home() {
             <br />
             <span className="text-vv-faint">honest takes on what we watch, hear, read and play.</span>
           </h1>
-          <div className="flex shrink-0 flex-wrap gap-2">
-            <Link href="/create-post" className="vv-btn vv-btn-solid">write a review</Link>
+          <div className="flex shrink-0 flex-wrap items-end gap-2">
+            {/* The site mascot sits on top of the button; the zero-width/min-full trick keeps
+                the image exactly as wide as the button instead of its own 512px. */}
+            <div className="inline-grid">
+              <img
+                src="/icon-512x512.png"
+                alt=""
+                aria-hidden="true"
+                className="pointer-events-none -mb-px block w-0 min-w-full translate-x-2 select-none invert dark:invert-0"
+              />
+              <Link href="/create-post" className="vv-btn vv-btn-solid">write a review</Link>
+            </div>
             <Link href="/community" className="vv-btn">community</Link>
           </div>
         </div>
@@ -213,17 +200,6 @@ export default function Home() {
           one&apos;s thoughts, ratings, and analysis of the work.
         </p>
       </section>
-
-      {showPatchNotes ? (
-        <>
-          <FrameRule />
-          <section className="px-5 py-10 md:px-8">
-            <div className="vv-panel px-5 py-5 md:px-7 md:py-6">
-              <PatchNotesSection />
-            </div>
-          </section>
-        </>
-      ) : null}
 
       <FrameRule />
 

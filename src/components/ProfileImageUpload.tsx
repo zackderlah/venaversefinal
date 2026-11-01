@@ -4,8 +4,7 @@ import { useState, ChangeEvent } from "react";
 import { useSession } from 'next-auth/react';
 
 export default function ProfileImageUpload({ profileImage }: { profileImage?: string }) {
-  console.log('ProfileImageUpload received profileImage:', profileImage);
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const user = session?.user;
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -34,6 +33,8 @@ export default function ProfileImageUpload({ profileImage }: { profileImage?: st
         body: JSON.stringify({ imageUrl: data.secure_url }),
       });
       if (!response.ok) throw new Error('Failed to update profile image in DB');
+      // Refresh the session token so the header avatar picks up the new image.
+      await update();
       window.location.reload();
     } catch (err) {
       setError("Failed to update profile image");
@@ -44,9 +45,9 @@ export default function ProfileImageUpload({ profileImage }: { profileImage?: st
   };
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      <label htmlFor="profile-upload" className="px-3 py-1.5 bg-white dark:bg-[#0A0A0A] border-2 border-black dark:border-white rounded-lg font-black text-[10px] md:text-xs lowercase cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 hover:dark:bg-gray-900 transition-all text-center whitespace-nowrap">
-        {uploading ? 'uploading...' : 'change profile photo'}
+    <div className="flex flex-col items-start gap-2">
+      <label htmlFor="profile-upload" className="vv-btn cursor-pointer">
+        {uploading ? 'uploading...' : 'upload new photo'}
         <input
           id="profile-upload"
           type="file"

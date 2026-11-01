@@ -167,11 +167,20 @@ export default function HeaderWithDarkMode() {
               {user ? (
                 <>
                   <Link href="/create-post" className="vv-btn vv-btn-solid">+ review</Link>
-                  <Link href="/profile" className="vv-icon-btn" aria-label="profile" title="profile">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                      <circle cx="12" cy="8" r="4" strokeWidth={2} />
-                      <path strokeLinecap="round" strokeWidth={2} d="M4 21a8 8 0 0116 0" />
-                    </svg>
+                  <Link
+                    href="/profile"
+                    className="vv-icon-btn overflow-hidden"
+                    aria-label="profile"
+                    title={user.name ? `${user.name}'s profile` : 'profile'}
+                  >
+                    {user.image ? (
+                      <img src={user.image} alt="" className="h-full w-full object-cover" />
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <circle cx="12" cy="8" r="4" strokeWidth={2} />
+                        <path strokeLinecap="round" strokeWidth={2} d="M4 21a8 8 0 0116 0" />
+                      </svg>
+                    )}
                   </Link>
                   <button type="button" onClick={handleLogout} className="vv-icon-btn" aria-label="logout" title="logout">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">

@@ -30,6 +30,7 @@ model User {
   favoriteReview          Review?                 @relation("FavoriteReview", fields: [favoriteReviewId], references: [id])
   selectedTitle           String?                 @db.VarChar(191)
   selectedTitleCategory   String?                 @db.VarChar(191)
+  selectedBanner          String?                 @db.VarChar(64)
   reviewDrafts            ReviewDraft[]
   passwordResetTokens     PasswordResetToken[]
 }

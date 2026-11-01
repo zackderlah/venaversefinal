@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { searchAlbums } from '@/lib/musicSearch';
 import { useRouter, useParams } from 'next/navigation';
 import RichTextEditor from '@/components/RichTextEditor';
 import StarRatingInput from '@/components/StarRatingInput';
@@ -174,45 +175,8 @@ export default function EditReviewPage() {
               results = allResults.slice(0, 5);
             }
           } else if (formData.category === 'music') {
-            // iTunes API: Use both artist and title if creator is filled
-            let url = `https://itunes.apple.com/search?term=${encodeURIComponent(searchValue)}&entity=album,song&limit=10`;
-            if (formData.creator.trim().length > 0) {
-              url = `https://itunes.apple.com/search?term=${encodeURIComponent(formData.creator + ' ' + searchValue)}&entity=album,song&limit=10`;
-            }
-            const res = await fetch(url);
-            const data = await res.json();
-            let allResults = [];
-            if (data.results) {
-              allResults = data.results.map((m: any) => ({
-                title: m.trackName || m.collectionName,
-                creator: m.artistName,
-                poster: m.artworkUrl100,
-                year: (m.releaseDate || m.collectionReleaseDate) ? (m.releaseDate || m.collectionReleaseDate).slice(0, 4) : '',
-              }));
-              // If creator is filled, filter by artist (substring match)
-              if (formData.creator.trim().length > 0) {
-                const creatorLower = formData.creator.trim().toLowerCase();
-                allResults = allResults.filter((r: any) => r.creator.toLowerCase().includes(creatorLower));
-              }
-              // Fallback to MusicBrainz + Cover Art Archive if iTunes art is missing
-              for (let r of allResults) {
-                if (!r.poster) {
-                  try {
-                    const mbUrl = `https://musicbrainz.org/ws/2/release/?query=release:${encodeURIComponent(r.title)}%20AND%20artist:${encodeURIComponent(r.creator)}&fmt=json&limit=1`;
-                    const mbRes = await fetch(mbUrl, { headers: { 'User-Agent': 'johnnywebsite/1.0.0 ( email@example.com )' } });
-                    const mbData = await mbRes.json();
-                    if (mbData.releases && mbData.releases.length > 0 && mbData.releases[0].id) {
-                      const caaUrl = `https://coverartarchive.org/release/${mbData.releases[0].id}/front-250`;
-                      const caaRes = await fetch(caaUrl);
-                      if (caaRes.ok) {
-                        r.poster = caaUrl;
-                      }
-                    }
-                  } catch {}
-                }
-              }
-              results = allResults.slice(0, 5);
-            }
+            // Albums only (see src/lib/musicSearch.ts for why a plain iTunes search buries them under songs)
+            results = await searchAlbums(searchValue, formData.creator);
           } else if (formData.category === 'books') {
             // Google Books API: Use both author and title if creator is filled
             let url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(searchValue)}&maxResults=10`;
@@ -450,16 +414,16 @@ export default function EditReviewPage() {
     <div className="mx-auto max-w-2xl">
       <h1 className="mb-10 text-[2rem] font-bold leading-tight tracking-[-0.035em] lowercase md:text-[2.75rem]">edit review</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
+        <div className="relative">
           <label htmlFor="title" className="vv-eyebrow mb-2 block">title</label>
           <input ref={titleInputRef} type="text" name="title" id="title" value={formData.title} onChange={handleChange} onKeyDown={activeSearchField === 'title' ? handleKeyDown : undefined} required className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500" autoComplete="off" />
           {activeSearchField === 'title' && suggestLoading && <div className="text-xs text-gray-400">searching...</div>}
           {activeSearchField === 'title' && suggestions.length > 0 && (
-            <ul ref={dropdownRef} className="bg-white dark:bg-[#18181b] border border-gray-300 dark:border-gray-700 rounded shadow absolute z-10 mt-2 max-h-48 overflow-y-auto w-full">
+            <ul ref={dropdownRef} className="vv-panel absolute left-0 right-0 z-20 mt-2 max-h-64 overflow-y-auto p-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.35)]">
               {suggestions.map((m, i) => (
                 <li
                   key={m.title + i}
-                  className={`flex items-center gap-2 px-3 py-2 text-xs cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900${highlightedIndex === i ? ' bg-blue-100 dark:bg-blue-900' : ''}`}
+                  className={`flex items-center gap-2 px-3 py-2 text-xs cursor-pointer rounded-lg transition-colors hover:bg-vv-raised${highlightedIndex === i ? ' bg-vv-raised' : ''}`}
                   onClick={() => {
                     setFormData(f => ({
                       ...f,
@@ -494,16 +458,16 @@ export default function EditReviewPage() {
           </select>
         </div>
 
-        <div>
+        <div className="relative">
           <label htmlFor="creator" className="vv-eyebrow mb-2 block">creator (e.g. director, artist)</label>
           <input ref={creatorInputRef} type="text" name="creator" id="creator" value={formData.creator} onChange={handleChange} onKeyDown={activeSearchField === 'creator' ? handleKeyDown : undefined} required className="mt-1 block w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500" autoComplete="off" />
           {activeSearchField === 'creator' && suggestLoading && <div className="text-xs text-gray-400">searching...</div>}
           {activeSearchField === 'creator' && suggestions.length > 0 && (
-            <ul ref={dropdownRef} className="bg-white dark:bg-[#18181b] border border-gray-300 dark:border-gray-700 rounded shadow absolute z-10 mt-2 max-h-48 overflow-y-auto w-full">
+            <ul ref={dropdownRef} className="vv-panel absolute left-0 right-0 z-20 mt-2 max-h-64 overflow-y-auto p-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.35)]">
               {suggestions.map((m, i) => (
                 <li
                   key={m.creator + i}
-                  className={`flex flex-col gap-1 px-3 py-2 text-xs cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900${highlightedIndex === i ? ' bg-blue-100 dark:bg-blue-900' : ''}`}
+                  className={`flex flex-col gap-1 px-3 py-2 text-xs cursor-pointer rounded-lg transition-colors hover:bg-vv-raised${highlightedIndex === i ? ' bg-vv-raised' : ''}`}
                   onClick={() => {
                     setFormData(f => ({
                       ...f,

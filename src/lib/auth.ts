@@ -68,7 +68,7 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       // If user is present (on login), set token fields
       if (user) {
         token.id = user.id;
@@ -77,9 +77,12 @@ export const authOptions: NextAuthOptions = {
         token.picture = user.image;
         token.isAdmin = user.isAdmin;
         token.refreshedAt = Date.now();
-      } else if (token.email && Date.now() - ((token.refreshedAt as number) || 0) > TOKEN_REFRESH_MS) {
-        // Refresh profileImage/isAdmin from the DB occasionally rather than on every
-        // session read: this callback runs on every page render and API call.
+      } else if (
+        token.email &&
+        (trigger === 'update' || Date.now() - ((token.refreshedAt as number) || 0) > TOKEN_REFRESH_MS)
+      ) {
+        // Refresh profileImage/isAdmin from the DB occasionally (or when the client calls
+        // update()) rather than on every session read: this callback runs on every request.
         const dbUser = await prisma.user.findUnique({
           where: { email: token.email as string },
           select: { profileImage: true, isAdmin: true },

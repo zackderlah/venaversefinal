@@ -1,91 +1,36 @@
 "use client";
-import { useState, useEffect } from "react";
-import { createPortal } from "react-dom";
-import ProfileImageUpload from "./ProfileImageUpload";
+import { useState } from "react";
 import LevelBadge from "./LevelBadge";
+import BannerPicker from "./BannerPicker";
+import EditProfileModal from "./EditProfileModal";
+import TitlePicker from "./TitlePicker";
+import { bannerClassName, bannerStyle, getBanner } from "@/data/banners";
 import { calculateUserXPAndLevel } from "@/utils/level";
-import { CATEGORY_TITLES, GENERIC_TITLES, Category } from "@/data/titles";
 import { FILM_TV_CATEGORY } from "@/lib/reviewCategories";
 
-const TITLE_TAB_ORDER: { id: Category | "generic"; label: string }[] = [
-  { id: "film-tv", label: "film/tv" },
-  { id: "music", label: "music" },
-  { id: "anime", label: "anime" },
-  { id: "books", label: "books" },
-  { id: "games", label: "games" },
-  { id: "generic", label: "generic" },
-];
-
-function normalizeTitleTabCategory(tab: string | null | undefined): string {
-  if (!tab) return FILM_TV_CATEGORY;
-  if (tab === "film") return FILM_TV_CATEGORY;
-  return tab;
-}
-
 export default function ProfileHeaderClient({ user, session, isOwner = false }: { user: any, session: any, isOwner?: boolean }) {
-  const [editingBio, setEditingBio] = useState(false);
-  const [bio, setBio] = useState(user?.bio || "");
-  const [bioLoading, setBioLoading] = useState(false);
-  const [bioError, setBioError] = useState("");
 
-  // Title selection modal state
   const [showTitleModal, setShowTitleModal] = useState(false);
-  const [unlockedTitles, setUnlockedTitles] = useState<any>(null);
-  const [titleTab, setTitleTab] = useState<string>(normalizeTitleTabCategory(user.selectedTitleCategory));
-  const [titleLoading, setTitleLoading] = useState(false);
-  const [titleError, setTitleError] = useState("");
+
+  const [showEditProfile, setShowEditProfile] = useState(false);
+  const [showBannerPicker, setShowBannerPicker] = useState(false);
+  const banner = getBanner(user.selectedBanner);
 
   // Calculate level from reviews
   const { level } = calculateUserXPAndLevel(user?.reviews || []);
 
-  useEffect(() => {
-    if (showTitleModal && isOwner) {
-      fetch("/api/users/titles")
-        .then(res => res.json())
-        .then(data => setUnlockedTitles(data))
-        .catch(() => setUnlockedTitles(null));
-    }
-  }, [showTitleModal, isOwner]);
-
-  useEffect(() => {
-    if (!showTitleModal) return;
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setShowTitleModal(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = prevOverflow;
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [showTitleModal]);
-
-  const handleSelectTitle = async (title: string, category: string) => {
-    setTitleLoading(true);
-    setTitleError("");
-    try {
-      const res = await fetch("/api/users/titles", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, category }),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        setTitleError(data.error || "Failed to set title");
-      } else {
-        setShowTitleModal(false);
-        window.location.reload();
-      }
-    } catch {
-      setTitleError("Failed to set title");
-    } finally {
-      setTitleLoading(false);
-    }
-  };
-
   return (
-    <div className="relative flex flex-col items-center gap-6 pb-4 md:flex-row md:items-start md:gap-8 md:pb-6">
+    <div className="relative isolate flex flex-col items-center gap-6 pb-4 md:flex-row md:items-start md:gap-8 md:pb-6">
+      {banner && (
+        // Bleeds to the frame edges and up to the site header; the overlay keeps text readable.
+        <div
+          className="pointer-events-none absolute -bottom-6 -left-5 -right-5 -top-12 -z-10 md:-bottom-8 md:-left-8 md:-right-8 md:-top-16"
+          aria-hidden="true"
+        >
+          <div className={`absolute inset-0 ${bannerClassName(banner)}`} style={bannerStyle(banner)} />
+          <div className="vv-banner-scrim absolute inset-0" />
+        </div>
+      )}
       {/* Profile Picture Section - Centered on mobile */}
       <div className="flex flex-col items-center gap-3 md:gap-2 mr-0 md:mr-8 w-full md:w-auto">
         <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border border-vv-line bg-vv-raised flex-shrink-0">
@@ -101,11 +46,6 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
             </div>
           )}
         </div>
-        {isOwner && (
-          <div className="w-full md:w-auto">
-            <ProfileImageUpload profileImage={user?.profileImage} />
-          </div>
-        )}
       </div>
       
       {/* User Info Section */}
@@ -118,7 +58,7 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
             </h1>
             {user.selectedTitle ? (
               <span
-                className={`text-xs md:text-sm font-bold lowercase cursor-pointer hover:underline ${
+                className={`text-xs md:text-sm font-bold lowercase ${
                   (user.selectedTitleCategory === FILM_TV_CATEGORY || user.selectedTitleCategory === 'film') ? 'text-blue-600' :
                   user.selectedTitleCategory === 'music' ? 'text-purple-600' :
                   user.selectedTitleCategory === 'anime' ? 'text-red-600' :
@@ -128,19 +68,10 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
                   'text-gray-700'
                 }`}
                 title={user.selectedTitleCategory ? `${user.selectedTitleCategory} title` : ''}
-                onClick={isOwner ? () => setShowTitleModal(true) : undefined}
-                style={isOwner ? { cursor: 'pointer' } : {}}
               >
                 {user.selectedTitle}
               </span>
-            ) : isOwner && (
-              <span
-                className="text-xs md:text-sm font-bold lowercase cursor-pointer hover:underline text-gray-400"
-                onClick={() => setShowTitleModal(true)}
-              >
-                add title
-              </span>
-            )}
+            ) : null}
           </div>
           <div className="md:ml-auto">
             <LevelBadge level={level} href={`/profile/${user.username}/level`} />
@@ -157,143 +88,32 @@ export default function ProfileHeaderClient({ user, session, isOwner = false }: 
         </div>
         
         {/* Bio Section - Better mobile formatting */}
-        <div className="mt-2 w-full text-center text-[15px] leading-relaxed text-vv-muted lowercase md:text-left">
-          {isOwner ? (
-            editingBio ? (
-              <form className="flex flex-col w-full gap-2" onSubmit={async (e) => {
-                e.preventDefault();
-                setBioLoading(true);
-                setBioError("");
-                try {
-                  const res = await fetch("/api/users/bio", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ bio }),
-                  });
-                  if (!res.ok) throw new Error("Failed to update bio");
-                  window.location.reload();
-                } catch (err) {
-                  setBioError("failed to update bio");
-                } finally {
-                  setBioLoading(false);
-                }
-              }}>
-                <textarea
-                  className="w-full resize-none px-4 py-3 text-sm lowercase"
-                  value={bio}
-                  onChange={e => setBio(e.target.value)}
-                  rows={2}
-                  maxLength={300}
-                  disabled={bioLoading}
-                  autoFocus
-                />
-                <div className="flex gap-2 justify-center md:justify-start">
-                  <button type="submit" className="vv-btn vv-btn-solid" disabled={bioLoading}>save</button>
-                  <button type="button" className="vv-btn" onClick={() => { setEditingBio(false); setBio(user?.bio || ""); }} disabled={bioLoading}>cancel</button>
-                </div>
-                {bioError && <span className="text-xs text-red-500 font-bold lowercase mt-1">{bioError}</span>}
-              </form>
-            ) : (
-              <div className="flex flex-col w-full gap-2 items-center md:items-start">
-                <span className="flex-1">{user?.bio || "no bio yet. click edit to add one!"}</span>
-                <span
-                  className="vv-btn cursor-pointer"
-                  onClick={() => setEditingBio(true)}
-                  aria-label="edit bio"
-                >edit bio</span>
-              </div>
-            )
-          ) : (
-            <span className="flex-1">{user?.bio || "no bio yet."}</span>
-          )}
-        </div>
-        {/* Title modal portals to document.body so it is not clipped by .review-card (backdrop-filter / overflow) */}
-        {showTitleModal &&
-          typeof document !== "undefined" &&
-          createPortal(
-            <div
-              className="fixed inset-0 z-[120] flex items-center justify-center bg-black bg-opacity-40 p-3 sm:p-6"
-              onClick={() => setShowTitleModal(false)}
-              role="presentation"
-            >
-              <div
-                className="bg-white dark:bg-[#18181b] rounded-lg shadow-lg p-5 sm:p-8 w-full max-w-2xl md:max-w-3xl max-h-[min(92vh,720px)] flex flex-col overflow-hidden relative border-2 border-black dark:border-gray-700"
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="title-modal-heading"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <button
-                  type="button"
-                  className="absolute top-3 right-3 z-10 text-gray-400 hover:text-gray-700 dark:hover:text-white text-2xl font-bold leading-none"
-                  onClick={() => setShowTitleModal(false)}
-                  aria-label="close"
-                >
-                  &times;
-                </button>
-                <h2 id="title-modal-heading" className="text-xl sm:text-2xl font-bold mb-4 pr-8 lowercase shrink-0">
-                  select your title
-                </h2>
-                {unlockedTitles ? (
-                  <div className="flex flex-col min-h-0 flex-1 gap-0">
-                    <div className="mb-2 font-bold text-sm text-gray-600 dark:text-gray-400 lowercase shrink-0">categories</div>
-                    <div className="flex gap-2 mb-4 flex-wrap shrink-0">
-                      {TITLE_TAB_ORDER.map(({ id, label }) => (
-                        <button
-                          key={id}
-                          className={`px-3 py-1.5 rounded text-xs sm:text-sm font-bold lowercase border-2 transition-colors duration-100 ${
-                            titleTab === id ? 'border-black dark:border-white' : 'border-gray-300 dark:border-gray-700'
-                          } ${
-                            id === FILM_TV_CATEGORY ? 'text-blue-600' :
-                            id === 'music' ? 'text-purple-600' :
-                            id === 'anime' ? 'text-red-600' :
-                            id === 'books' ? 'text-green-600' :
-                            id === 'games' ? 'text-cyan-600' :
-                            id === 'generic' ? 'text-yellow-700' :
-                            ''
-                          }`}
-                          onClick={() => setTitleTab(id)}
-                          type="button"
-                        >
-                          {label}
-                        </button>
-                      ))}
-                    </div>
-                    <div className="mb-2 font-bold text-sm text-gray-600 dark:text-gray-400 lowercase shrink-0">titles unlocked</div>
-                    <div className="flex flex-col gap-1 min-h-0 flex-1 overflow-y-auto overscroll-y-contain pr-2 -mr-1 mb-2 border border-gray-200 dark:border-gray-700 rounded-md p-2 sm:p-3">
-                      {(titleTab === 'generic' ? unlockedTitles.unlockedGeneric : unlockedTitles.unlockedByCategory[titleTab]).map((t: string, idx: number) => (
-                        <button
-                          key={`${titleTab}-${t}-${idx}`}
-                          className={`text-left w-full py-2 px-2 rounded text-xs sm:text-sm font-bold lowercase transition-colors duration-100 shrink-0 ${
-                            titleTab === FILM_TV_CATEGORY ? 'text-blue-600' :
-                            titleTab === 'music' ? 'text-purple-600' :
-                            titleTab === 'anime' ? 'text-red-600' :
-                            titleTab === 'books' ? 'text-green-600' :
-                            titleTab === 'games' ? 'text-cyan-600' :
-                            titleTab === 'generic' ? 'text-yellow-700' :
-                            ''
-                          } ${
-                            user.selectedTitle === t && user.selectedTitleCategory === titleTab ? 'font-extrabold underline' : ''
-                          } hover:bg-gray-100 dark:hover:bg-gray-800/80`}
-                          disabled={titleLoading}
-                          onClick={() => handleSelectTitle(t, titleTab)}
-                          type="button"
-                          style={{ background: 'none', border: 'none' }}
-                        >
-                          {t}
-                        </button>
-                      ))}
-                    </div>
-                    {titleError && <div className="text-xs text-red-500 font-bold mb-2 shrink-0">{titleError}</div>}
-                    {titleLoading && <div className="text-xs text-gray-500 shrink-0">updating...</div>}
-                  </div>
-                ) : (
-                  <div className="text-gray-500 text-sm py-8">loading titles...</div>
-                )}
-              </div>
-            </div>,
-            document.body
-          )}
+        <p className="mt-2 w-full text-center text-[15px] leading-relaxed text-vv-muted lowercase md:text-left">
+          {user?.bio || "no bio yet."}
+        </p>
+        {isOwner && (
+          <button type="button" className="vv-btn mt-1" onClick={() => setShowEditProfile(true)}>
+            edit profile
+          </button>
+        )}
+        {showEditProfile && (
+          <EditProfileModal
+            user={user}
+            onClose={() => setShowEditProfile(false)}
+            onChangeTitle={() => { setShowEditProfile(false); setShowTitleModal(true); }}
+            onChangeBanner={() => { setShowEditProfile(false); setShowBannerPicker(true); }}
+          />
+        )}
+        {showBannerPicker && (
+          <BannerPicker selectedBanner={user.selectedBanner ?? null} onClose={() => setShowBannerPicker(false)} />
+        )}
+        {showTitleModal && (
+          <TitlePicker
+            selectedTitle={user.selectedTitle ?? null}
+            selectedTitleCategory={user.selectedTitleCategory ?? null}
+            onClose={() => setShowTitleModal(false)}
+          />
+        )}
       </div>
     </div>
   );
